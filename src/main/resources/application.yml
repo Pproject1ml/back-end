@@ -1,0 +1,41 @@
+spring:
+  #AWS의 MySQL
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://3.37.171.121:3306/testdb
+    username: testuser
+    password: 232323
+
+  #내 h2 DB
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:tcp://localhost/~/inflearn/h2/DB/testChat
+#    username: sa
+#    password:
+
+  jpa:
+    hibernate:
+      #이걸 create로 바꾸시면 JPA가 테이블을 만들어줍니다
+      #create로 한 번 돌리시고 반드시 none으로 바꿔야 합니다
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+springdoc:
+  api-docs:
+    path: /swagger/v3/api-docs
+  swagger-ui:
+    path: /swagger/swagger-ui.html
+    #ControllerAdvice를 통해 만들어지는 응답은 무시하기 위한 설정 (이거 필수)
+  override-with-generic-response: false
+
+
+spring.jwt.secret: "qwfnlfasfdfapdzdflaksfalalasfjlasdifoasdfjl"
+
+
+#server:
+#  address: 0.0.0.0
+#  port: 8080
