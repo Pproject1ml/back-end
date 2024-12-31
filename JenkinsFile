@@ -1,47 +1,73 @@
 pipeline {
+
     agent any
 
     environment{
-	    gitRepo = 'git@github.com:Pproject1ml/back-end.git'
-        userAndIP = 'ubuntu@3.36.232.149'
+        GIT_REPO = 'git@github.com:Pproject1ml/back-end.git'
+        GIT_REPO_NAME = 'back-end'
+        BRANCH = 'main'
+        JENKINS_GIT_CLONE_PATH = '/var/jenkins_home/workspace/TT_Backend'
+
+        DOCKER_REPO = 'teamonemg/tt_server'
+        IMAGE_NAME = 'tt_server'
+
+        HOST_SERVER = 'ubuntu@3.36.232.149'
+        HOST_DOCKER_COMPOSE_PATH = '/home/ubuntu/tt/backend/'
     }
 
     stages {
-        stage('hello') {
+        stage('Delete if Exists') {
             steps {
-                script {
-                    sh "echo 'hello jenkins'"
-                }
+			    sh "rm -rf ${JENKINS_GIT_CLONE_PATH}/*"
             }
         }
 
-        stage('test Dockerhub') {
-		    steps{
-		        withCredentials([usernamePassword(credentialsId: 'forDockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-					sh "docker login -u ${USERNAME} -p ${PASSWORD}"
-                    sh "docker info"
-                    sh "docker logout"
+        stage('Git Clone') {
+            steps {
+			    sshagent(credentials:["forGithub"]){
+			        sh "git clone -b ${BRANCH} ${GIT_REPO}"
 				}
             }
         }
 
-        stage('test Github') {
+        stage('BE-Build') {
             steps {
-                sshagent(credentials: ['forGithub']) {
-                    sh "git ls-remote ${gitRepo}"
+                dir("./${GIT_REPO_NAME}") {
+                    sh "chmod +x ./gradlew "
+                    sh "./gradlew clean build"
                 }
             }
         }
 
-        stage('test AWS') {
+        stage('Create New Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'forDockerhub',
+                                                    usernameVariable: 'USERNAME',
+                                                    passwordVariable: 'PASSWORD')]) {
+                    dir("./${GIT_REPO_NAME}") {
+                        sh "docker build -t ${IMAGE_NAME}:latest ."
+                    }
+
+                    sh '''
+		                    docker login -u ${USERNAME} -p ${PASSWORD}
+		                    docker image tag ${IMAGE_NAME}:latest ${DOCKER_REPO}:latest
+		                    docker push ${DOCKER_REPO}:latest
+		                    docker logout
+		                '''
+                }
+            }
+        }
+
+        stage('Deploy') {
             steps {
                 sshagent(credentials: ['forDevServer']) {
                     sh '''
-                        ssh ${userAndIP} << EOF
-                        whoami
-                        pwd
-                        << EOF
-                        '''
+                        ssh ${HOST_SERVER} << EOF
+                        cd ${HOST_DOCKER_COMPOSE_PATH}
+                        docker-compose down
+                        docker-compose up -d
+                        docker image prune -f
+                    '''
                 }
             }
         }
