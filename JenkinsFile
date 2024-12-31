@@ -35,7 +35,7 @@ pipeline {
 
         stage('test AWS') {
             steps {
-                sshagent(credentials: ['forAWS']) {
+                sshagent(credentials: ['forDevServer']) {
                     sh '''
                         ssh ${userAndIP} << EOF
                         whoami
