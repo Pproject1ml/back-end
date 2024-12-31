@@ -47,7 +47,6 @@ public class MemberService {
             throw new NicknameAlreadyExistsException("NOT UNIQUE NICKNAME", nickname);
         }
 
-
         return objectMapper.writeValueAsString(Map.of("nickname", nickname));
     }
 
