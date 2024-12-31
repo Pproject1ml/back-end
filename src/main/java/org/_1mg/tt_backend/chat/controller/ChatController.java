@@ -8,6 +8,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.UUID;
+
 @Controller
 public class ChatController {
 
@@ -32,23 +34,25 @@ public class ChatController {
         ChatMessageDTO responseDTO = new ChatMessageDTO();
         responseDTO.setMessageId(savedMessage.getMessageId());
         responseDTO.setChatroomId(savedMessage.getChatRoom().getChatroomId());
-        responseDTO.setMemberId(savedMessage.getMemberId());
+        responseDTO.setMemberId(String.valueOf(savedMessage.getMemberId()));
         responseDTO.setContent(savedMessage.getContent());
         responseDTO.setCreatedAt(savedMessage.getCreatedAt());
         return responseDTO;
     }
 
     // 클릭 시 메세지 읽음처리
+    /*
     @MessageMapping("/read")
     public void markAsRead(ChatMessageDTO chatMessageDTO) {
         chatService.markMessageAsRead(chatMessageDTO.getMessageId(), chatMessageDTO.getMemberId());
     }
+     */
 
     @MessageMapping("/chat/enter")
     @SendTo("/topic/messages")
     public ChatMessageDTO enterChat(ChatMessageDTO chatMessageDTO) {
         // 사용자 입장 처리
-        chatService.userJoinChatRoom(chatMessageDTO.getChatroomId(), chatMessageDTO.getMemberId());
+        chatService.userJoinChatRoom(chatMessageDTO.getChatroomId(), UUID.fromString(chatMessageDTO.getMemberId()));
 
         // 입장 메시지 생성
         chatMessageDTO.setMessageType("ENTER");
@@ -60,7 +64,7 @@ public class ChatController {
     @SendTo("/topic/messages")
     public ChatMessageDTO leaveChat(ChatMessageDTO chatMessageDTO) {
         // 사용자 퇴장 처리
-        chatService.userLeaveChatRoom(chatMessageDTO.getChatroomId(), chatMessageDTO.getMemberId());
+        chatService.userLeaveChatRoom(chatMessageDTO.getChatroomId(), UUID.fromString(chatMessageDTO.getMemberId()));
         chatMessageDTO.setMessageType("LEAVE");
         chatMessageDTO.setContent(chatMessageDTO.getMemberId() + "님이 퇴장하셨습니다.");
         return chatMessageDTO;

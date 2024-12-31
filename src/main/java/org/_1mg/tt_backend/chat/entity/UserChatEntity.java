@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ public class UserChatEntity {
     private Integer userChatId;
 
     @Column(name = "member_id", nullable = false)
-    private String memberId;
+    private UUID memberId;
 
     @ManyToOne
     @JoinColumn(name = "chatroom_id", nullable = false)
