@@ -45,9 +45,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         //구글, kakao 로그인 형식 구분
         try {
-            switch (unauthenticatedToken.getOauthProvider()){
-                case "GOOGLE" : checkGoogle(userDetails, unauthenticatedToken); break;
-                case "KAKAO" : checkKakao(userDetails, unauthenticatedToken); break;
+            switch (unauthenticatedToken.getOauthProvider()) {
+                case "GOOGLE":
+                    checkGoogle(userDetails, unauthenticatedToken);
+                    break;
+                case "KAKAO":
+                    checkKakao(userDetails, unauthenticatedToken);
+                    break;
             }
         } catch (BadCredentialsException e) {
             log.error(e.getMessage());
@@ -75,7 +79,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private String determineUsername(CustomAuthenticationToken authentication) {
 
-        if(authentication.getOauthId() == null){
+        if (authentication.getOauthId() == null) {
             throw new BadCredentialsException("OAUTH ID IS NULL");
         }
 
@@ -86,8 +90,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     //이메일과 oauthId 비교
     private void checkGoogle(CustomUserDetails userDetails, CustomAuthenticationToken authentication) throws AuthenticationException {
 
-        if(!userDetails.getOauthId().equals(authentication.getOauthId())
-        //    || !userDetails.getEmail().equals(authentication.getEmail())
+        if (!userDetails.getOauthId().equals(authentication.getOauthId())
+            //|| !userDetails.getEmail().equals(authentication.getEmail())
         ) {
             log.error("WRONG CREDENTIALS GOOGLE {} {}", authentication.getOauthId(), authentication.getEmail());
             throw new BadCredentialsException("WRONG GOOGLE OAUTH ID OR EMAIL");
@@ -98,7 +102,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     //oauthId만 비교 (카카오에서 받아올 수 있는 데이터 중 고유한 값이 없음)
     private void checkKakao(CustomUserDetails userDetails, CustomAuthenticationToken authentication) throws AuthenticationException {
 
-        if(!userDetails.getOauthId().equals(authentication.getOauthId())){
+        if (!userDetails.getOauthId().equals(authentication.getOauthId())) {
             log.error("WRONG CREDENTIALS KAKAO {}", authentication.getOauthId());
             throw new BadCredentialsException("WRONG KAKAO OAUTH ID");
         }

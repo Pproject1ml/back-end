@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.MemberService;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  * access token 발급해서 응답 Authorization 헤더에 추가
  * refresh token 발급해서 DB에 저장
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -42,6 +44,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Long EXPIRED_ACCESS = 3 * 30 * 24 * 60 * 60L;
         //Long EXPIRED_ACCESS = 30 * 1000L;
         String access = jwtUtils.createJwt("access", memberId, roles, EXPIRED_ACCESS);
+        log.info("ACCESS TOKEN : {}", access);
 
         Long EXPIRED_REFRESH = 12 * 30 * 24 * 60 * 60L;
         String refresh = jwtUtils.createJwt("refresh", memberId, roles, EXPIRED_REFRESH);

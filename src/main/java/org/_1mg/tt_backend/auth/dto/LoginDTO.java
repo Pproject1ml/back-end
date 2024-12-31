@@ -12,12 +12,8 @@ import lombok.Setter;
 public class LoginDTO {
 
     private String oauthId;
-
     private String email;
-
     private String oauthProvider;
-
     private String nickname;
-
     private String profileImage;
 }

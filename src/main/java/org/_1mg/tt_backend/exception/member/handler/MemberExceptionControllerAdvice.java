@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Map;
 
-import static org._1mg.tt_backend.exception.CustomException.*;
+import static org._1mg.tt_backend.exception.CustomException.ALREADY_EXISTS_NICKNAME;
+import static org._1mg.tt_backend.exception.CustomException.ALREADY_EXISTS_USER;
 
 @Slf4j
 @RestControllerAdvice(assignableTypes = MemberController.class)
@@ -26,7 +27,7 @@ public class MemberExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseDTO<String> userAlreadyExist(UserAlreadyExistsException exception){
+    public ResponseDTO<String> userAlreadyExist(UserAlreadyExistsException exception) {
 
         return ResponseDTO.<String>builder()
                 .status(ALREADY_EXISTS_USER.getStatus())

@@ -10,8 +10,6 @@ import lombok.*;
 public class ResponseDTO<T> {
 
     private int status;
-
     private String message;
-
     private T data;
 }

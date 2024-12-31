@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org._1mg.tt_backend.auth.Role;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.base.BaseEntity;
-import org._1mg.tt_backend.auth.Role;
 
 import java.util.UUID;
 
@@ -16,15 +16,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(uniqueConstraints = {
-        @UniqueConstraint(
-                name = "unique_id_for_login",
-                columnNames = {"oauthId"}),
+@Table(uniqueConstraints = {@UniqueConstraint(name = "unique_id_for_login", columnNames = {"oauthId"}),
 
-        @UniqueConstraint(
-                name = "unique_nickname",
-                columnNames = {"nickname"})
-})
+        @UniqueConstraint(name = "unique_nickname", columnNames = {"nickname"})})
 public class Member extends BaseEntity {
 
     @Id
@@ -65,11 +59,11 @@ public class Member extends BaseEntity {
 
     private String refreshToken;
 
-    public void updateDelete(boolean deleted){
+    public void updateDelete(boolean deleted) {
         this.isDeleted = deleted;
     }
 
-    public void updateRefreshToken(String refreshToken){
+    public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
@@ -78,22 +72,10 @@ public class Member extends BaseEntity {
         return MemberDTO.builder()
                 .memberId(this.memberId.toString())
                 .nickname(this.getNickname())
-                .email(this.getEmail())
-                .profileImage(this.getProfileImage())
-                .introduction(this.getIntroduction())
-                .age(this.getAge())
-                .gender(this.getGender())
-                .role(this.getRole())
-                .oauthId(this.getOauthId())
-                .oauthProvider(this.getOauthProvider())
-                .createdAt(this.getCreatedAt())
-                .updatedAt(this.getUpdateAt())
-                .isDeleted(this.getIsDeleted())
-                .isVisible(this.getIsVisible())
-                .build();
+                .email(this.getEmail()).profileImage(this.getProfileImage()).introduction(this.getIntroduction()).age(this.getAge()).gender(this.getGender()).role(this.getRole()).oauthId(this.getOauthId()).oauthProvider(this.getOauthProvider()).createdAt(this.getCreatedAt()).updatedAt(this.getUpdateAt()).isDeleted(this.getIsDeleted()).isVisible(this.getIsVisible()).build();
     }
 
-    public void updateMember (MemberDTO dto) {
+    public void updateMember(MemberDTO dto) {
 
         this.nickname = dto.getNickname();
         this.profileImage = dto.getProfileImage();
@@ -104,7 +86,7 @@ public class Member extends BaseEntity {
         this.isVisible = dto.getIsVisible();
     }
 
-    public void deleteRefreshToken(){
+    public void deleteRefreshToken() {
         this.refreshToken = null;
     }
 }

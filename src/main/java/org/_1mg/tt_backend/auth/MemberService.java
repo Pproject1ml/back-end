@@ -28,12 +28,12 @@ public class MemberService {
     private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
 
-    public Member findMember(String memberId){
+    public Member findMember(String memberId) {
 
         return memberRepository.findById(UUID.fromString(memberId)).orElseThrow();
     }
 
-    public void updateMember(MemberDTO memberDTO, String memberId){
+    public void updateMember(MemberDTO memberDTO, String memberId) {
 
         Member member = findMember(memberId);
         member.updateMember(memberDTO.checkNull(memberDTO, member));
@@ -42,7 +42,7 @@ public class MemberService {
     public String checkUniqueNickname(String nickname) throws JsonProcessingException {
 
         Member member = memberRepository.findByNickname(nickname);
-        if(member != null){
+        if (member != null) {
             log.error("NOT UNIQUE NICKNAME");
             throw new NicknameAlreadyExistsException("NOT UNIQUE NICKNAME", nickname);
         }
@@ -56,9 +56,9 @@ public class MemberService {
 
         Member beforeJoin = memberRepository.findByOauthId(memberDTO.getOauthId());
 
-        if(beforeJoin != null) {
+        if (beforeJoin != null) {
             log.error("USER ALREADY EXISTS");
-            if(!beforeJoin.getIsDeleted()){
+            if (!beforeJoin.getIsDeleted()) {
                 throw new UserAlreadyExistsException("USER ALREADY EXISTS");
             } else {
                 beforeJoin.updateMember(memberDTO);
@@ -66,8 +66,7 @@ public class MemberService {
             }
         }
 
-        memberRepository.save(
-                Member.builder()
+        memberRepository.save(Member.builder()
                 .nickname(memberDTO.getNickname())
                 .email(memberDTO.getEmail())
                 .profileImage(memberDTO.getProfileImage())
@@ -76,8 +75,7 @@ public class MemberService {
                 .gender(memberDTO.getGender())
                 .oauthId(memberDTO.getOauthId())
                 .oauthProvider(memberDTO.getOauthProvider())
-                .build()
-        );
+                .build());
     }
 
     public void saveRefreshToken(String memberId, String refreshToken) {
@@ -90,7 +88,7 @@ public class MemberService {
 
         Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow();
 
-        if(member.getRefreshToken() == null){
+        if (member.getRefreshToken() == null) {
             log.error("REFRESH TOKEN IS NULL");
             throw new CustomJwtException("REFRESH TOKEN IS NULL");
         }

@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import static org._1mg.tt_backend.exception.CustomException.*;
+import static org._1mg.tt_backend.exception.CustomException.DEFAULT_TOKEN_ERROR;
 
 @Component
-public class DefaultJwtExceptionHandler implements UnauthenticatedExceptionHandler{
+public class DefaultJwtExceptionHandler implements UnauthenticatedExceptionHandler {
 
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception) {
@@ -26,9 +26,10 @@ public class DefaultJwtExceptionHandler implements UnauthenticatedExceptionHandl
     @Override
     public boolean support(AuthenticationException exception, HttpServletRequest request) {
 
-        if(request.getAttribute("customException") == null){
+        if (request.getAttribute("customException") == null) {
             return false;
         }
+
         return request.getAttribute("customException").getClass().equals(CustomJwtException.class);
     }
 }

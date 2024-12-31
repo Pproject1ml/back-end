@@ -29,10 +29,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
 
+        String url = request.getRequestURI();
         //기본적인 예외 응답 메시지 양식
         ResponseDTO<String> responseDTO = ResponseDTO.<String>builder()
                 .status(NEED_SIGN_IN.getStatus())
-                .message("NEED TO SING IN")
+                .message(url + " NEED TO SING IN")
                 .build();
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -17,7 +17,7 @@ import java.io.IOException;
 
 /**
  * 로그인을 담당하는 Filter
- * 로그인 시작점임 AuthenticationManager를 통해 AuthenticationProvider를 호출함으로써 인증 수행 
+ * 로그인 시작점임 AuthenticationManager를 통해 AuthenticationProvider를 호출함으로써 인증 수행
  */
 public class CustomLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -39,20 +39,15 @@ public class CustomLoginFilter extends AbstractAuthenticationProcessingFilter {
         LoginDTO input = objectMapper.readValue(request.getInputStream(), LoginDTO.class);
 
         String oauthId = check(input.getOauthId());
-        String email = check(input.getEmail());
         String oauthProvider = check(input.getOauthProvider());
-
-        String profileImage = check(input.getProfileImage());
-        String nickname = check(input.getNickname());
+        String email = check(input.getEmail());
 
         MemberDTO memberDto = MemberDTO.builder()
                 .oauthId(oauthId)
-                .email(email)
                 .oauthProvider(oauthProvider)
-                .nickname(nickname)
-                .profileImage(profileImage)
+                .email(email)
                 .build();
-        
+
         //인증 전 Token의 Principal에는 입력된 memberDTO가 들어감
         CustomAuthenticationToken authRequest = CustomAuthenticationToken.unauthenticated(oauthId, email, oauthProvider, memberDto);
         this.setDetails(request, authRequest);
@@ -64,7 +59,7 @@ public class CustomLoginFilter extends AbstractAuthenticationProcessingFilter {
         authRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));
     }
 
-    private String check(String input){
+    private String check(String input) {
         return input != null ? input.trim() : null;
     }
 }

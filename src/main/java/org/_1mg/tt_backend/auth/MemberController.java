@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static org._1mg.tt_backend.exception.CustomException.*;
+import static org._1mg.tt_backend.exception.CustomException.OK;
 
 
 @RestController
@@ -144,9 +144,9 @@ public class MemberController {
         memberService.updateMember(memberDTO, user.getMemberId());
 
         return ResponseDTO.<String>builder()
-                        .status(OK.getStatus())
-                        .message("UPDATE USERINFO SUCCESS")
-                        .build();
+                .status(OK.getStatus())
+                .message("UPDATE USERINFO SUCCESS")
+                .build();
     }
 
     @PostMapping
