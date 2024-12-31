@@ -1,17 +1,18 @@
 package org._1mg.tt_backend.chat.service;
 
+import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
 import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
 import org._1mg.tt_backend.chat.entity.UserChatEntity;
 import org._1mg.tt_backend.chat.repository.ChatMessageRepository;
 import org._1mg.tt_backend.chat.repository.ChatRoomRepository;
-import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.chat.repository.UserChatRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +33,16 @@ public class ChatService {
 
         ChatMessageEntity message = new ChatMessageEntity();
         message.setChatRoom(chatRoom);
-        message.setMemberId(chatMessageDTO.getMemberId());
+        message.setMemberId(UUID.fromString(chatMessageDTO.getMemberId()));
         message.setContent(chatMessageDTO.getContent());
         message.setCreatedAt(LocalDateTime.now());
         message.setIsRead(false); // 초기값 설정: 읽지 않음
         return chatMessageRepository.save(message); // 저장 후 엔티티 반환
     }
 
-    public void markMessageAsRead(Integer messageId, String memberId) {
+    // 메세지 읽음처리
+    /*
+    public void markMessageAsRead(Integer messageId, UUID memberId) {
         // 메시지 조회
         ChatMessageEntity message = chatMessageRepository.findById(messageId)
                 .orElseThrow(() -> new IllegalArgumentException("Message not found with id: " + messageId));
@@ -52,12 +55,14 @@ public class ChatService {
         }
     }
 
+
     public int countUnreadMessages(Integer chatroomId) {
         return chatMessageRepository.findByChatRoomChatroomIdAndIsReadFalse(chatroomId).size();
     }
+     */
 
     // 입/퇴장
-    public void userJoinChatRoom(Integer chatroomId, String memberId) {
+    public void userJoinChatRoom(Integer chatroomId, UUID memberId) {
         // 사용자와 채팅방 매핑 저장
         UserChatEntity userChat = new UserChatEntity();
         userChat.setChatRoom(chatRoomRepository.findById(chatroomId).orElseThrow(() ->
@@ -67,7 +72,7 @@ public class ChatService {
         userChatRepository.save(userChat);
     }
 
-    public void userLeaveChatRoom(Integer chatroomId, String memberId) {
+    public void userLeaveChatRoom(Integer chatroomId, UUID memberId) {
         // 가장 최근에 추가된 UserChatEntity 가져오기
         UserChatEntity userChat = userChatRepository.findFirstByChatRoomChatroomIdAndMemberIdOrderByJoinedAtDesc(chatroomId, memberId);
         if (userChat == null) {

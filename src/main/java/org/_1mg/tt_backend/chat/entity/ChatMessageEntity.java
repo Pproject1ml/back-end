@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 // 채팅 메시지 엔터티
 @Getter
@@ -22,7 +23,7 @@ public class ChatMessageEntity {
     private ChatRoomEntity chatRoom;
 
     @Column(name = "member_id", nullable = false)
-    private String memberId;
+    private UUID memberId;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
