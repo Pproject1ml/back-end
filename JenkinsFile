@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment{
+	    gitRepo = 'git@github.com:Pproject1ml/back-end.git'
+        userAndIP = 'ubuntu@3.37.171.121'
+    }
+
+    stages {
+        stage('hello') {
+            steps {
+                script {
+                    sh "echo 'hello jenkins'"
+                }
+            }
+        }
+
+        stage('test Dockerhub') {
+		    steps{
+		        withCredentials([usernamePassword(credentialsId: 'forDockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+					sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+                    sh "docker info"
+                    sh "docker logout"
+				}
+            }
+        }
+
+        stage('test Github') {
+            steps {
+                sshagent(credentials: ['forGithub']) {
+                    sh "git ls-remote ${gitRepo}"
+                }
+            }
+        }
+
+        stage('test AWS') {
+            steps {
+                sshagent(credentials: ['forAWS']) {
+                    sh '''
+                        ssh ${userAndIP} << EOF
+                        whoami
+                        pwd
+                        << EOF
+                        '''
+                }
+            }
+        }
+    }
+}
