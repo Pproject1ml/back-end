@@ -3,7 +3,7 @@ pipeline {
 
     environment{
 	    gitRepo = 'git@github.com:Pproject1ml/back-end.git'
-        userAndIP = 'ubuntu@3.37.171.121'
+        userAndIP = 'ubuntu@3.36.232.149'
     }
 
     stages {
