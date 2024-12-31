@@ -1,0 +1,19 @@
+version: "3"
+services:
+  server:
+    image: teamonemg/tt_server:latest
+    container_name: testTT
+    environment:
+      - SPRING_PROFILES_ACTIVE=mysql
+      - SPRING_DATASOURCE_URL=jdbc:mysql://testDBContainer:3306/testdb
+      - SPRING_DATASOURCE_USERNAME=testuser
+      - SPRING_DATASOURCE_PASSWORD=232323
+    networks:
+      - testnet
+    ports:
+      - 8080:8080
+    restart: no
+
+networks:
+  testnet:
+    external: true
