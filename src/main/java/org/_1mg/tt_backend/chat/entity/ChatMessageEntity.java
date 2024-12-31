@@ -3,9 +3,9 @@ package org._1mg.tt_backend.chat.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org._1mg.tt_backend.auth.entity.Member;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 // 채팅 메시지 엔터티
 @Getter
@@ -18,12 +18,13 @@ public class ChatMessageEntity {
     @Column(name = "message_id")
     private Integer messageId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatRoomEntity chatRoom;
 
-    @Column(name = "member_id", nullable = false)
-    private UUID memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member; // member 테이블과 연관
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;

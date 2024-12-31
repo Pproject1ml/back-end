@@ -3,9 +3,9 @@ package org._1mg.tt_backend.chat.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org._1mg.tt_backend.auth.entity.Member;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,10 +17,11 @@ public class UserChatEntity {
     @Column(name = "user_chat_id")
     private Integer userChatId;
 
-    @Column(name = "member_id", nullable = false)
-    private UUID memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member; // member 테이블과 연관
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatRoomEntity chatRoom;
 

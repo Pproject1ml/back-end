@@ -1,6 +1,8 @@
 package org._1mg.tt_backend.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import org._1mg.tt_backend.auth.MemberRepository;
+import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
 import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
@@ -21,6 +23,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserChatRepository userChatRepository;
+    private final MemberRepository memberRepository;
 
     public List<ChatMessageEntity> getMessages(Integer chatroomId) {
         return chatMessageRepository.findByChatRoomChatroomId(chatroomId);
@@ -31,9 +34,12 @@ public class ChatService {
         ChatRoomEntity chatRoom = chatRoomRepository.findById(chatMessageDTO.getChatroomId())
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found with id: " + chatMessageDTO.getChatroomId()));
 
+        Member member = memberRepository.findById(UUID.fromString(chatMessageDTO.getMemberId()))
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
         ChatMessageEntity message = new ChatMessageEntity();
         message.setChatRoom(chatRoom);
-        message.setMemberId(UUID.fromString(chatMessageDTO.getMemberId()));
+        message.setMember(member);
         message.setContent(chatMessageDTO.getContent());
         message.setCreatedAt(LocalDateTime.now());
         message.setIsRead(false); // 초기값 설정: 읽지 않음
@@ -65,16 +71,21 @@ public class ChatService {
     public void userJoinChatRoom(Integer chatroomId, UUID memberId) {
         // 사용자와 채팅방 매핑 저장
         UserChatEntity userChat = new UserChatEntity();
+        // 채팅방 찾기
         userChat.setChatRoom(chatRoomRepository.findById(chatroomId).orElseThrow(() ->
                 new IllegalArgumentException("Chat room not found")));
-        userChat.setMemberId(memberId);
+        // 멤버 찾기
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        userChat.setMember(member);    // MemberEntity 설정
         userChat.setJoinedAt(LocalDateTime.now()); // joined_at에 현재 시간 설정
         userChatRepository.save(userChat);
     }
 
     public void userLeaveChatRoom(Integer chatroomId, UUID memberId) {
         // 가장 최근에 추가된 UserChatEntity 가져오기
-        UserChatEntity userChat = userChatRepository.findFirstByChatRoomChatroomIdAndMemberIdOrderByJoinedAtDesc(chatroomId, memberId);
+        UserChatEntity userChat = userChatRepository.findFirstByChatRoomChatroomIdAndMember_MemberIdOrderByJoinedAtDesc(chatroomId, memberId);
         if (userChat == null) {
             throw new IllegalArgumentException("No active user found in chat room");
         }

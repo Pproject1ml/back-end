@@ -34,7 +34,7 @@ public class ChatController {
         ChatMessageDTO responseDTO = new ChatMessageDTO();
         responseDTO.setMessageId(savedMessage.getMessageId());
         responseDTO.setChatroomId(savedMessage.getChatRoom().getChatroomId());
-        responseDTO.setMemberId(String.valueOf(savedMessage.getMemberId()));
+        responseDTO.setMemberId(String.valueOf(savedMessage.getMember().getMemberId()));
         responseDTO.setContent(savedMessage.getContent());
         responseDTO.setCreatedAt(savedMessage.getCreatedAt());
         return responseDTO;

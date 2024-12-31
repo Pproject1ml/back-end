@@ -11,6 +11,6 @@ public interface UserChatRepository extends JpaRepository<UserChatEntity, Intege
     List<UserChatEntity> findByChatRoomChatroomId(Integer chatroomId);
 
     // 가장 최근에 삽입된 UserChatEntity를 기준으로 lefted_at을 업데이트
-    UserChatEntity findFirstByChatRoomChatroomIdAndMemberIdOrderByJoinedAtDesc(Integer chatroomId, UUID memberId);
+    UserChatEntity findFirstByChatRoomChatroomIdAndMember_MemberIdOrderByJoinedAtDesc(Integer chatroomId, UUID memberId);
 
 }
