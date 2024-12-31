@@ -1,0 +1,80 @@
+package org._1mg.tt_backend.chat.service;
+
+import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
+import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
+import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
+import org._1mg.tt_backend.chat.entity.UserChatEntity;
+import org._1mg.tt_backend.chat.repository.ChatMessageRepository;
+import org._1mg.tt_backend.chat.repository.ChatRoomRepository;
+import lombok.RequiredArgsConstructor;
+import org._1mg.tt_backend.chat.repository.UserChatRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ChatService {
+
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final UserChatRepository userChatRepository;
+
+    public List<ChatMessageEntity> getMessages(Integer chatroomId) {
+        return chatMessageRepository.findByChatRoomChatroomId(chatroomId);
+    }
+
+    // 메세지 보내기
+    public ChatMessageEntity saveMessage(ChatMessageDTO chatMessageDTO) {
+        ChatRoomEntity chatRoom = chatRoomRepository.findById(chatMessageDTO.getChatroomId())
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found with id: " + chatMessageDTO.getChatroomId()));
+
+        ChatMessageEntity message = new ChatMessageEntity();
+        message.setChatRoom(chatRoom);
+        message.setMemberId(chatMessageDTO.getMemberId());
+        message.setContent(chatMessageDTO.getContent());
+        message.setCreatedAt(LocalDateTime.now());
+        message.setIsRead(false); // 초기값 설정: 읽지 않음
+        return chatMessageRepository.save(message); // 저장 후 엔티티 반환
+    }
+
+    public void markMessageAsRead(Integer messageId, String memberId) {
+        // 메시지 조회
+        ChatMessageEntity message = chatMessageRepository.findById(messageId)
+                .orElseThrow(() -> new IllegalArgumentException("Message not found with id: " + messageId));
+
+        // 읽음 처리
+        if (!message.getIsRead()) {
+            message.setIsRead(true);
+            chatMessageRepository.save(message);
+            System.out.println("Message marked as read: " + messageId);
+        }
+    }
+
+    public int countUnreadMessages(Integer chatroomId) {
+        return chatMessageRepository.findByChatRoomChatroomIdAndIsReadFalse(chatroomId).size();
+    }
+
+    // 입/퇴장
+    public void userJoinChatRoom(Integer chatroomId, String memberId) {
+        // 사용자와 채팅방 매핑 저장
+        UserChatEntity userChat = new UserChatEntity();
+        userChat.setChatRoom(chatRoomRepository.findById(chatroomId).orElseThrow(() ->
+                new IllegalArgumentException("Chat room not found")));
+        userChat.setMemberId(memberId);
+        userChat.setJoinedAt(LocalDateTime.now()); // joined_at에 현재 시간 설정
+        userChatRepository.save(userChat);
+    }
+
+    public void userLeaveChatRoom(Integer chatroomId, String memberId) {
+        // 가장 최근에 추가된 UserChatEntity 가져오기
+        UserChatEntity userChat = userChatRepository.findFirstByChatRoomChatroomIdAndMemberIdOrderByJoinedAtDesc(chatroomId, memberId);
+        if (userChat == null) {
+            throw new IllegalArgumentException("No active user found in chat room");
+        }
+        // 가장 최근 엔티티의 lefted_at 업데이트
+        userChat.setLeftedAt(LocalDateTime.now());
+        userChatRepository.save(userChat);
+    }
+}

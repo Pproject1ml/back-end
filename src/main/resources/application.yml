@@ -7,11 +7,11 @@ spring:
     password: 232323
 
   #내 h2 DB
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:tcp://localhost/~/inflearn/h2/DB/testChat
-#    username: sa
-#    password:
+  #  datasource:
+  #    driver-class-name: org.h2.Driver
+  #    url: jdbc:h2:tcp://localhost/~/inflearn/h2/DB/testChat
+  #    username: sa
+  #    password:
 
   jpa:
     hibernate:
@@ -23,6 +23,14 @@ spring:
         show_sql: true
         format_sql: true
 
+    websocket:
+      message-broker:
+        enabled: true     # WebSocket 메시지 브로커 활성화
+
+    server:
+      port: 8080            # 서버 포트 설정
+      servlet:
+        context-path: /chat # 애플리케이션 루트 경로 설정
 
 springdoc:
   api-docs:
