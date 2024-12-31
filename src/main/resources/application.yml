@@ -17,7 +17,7 @@ spring:
     hibernate:
       #이걸 create로 바꾸시면 JPA가 테이블을 만들어줍니다
       #create로 한 번 돌리시고 반드시 none으로 바꿔야 합니다
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
