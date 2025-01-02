@@ -20,10 +20,12 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        if (headerAccessor.getSessionId() != null) {
-            log.info("WebSocket connected: sessionId = {}", headerAccessor.getSessionId());
-        } else {
-            log.warn("WebSocket connection event received, but no session ID found.");
+
+        if (headerAccessor.getUser() == null) {
+            log.error("WebSocket connection failed: no user information found.");
+            return;
         }
+
+        log.info("WebSocket connected: sessionId={}, user={}", headerAccessor.getSessionId(), headerAccessor.getUser().getName());
     }
 }
