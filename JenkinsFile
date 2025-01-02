@@ -66,13 +66,13 @@ pipeline {
                     sh "docker buildx build -t ${IMAGE_NAME}:${env.version} ."
                     //}
 
-                    echo 'tag : ${env.version}'
-                    sh '''
+                    echo "tag : ${env.version}"
+                    sh """
 		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:${env.version}
 		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:latest
 		                    docker push ${DOCKER_REPO}:${env.version}
 		                    docker push ${DOCKER_REPO}:latest
-		                '''
+		                """
                 }
                 sh "docker rmi ${IMAGE_NAME}:${env.version}"
             }
