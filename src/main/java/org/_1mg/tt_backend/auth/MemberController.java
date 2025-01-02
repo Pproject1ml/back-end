@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.LoginDTO;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
+import org._1mg.tt_backend.auth.dto.SignupDTO;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.security.CustomUserDetails;
 import org._1mg.tt_backend.base.ResponseDTO;
@@ -62,9 +63,20 @@ public class MemberController {
             )
     })
     @PostMapping("/auth/signup")
-    public ResponseDTO<String> signup(@RequestBody MemberDTO memberDTO) {
+    public ResponseDTO<String> signup(@RequestBody SignupDTO signupDTO) {
 
-        memberService.signup(memberDTO);
+        memberService.signup(MemberDTO.builder()
+                .nickname(signupDTO.getNickname())
+                .email(signupDTO.getEmail())
+                .profileImage(signupDTO.getProfileImage())
+                .introduction(signupDTO.getIntroduction())
+                .age(signupDTO.getAge())
+                .gender(signupDTO.getGender())
+                .oauthId(signupDTO.getOauthId())
+                .oauthProvider(signupDTO.getOauthProvider())
+                .isDeleted(false)
+                .isVisible(false)
+                .build());
 
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
