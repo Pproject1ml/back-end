@@ -1,8 +1,8 @@
 package org._1mg.tt_backend.auth.dto;
 
 import lombok.*;
-import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.Role;
+import org._1mg.tt_backend.auth.entity.Member;
 
 import java.time.LocalDateTime;
 
