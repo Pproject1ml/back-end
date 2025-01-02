@@ -42,11 +42,17 @@ pipeline {
     stages {
         stage('Git Pull') {
             steps {
-                sshagent(credentials:["forGithub"]) {
-                    dir("./${GIT_REPO_NAME}"){
-                        sh 'git pull origin main'
+                sshagent(credentials:['forGithub']){
+                    script {
+                        if (fileExists('.git')) {
+                            echo "Git repository already exists. Pulling latest changes..."
+                            sh "git pull origin main"
+                        } else {
+                            echo "Git repository does not exist. Cloning the repository..."
+                            git clone ${GIT_REPO}
+                        }
                     }
-			    }
+                }
             }
         }
 
