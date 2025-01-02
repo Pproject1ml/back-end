@@ -1,11 +1,10 @@
-version: "3"
 services:
   server:
-    image: teamonemg/tt_server:latest
+    image: teamonemg/tt-server:test2
     container_name: testTT
     environment:
-      - SPRING_PROFILES_ACTIVE=mysql
-      - SPRING_DATASOURCE_URL=jdbc:mysql://testDBContainer:3306/testdb
+      - SPRING_PROFILES_ACTIVE=mariadb
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://testDBContainer:3306/testdb
       - SPRING_DATASOURCE_USERNAME=testuser
       - SPRING_DATASOURCE_PASSWORD=232323
     networks:
