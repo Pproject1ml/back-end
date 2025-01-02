@@ -1,5 +1,6 @@
 package org._1mg.tt_backend.chat.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
 import org._1mg.tt_backend.chat.service.ChatService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.UUID;
 
+@Slf4j
 @Controller
 public class ChatController {
 
@@ -26,7 +28,7 @@ public class ChatController {
 
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
-    public ChatMessageDTO sendMessage(ChatMessageDTO chatMessageDTO) {
+    public ChatMessageDTO saveMessage(ChatMessageDTO chatMessageDTO) {
         System.out.println("Message received: " + chatMessageDTO);
         ChatMessageEntity savedMessage = chatService.saveMessage(chatMessageDTO);
 
@@ -39,6 +41,7 @@ public class ChatController {
         responseDTO.setCreatedAt(savedMessage.getCreatedAt());
         return responseDTO;
     }
+
 
     // 클릭 시 메세지 읽음처리
     /*

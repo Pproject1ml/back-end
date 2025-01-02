@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface UserChatRepository extends JpaRepository<UserChatEntity, Integer> {
     // 채팅방 ID(chatroomId)를 기준으로 모든 UserChatEntity를 가져옵니다.
-    List<UserChatEntity> findByChatRoomChatroomId(Integer chatroomId);
+    List<UserChatEntity> findAllByChatRoomChatroomId(Integer chatroomId);
 
     // 가장 최근에 삽입된 UserChatEntity를 기준으로 lefted_at을 업데이트
     UserChatEntity findFirstByChatRoomChatroomIdAndMember_MemberIdOrderByJoinedAtDesc(Integer chatroomId, UUID memberId);
