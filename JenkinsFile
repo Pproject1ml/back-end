@@ -13,7 +13,9 @@ pipeline {
 
         HOST_SERVER = 'ubuntu@3.36.232.149'
         HOST_DOCKER_COMPOSE_PATH = '/home/ubuntu/tt/backend/'
-        HOST_TEST_PATH = '/home/ubuntu/tt/test/'
+
+        TEST_SERVER = 'ubuntu@3.37.171.121'
+        TEST_PATH = '/home/ubuntu/tt/test/'
     }
 
     triggers {
@@ -83,8 +85,8 @@ pipeline {
             steps {
                 sshagent(credentials: ['forTestServer']) {
                     sh """
-                        ssh ${HOST_SERVER} << EOF
-                        cd ${HOST_TEST_PATH}
+                        ssh ${TEST_SERVER} << EOF
+                        cd ${TEST_PATH}
                         docker compose down
                         docker compose up -d
                         docker image prune -f
