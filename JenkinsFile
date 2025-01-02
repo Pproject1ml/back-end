@@ -41,9 +41,11 @@ pipeline {
 
     stages {
         stage('Git Pull') {
-            steps {
-                dir("./${GIT_REPO_NAME}")
-			    sh 'git pull origin/main'
+            sshagent(credentials:["forGithub"]){
+                steps {
+                    dir("./${GIT_REPO_NAME}")
+			        sh 'git pull origin/main'
+			    }
             }
         }
 
