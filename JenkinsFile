@@ -43,25 +43,17 @@ pipeline {
         stage('Git Pull') {
             steps {
                 sshagent(credentials:['forGithub']){
-                    script {
-                        if (fileExists('.git')) {
-                            echo "Git repository already exists. Pulling latest changes..."
-                            sh "git pull origin main"
-                        } else {
-                            echo "Git repository does not exist. Cloning the repository..."
-                            git clone ${GIT_REPO}
-                        }
-                    }
+                    sh "git pull origin main"
                 }
             }
         }
 
         stage('BE-Build') {
             steps {
-                dir("./${GIT_REPO_NAME}") {
+                //dir("./${GIT_REPO_NAME}") {
                     sh "chmod +x ./gradlew "
                     sh "./gradlew clean build"
-                }
+                //}
             }
         }
 
@@ -70,9 +62,9 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'forDockerhub',
                                                     usernameVariable: 'USERNAME',
                                                     passwordVariable: 'PASSWORD')]) {
-                    dir("./TestCICD") {
+                    //dir("./TestCICD") {
                         sh "docker buildx build -t ${IMAGE_NAME}:${env.version} ."
-                    }
+                    //}
                     sh '''
 		                    docker login -u ${USERNAME} -p ${PASSWORD}
 		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:${env.version}
