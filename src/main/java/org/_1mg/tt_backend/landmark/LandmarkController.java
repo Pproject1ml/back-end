@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +17,15 @@ public class LandmarkController {
     private final LandmarkService landmarkService;
 
     @GetMapping("/landmark")
-    public ResponseDTO<List<LandmarkDTO>> getLandmarks(@RequestBody LocationDTO location) {
+    public ResponseDTO<List<LandmarkDTO>> getLandmarks(@RequestParam("longitude") Double longitude,
+                                                       @RequestParam("latitude") Double latitude,
+                                                       @RequestParam("radius") Integer radius) {
+
+        LocationDTO location = LocationDTO.builder()
+                .longitude(longitude)
+                .latitude(latitude)
+                .radius(radius)
+                .build();
 
         List<LandmarkDTO> result = landmarkService.getLandmarks(location);
 
