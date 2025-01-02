@@ -80,7 +80,22 @@ pipeline {
                 sh "docker rmi ${IMAGE_NAME}:${env.version}"
             }
         }
+//운영 서버
+//         stage('Deploy') {
+//             steps {
+//                 sshagent(credentials: ['forDevServer']) {
+//                     sh """
+//                         ssh ${HOST_SERVER} << EOF
+//                         cd ${HOST_DOCKER_COMPOSE_PATH}
+//                         docker compose down
+//                         docker compose up -d
+//                         docker image prune -f
+//                     """
+//                 }
+//             }
+//         }
 
+//테스트 서버
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['forTestServer']) {
