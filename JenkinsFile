@@ -8,7 +8,7 @@ pipeline {
         BRANCH = 'main'
         JENKINS_GIT_CLONE_PATH = '/var/jenkins_home/workspace/TT_Backend'
 
-        DOCKER_REPO = 'teamonemg/tt_server'
+        DOCKER_REPO = 'teamonemg/tt-server'
         IMAGE_NAME = 'tt_server'
 
         HOST_SERVER = 'ubuntu@3.36.232.149'
@@ -84,8 +84,8 @@ pipeline {
                     sh '''
                         ssh ${HOST_SERVER} << EOF
                         cd ${HOST_DOCKER_COMPOSE_PATH}
-                        docker-compose down
-                        docker-compose up -d
+                        docker compose down
+                        docker compose up -d
                         docker image prune -f
                     '''
                 }
