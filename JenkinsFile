@@ -44,7 +44,7 @@ pipeline {
             steps {
                 sshagent(credentials:["forGithub"]) {
                     dir("./${GIT_REPO_NAME}"){
-                        sh 'git pull origin/main'
+                        sh 'git pull origin main'
                     }
 			    }
             }
