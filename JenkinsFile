@@ -15,18 +15,35 @@ pipeline {
         HOST_DOCKER_COMPOSE_PATH = '/home/ubuntu/tt/backend/'
     }
 
-    stages {
-        stage('Delete if Exists') {
-            steps {
-			    sh "rm -rf ${JENKINS_GIT_CLONE_PATH}/*"
-            }
-        }
+    triggers {
+        // generic webhook trigger 설정
+        GenericTrigger(
 
-        stage('Git Clone') {
+    	    //전역 변수로 활용할 값을 JSON에서 추출
+    		genericVariables: [
+    		    [key: 'version', value: '$.ref'],
+    	        [key: 'ref_type', value: '$.ref_type']
+    		],
+
+            // GitHub Webhook에 설정한 토큰
+            token: 'tt-server',
+
+    		// branch 또는 tag 생성 시 실행
+            causeString: 'Triggered on $ref_type creation: $version',
+            regexpFilterText: '$ref_type',
+    	    regexpFilterExpression: 'branch|tag',
+
+            //콘솔 로그 출력 관련
+            printContributedVariables: true,
+            printPostContent: true
+        )
+    }
+
+    stages {
+        stage('Git Pull') {
             steps {
-			    sshagent(credentials:["forGithub"]){
-			        sh "git clone -b ${BRANCH} ${GIT_REPO}"
-				}
+                dir("./${GIT_REPO_NAME}")
+			    sh 'git pull origin/main'
             }
         }
 
@@ -44,17 +61,19 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'forDockerhub',
                                                     usernameVariable: 'USERNAME',
                                                     passwordVariable: 'PASSWORD')]) {
-                    dir("./${GIT_REPO_NAME}") {
-                        sh "docker build -t ${IMAGE_NAME}:latest ."
+                    dir("./TestCICD") {
+                        sh "docker buildx build -t ${IMAGE_NAME}:${env.version} ."
                     }
-
                     sh '''
 		                    docker login -u ${USERNAME} -p ${PASSWORD}
-		                    docker image tag ${IMAGE_NAME}:latest ${DOCKER_REPO}:latest
+		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:${env.version}
+		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:latest
+		                    docker push ${DOCKER_REPO}:${env.version}
 		                    docker push ${DOCKER_REPO}:latest
 		                    docker logout
 		                '''
                 }
+                sh "docker rmi ${IMAGE_NAME}:${env.version}"
             }
         }
 

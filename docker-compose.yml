@@ -1,6 +1,6 @@
 services:
   server:
-    image: teamonemg/tt-server:test2
+    image: teamonemg/tt-server:latest
     container_name: testTT
     environment:
       - SPRING_PROFILES_ACTIVE=mariadb
