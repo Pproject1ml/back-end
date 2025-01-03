@@ -63,7 +63,7 @@ public class LandmarkService {
                         .longitude(landmarkDTO.getLongitude())
                         .radius(landmarkDTO.getRadius())
                         .imagePath(landmarkDTO.getImagePath())
-                        .chatRoomId(landmarkDTO.getChatRoomId())
+                        //.chatRoomId(landmarkDTO.getChatRoomId())
                         .build()
         );
     }
