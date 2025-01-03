@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.MemberRepository;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
+import org._1mg.tt_backend.chat.dto.ChatRoomDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
 import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
 import org._1mg.tt_backend.chat.entity.UserChatEntity;
@@ -12,7 +13,6 @@ import org._1mg.tt_backend.chat.repository.ChatRoomRepository;
 import org._1mg.tt_backend.chat.repository.UserChatRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,21 +29,31 @@ public class ChatService {
         return chatMessageRepository.findByChatRoomChatroomId(chatroomId);
     }
 
+    public ChatRoomDTO getChatRoomByLandmarkId(Long landmarkId) {
+        // Landmark의 chatRoom 필드를 통해 ChatRoomEntity를 조회
+        ChatRoomEntity chatRoom = chatRoomRepository.findByLandmark_LandmarkId(landmarkId)
+                .orElseThrow(() -> new IllegalArgumentException("No chat room found for the given landmark ID"));
+
+        return ChatRoomDTO.builder()
+                .chatroomId(chatRoom.getChatroomId())
+                .landmarkName(chatRoom.getLandmark().getName())
+                .createdAt(chatRoom.getCreatedAt())
+//                .isActive(chatRoom.getIsActive())
+                .build();
+    }
+
     // 메세지 보내기
     public ChatMessageEntity saveMessage(ChatMessageDTO chatMessageDTO) {
+        // 채팅방 찾기
         ChatRoomEntity chatRoom = chatRoomRepository.findById(chatMessageDTO.getChatroomId())
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found with id: " + chatMessageDTO.getChatroomId()));
 
+        // 멤버 찾기
         Member member = memberRepository.findById(UUID.fromString(chatMessageDTO.getMemberId()))
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
-        ChatMessageEntity message = new ChatMessageEntity();
-        message.setChatRoom(chatRoom);
-        message.setMember(member);
-        message.setContent(chatMessageDTO.getContent());
-        message.setCreatedAt(LocalDateTime.now());
-        message.setIsRead(false); // 초기값 설정: 읽지 않음
-        return chatMessageRepository.save(message); // 저장 후 엔티티 반환
+        ChatMessageEntity message = ChatMessageEntity.create(chatRoom, member, chatMessageDTO.getContent());
+        return chatMessageRepository.save(message);
     }
 
     // 메세지 읽음처리
@@ -69,17 +79,16 @@ public class ChatService {
 
     // 입/퇴장
     public void userJoinChatRoom(Integer chatroomId, UUID memberId) {
-        // 사용자와 채팅방 매핑 저장
-        UserChatEntity userChat = new UserChatEntity();
         // 채팅방 찾기
-        userChat.setChatRoom(chatRoomRepository.findById(chatroomId).orElseThrow(() ->
-                new IllegalArgumentException("Chat room not found")));
+        ChatRoomEntity chatRoom = chatRoomRepository.findById(chatroomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+
         // 멤버 찾기
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
-        userChat.setMember(member);    // MemberEntity 설정
-        userChat.setJoinedAt(LocalDateTime.now()); // joined_at에 현재 시간 설정
+        // UserChatEntity 생성
+        UserChatEntity userChat = UserChatEntity.create(chatRoom, member);
         userChatRepository.save(userChat);
     }
 
@@ -89,8 +98,9 @@ public class ChatService {
         if (userChat == null) {
             throw new IllegalArgumentException("No active user found in chat room");
         }
-        // 가장 최근 엔티티의 lefted_at 업데이트
-        userChat.setLeftedAt(LocalDateTime.now());
+
+        // 퇴장 시간 업데이트
+        userChat.leave();
         userChatRepository.save(userChat);
     }
 }

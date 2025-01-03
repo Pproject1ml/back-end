@@ -1,15 +1,17 @@
 package org._1mg.tt_backend.chat.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Member;
 
 import java.time.LocalDateTime;
 
 // 채팅 메시지 엔터티
 @Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "chat_message")
 public class ChatMessageEntity {
@@ -34,4 +36,17 @@ public class ChatMessageEntity {
 
     @Column(name = "is_read")
     private Boolean isRead = false;
+
+    // 매개변수 6개를 받는 생성자 추가
+    public ChatMessageEntity(ChatRoomEntity chatRoom, Member member, String content, LocalDateTime createdAt, Boolean isRead) {
+        this.chatRoom = chatRoom;
+        this.member = member;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.isRead = isRead;
+    }
+
+    public static ChatMessageEntity create(ChatRoomEntity chatRoom, Member member, String content) {
+        return new ChatMessageEntity(chatRoom, member, content, LocalDateTime.now(), false);
+    }
 }

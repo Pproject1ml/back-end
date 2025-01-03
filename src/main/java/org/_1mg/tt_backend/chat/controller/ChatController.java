@@ -1,13 +1,16 @@
 package org._1mg.tt_backend.chat.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
+import org._1mg.tt_backend.chat.dto.ChatRoomDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -19,6 +22,18 @@ public class ChatController {
 
     public ChatController(ChatService chatService) {
         this.chatService = chatService;
+    }
+
+    // 랜드마크와 연결
+    @GetMapping
+    public ResponseDTO<ChatRoomDTO> getChatRoomByLandmark(@RequestParam("landmarkId") Long landmarkId) {
+        ChatRoomDTO chatRoomDTO = chatService.getChatRoomByLandmarkId(landmarkId);
+
+        return ResponseDTO.<ChatRoomDTO>builder()
+                .status(200)
+                .message("CHAT ROOM FOR LANDMARK ID " + landmarkId)
+                .data(chatRoomDTO)
+                .build();
     }
 
     @GetMapping("/chat")
