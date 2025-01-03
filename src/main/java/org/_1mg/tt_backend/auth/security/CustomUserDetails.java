@@ -1,6 +1,7 @@
 package org._1mg.tt_backend.auth.security;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,14 +32,14 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return getOauthId();
     }
 
-    public String getMemberId(){
+    public String getMemberId() {
         return member.getMemberId();
     }
 
-    public String getOauthId(){
+    public String getOauthId() {
         return member.getOauthId();
     }
 
