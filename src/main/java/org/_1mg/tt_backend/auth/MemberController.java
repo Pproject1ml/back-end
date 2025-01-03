@@ -65,7 +65,7 @@ public class MemberController {
     @PostMapping("/auth/signup")
     public ResponseDTO<String> signup(@RequestBody SignupDTO signupDTO) {
 
-        memberService.signup(MemberDTO.builder()
+        MemberDTO member = MemberDTO.builder()
                 .nickname(signupDTO.getNickname())
                 .email(signupDTO.getEmail())
                 .profileImage(signupDTO.getProfileImage())
@@ -74,9 +74,10 @@ public class MemberController {
                 .gender(signupDTO.getGender())
                 .oauthId(signupDTO.getOauthId())
                 .oauthProvider(signupDTO.getOauthProvider())
-                .isDeleted(false)
-                .isVisible(false)
-                .build());
+                .isVisible(signupDTO.getIsVisible())
+                .build();
+
+        memberService.signup(member);
 
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())

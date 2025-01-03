@@ -1,12 +1,14 @@
 package org._1mg.tt_backend.auth.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class SignupDTO {
 
     String nickname;
@@ -17,4 +19,5 @@ public class SignupDTO {
     String gender;
     String oauthId;
     String oauthProvider;
+    Boolean isVisible;
 }
