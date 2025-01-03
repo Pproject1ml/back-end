@@ -60,7 +60,7 @@ public class MemberDTO {
                 .oauthId(memberDTO.oauthId == null ? member.getOauthId() : memberDTO.oauthId)
                 .oauthProvider(memberDTO.oauthProvider == null ? member.getOauthProvider() : memberDTO.oauthProvider)
                 .createdAt(memberDTO.createdAt == null ? member.getCreatedAt() : memberDTO.createdAt)
-                .updatedAt(memberDTO.updatedAt == null ? member.getUpdateAt() : memberDTO.updatedAt)
+                .updatedAt(memberDTO.updatedAt == null ? member.getUpdatedAt() : memberDTO.updatedAt)
                 .isDeleted(memberDTO.isDeleted == null ? member.getIsDeleted() : memberDTO.isDeleted)
                 .isVisible(memberDTO.isVisible == null ? member.getIsVisible() : memberDTO.isVisible)
                 .build();

@@ -16,9 +16,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(uniqueConstraints = {@UniqueConstraint(name = "unique_id_for_login", columnNames = {"oauthId"}),
-
-        @UniqueConstraint(name = "unique_nickname", columnNames = {"nickname"})})
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "unique_id_for_login", columnNames = {"oauthId"}),
+        @UniqueConstraint(name = "unique_nickname", columnNames = {"nickname"})
+})
 public class Member extends BaseEntity {
 
     @Id
@@ -72,7 +73,7 @@ public class Member extends BaseEntity {
         return MemberDTO.builder()
                 .memberId(this.memberId.toString())
                 .nickname(this.getNickname())
-                .email(this.getEmail()).profileImage(this.getProfileImage()).introduction(this.getIntroduction()).age(this.getAge()).gender(this.getGender()).role(this.getRole()).oauthId(this.getOauthId()).oauthProvider(this.getOauthProvider()).createdAt(this.getCreatedAt()).updatedAt(this.getUpdateAt()).isDeleted(this.getIsDeleted()).isVisible(this.getIsVisible()).build();
+                .email(this.getEmail()).profileImage(this.getProfileImage()).introduction(this.getIntroduction()).age(this.getAge()).gender(this.getGender()).role(this.getRole()).oauthId(this.getOauthId()).oauthProvider(this.getOauthProvider()).createdAt(this.getCreatedAt()).updatedAt(this.getUpdatedAt()).isDeleted(this.getIsDeleted()).isVisible(this.getIsVisible()).build();
     }
 
     public void updateMember(MemberDTO dto) {
