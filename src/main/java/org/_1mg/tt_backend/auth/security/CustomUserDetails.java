@@ -32,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return getOauthId();
+        return getMemberId();
     }
 
     public String getMemberId() {
