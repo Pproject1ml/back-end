@@ -27,11 +27,6 @@ spring:
       message-broker:
         enabled: true     # WebSocket 메시지 브로커 활성화
 
-    server:
-      port: 8080            # 서버 포트 설정
-      servlet:
-        context-path: /chat # 애플리케이션 루트 경로 설정
-
 springdoc:
   api-docs:
     path: /swagger/v3/api-docs
@@ -44,6 +39,6 @@ springdoc:
 spring.jwt.secret: "qwfnlfasfdfapdzdflaksfalalasfjlasdifoasdfjl"
 
 
-#server:
-#  address: 0.0.0.0
-#  port: 8080
+server:
+  address: 0.0.0.0
+  port: 8080
