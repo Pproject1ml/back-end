@@ -15,7 +15,7 @@ pipeline {
         HOST_DOCKER_COMPOSE_PATH = '/home/ubuntu/tt/backend/'
 
         TEST_SERVER = 'ubuntu@3.37.171.121'
-        TEST_PATH = '/home/ubuntu/tt/test/'
+        TEST_PATH = '/home/ubuntu/test/'
     }
 
     triggers {
@@ -62,22 +62,15 @@ pipeline {
 
         stage('Create New Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'forDockerhub',
-                                                    usernameVariable: 'USERNAME',
-                                                    passwordVariable: 'PASSWORD')]) {
-                    //dir("./TestCICD") {
-                    sh "docker buildx build -t ${IMAGE_NAME}:${env.version} ."
-                    //}
 
-                    echo "tag : ${env.version}"
-                    sh """
-		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:${env.version}
-		                    docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:latest
-		                    docker push ${DOCKER_REPO}:${env.version}
-		                    docker push ${DOCKER_REPO}:latest
-		                """
-                }
-                sh "docker rmi ${IMAGE_NAME}:${env.version}"
+                sh "docker buildx build -t ${IMAGE_NAME}:${env.version} ."
+                echo "tag : ${env.version}"
+                sh """
+		            docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:${env.version}
+		            docker image tag ${IMAGE_NAME}:${env.version} ${DOCKER_REPO}:latest
+		            docker push ${DOCKER_REPO}:${env.version}
+		            docker push ${DOCKER_REPO}:latest
+		        """
             }
         }
 //운영 서버
@@ -104,7 +97,7 @@ pipeline {
                         cd ${TEST_PATH}
                         docker compose down
                         docker compose up -d
-                        docker image prune -f
+                        docker image prune -af
                     """
                 }
             }
