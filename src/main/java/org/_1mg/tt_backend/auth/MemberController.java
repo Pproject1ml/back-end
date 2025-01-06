@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.LoginDTO;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.SignupDTO;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 import static org._1mg.tt_backend.exception.CustomException.OK;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
@@ -65,6 +66,7 @@ public class MemberController {
     @PostMapping("/auth/signup")
     public ResponseDTO<String> signup(@RequestBody SignupDTO signupDTO) {
 
+        log.debug("SIGN UP START");
         MemberDTO member = MemberDTO.builder()
                 .nickname(signupDTO.getNickname())
                 .email(signupDTO.getEmail())
@@ -79,6 +81,7 @@ public class MemberController {
 
         memberService.signup(member);
 
+        log.debug("SIGN UP FINISHED");
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message("SIGNUP SUCCESS")
@@ -98,8 +101,10 @@ public class MemberController {
                     )
             ) @RequestBody Map<String, String> refreshDTO) {
 
+        log.debug("TOKEN REFRESH START");
         String accessToken = memberService.refresh(refreshDTO.get("memberId"));
 
+        log.debug("TOKEN REFRESH FINISHED");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .header("Authorization", "Bearer " + accessToken)
@@ -128,8 +133,10 @@ public class MemberController {
                     )
             ) @RequestBody Map<String, String> nicknameDTO) throws JsonProcessingException {
 
+        log.debug("CHECK NICKNAME START");
         String result = memberService.checkUniqueNickname(nicknameDTO.get("nickname"));
 
+        log.debug("CHECK NICKNAME FINISHED");
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message("UNIQUE NICKNAME")
@@ -140,9 +147,12 @@ public class MemberController {
     @GetMapping("/user")
     public ResponseDTO<MemberDTO> userinfo(Authentication authentication) {
 
+        log.debug("GET USERINFO START");
+
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         Member member = memberService.findMember(user.getMemberId());
 
+        log.debug("GET USERINFO FINISHED");
         return ResponseDTO.<MemberDTO>builder()
                 .status(OK.getStatus())
                 .message("USER INFO")
@@ -153,9 +163,11 @@ public class MemberController {
     @PatchMapping("/user")
     public ResponseDTO<String> userinfo(@RequestBody MemberDTO memberDTO, Authentication authentication) {
 
+        log.debug("UPDATE USERINFO START");
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         memberService.updateMember(memberDTO, user.getMemberId());
 
+        log.debug("UPDATE USERINFO FINISHED");
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message("UPDATE USERINFO SUCCESS")
@@ -165,11 +177,13 @@ public class MemberController {
     @PostMapping
     public ResponseDTO<String> logout(Authentication authentication) {
 
+        log.debug("LOGOUT START");
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         memberService.logout(user.getMemberId());
 
         SecurityContextHolder.getContext().setAuthentication(null);
 
+        log.debug("LOGOUT FINISHED");
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message("LOGOUT SUCCESS")
