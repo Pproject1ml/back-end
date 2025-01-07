@@ -26,6 +26,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 src/test/
+src/main/java/org/_1mg/tt_backend/base/TestController.java
 
 ### NetBeans ###
 /nbproject/private/
