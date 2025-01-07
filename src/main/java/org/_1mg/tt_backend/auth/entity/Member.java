@@ -5,10 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org._1mg.tt_backend.auth.Role;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.base.BaseEntity;
+import org._1mg.tt_backend.chat.entity.MemberChatEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -59,6 +60,9 @@ public class Member extends BaseEntity {
     private Boolean isVisible = false;
 
     private String refreshToken;
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberChatEntity> memberChatEntities;
 
     public void updateDelete(boolean deleted) {
         this.isDeleted = deleted;

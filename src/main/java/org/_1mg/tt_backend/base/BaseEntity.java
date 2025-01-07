@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 public class BaseEntity {
 
+    private boolean isDeleted;
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

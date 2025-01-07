@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org._1mg.tt_backend.base.BaseEntity;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 // 채팅방 엔터티
 @Getter
@@ -15,15 +16,18 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table(name = "chatroom")
-public class ChatRoomEntity {
+public class ChatRoomEntity extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatroom_id")
-    private Integer chatroomId;
+    private Long chatroomId;
 
+    @Column(nullable = false)
+    private String title;
 
-    @Builder.Default
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "chatroom")
+    private List<ChatMessageEntity> chatMessages;
 
+    @OneToMany(mappedBy = "chatroom")
+    private List<MemberChatEntity> memberChats;
 }
