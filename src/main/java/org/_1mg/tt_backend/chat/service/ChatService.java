@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.MemberRepository;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
-import org._1mg.tt_backend.chat.dto.ChatRoomDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
 import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
 import org._1mg.tt_backend.chat.entity.UserChatEntity;
@@ -29,18 +28,19 @@ public class ChatService {
         return chatMessageRepository.findByChatRoomChatroomId(chatroomId);
     }
 
-    public ChatRoomDTO getChatRoomByLandmarkId(Long landmarkId) {
-        // Landmark의 chatRoom 필드를 통해 ChatRoomEntity를 조회
-        ChatRoomEntity chatRoom = chatRoomRepository.findByLandmark_LandmarkId(landmarkId)
-                .orElseThrow(() -> new IllegalArgumentException("No chat room found for the given landmark ID"));
+//    public ChatRoomDTO getChatRoomByLandmarkId(Long landmarkId) {
+//        // Landmark의 chatRoom 필드를 통해 ChatRoomEntity를 조회
+//        ChatRoomEntity chatRoom = chatRoomRepository.findByLandmark_LandmarkId(landmarkId)
+//                .orElseThrow(() -> new IllegalArgumentException("No chat room found for the given landmark ID"));
+//
+//        return ChatRoomDTO.builder()
+//                .chatroomId(chatRoom.getChatroomId())
+//                .landmarkName(chatRoom.getLandmark().getName())
+//                .createdAt(chatRoom.getCreatedAt())
 
-        return ChatRoomDTO.builder()
-                .chatroomId(chatRoom.getChatroomId())
-                .landmarkName(chatRoom.getLandmark().getName())
-                .createdAt(chatRoom.getCreatedAt())
-//                .isActive(chatRoom.getIsActive())
-                .build();
-    }
+    /// /                .isActive(chatRoom.getIsActive())
+//                .build();
+//    }
 
     // 메세지 보내기
     public ChatMessageEntity saveMessage(ChatMessageDTO chatMessageDTO) {
