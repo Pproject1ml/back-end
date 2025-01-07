@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class StompHandler implements ChannelInterceptor {
+public class MessageInterceptor implements ChannelInterceptor {
 
 
     @Override
