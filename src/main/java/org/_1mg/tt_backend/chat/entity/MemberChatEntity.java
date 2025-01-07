@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Member;
+import org._1mg.tt_backend.chat.dto.MemberChatDTO;
 
 import java.time.LocalDateTime;
 
@@ -27,13 +28,13 @@ public class MemberChatEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
-    private ChatRoomEntity chatroom;
+    private ChatroomEntity chatroom;
 
     private LocalDateTime joinedAt;
 
     private LocalDateTime leftAt;
 
-    public static MemberChatEntity create(ChatRoomEntity chatRoom, Member member) {
+    public static MemberChatEntity create(ChatroomEntity chatRoom, Member member) {
 
         return MemberChatEntity.builder()
                 .member(member)
@@ -44,5 +45,15 @@ public class MemberChatEntity {
 
     public void leave() {
         this.leftAt = LocalDateTime.now();
+    }
+
+    public MemberChatDTO convertToDTO() {
+
+        return MemberChatDTO.builder()
+                .member(member.convertToDTO())
+                .chatRoom(chatroom.convertToDTO())
+                .joinedAt(joinedAt)
+                .leftAt(leftAt)
+                .build();
     }
 }

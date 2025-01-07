@@ -3,6 +3,7 @@ package org._1mg.tt_backend.chat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.chat.service.ChatService;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -75,11 +76,23 @@ public class ChatController {
 //    }
 
     // /pub/cache 로 메시지를 발행한다.
-    @MessageMapping("/cache")
-    @SendTo("/sub/cache")
-    public void sendMessage(Map<String, Object> params) {
+//    @MessageMapping("/")
+//    @SendTo("/sub/room/{id}")
+//    public void sendMessage(Map<String, Object> params) {
+//
+//        log.info("send message: {}", params);
+//        // /sub/cache 에 구독중인 client에 메세지를 보낸다.
+//        messagingTemplate.convertAndSend("/sub/cache/" + params.get("channelId"), params);
+//    }
 
-        // /sub/cache 에 구독중인 client에 메세지를 보낸다.
-        messagingTemplate.convertAndSend("/sub/cache/" + params.get("channelId"), params);
+    @MessageMapping("/enter/{id}")
+    @SendTo("/sub/room/{id}")
+    public String enterMessage(Map<String, Object> params, @DestinationVariable String id) {
+
+        log.info("send message: {}", params);
+        log.info("id: {}", id);
+
+        return id;
     }
+
 }

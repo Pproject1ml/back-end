@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org._1mg.tt_backend.auth.dto.MemberDTO;
+import org._1mg.tt_backend.chat.MessageType;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageDTO {
+
     private Long messageId;
-    private Long chatroomId;
-    private String memberId;
+    private ChatroomDTO chatroom;
+    private MemberDTO member;
     private String content;
-    private String messageType; // "ENTER", "LEAVE", or "CHAT"
-    private LocalDateTime createdAt = LocalDateTime.now(); // 메시지 생성 시간 추가
+    private MessageType messageType;
+    private LocalDateTime createdAt; // 메시지 생성 시간 추가
 }

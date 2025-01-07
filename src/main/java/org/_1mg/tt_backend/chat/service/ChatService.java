@@ -5,7 +5,7 @@ import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
 import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
 import org._1mg.tt_backend.chat.entity.ChatMessageEntity;
-import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
+import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MemberChatEntity;
 import org._1mg.tt_backend.chat.repository.ChatMessageRepository;
 import org._1mg.tt_backend.chat.repository.ChatRoomRepository;
@@ -45,11 +45,11 @@ public class ChatService {
     // 메세지 보내기
     public ChatMessageEntity saveMessage(ChatMessageDTO chatMessageDTO) {
         // 채팅방 찾기
-        ChatRoomEntity chatRoom = chatRoomRepository.findById(chatMessageDTO.getChatroomId())
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found with id: " + chatMessageDTO.getChatroomId()));
+        ChatroomEntity chatRoom = chatRoomRepository.findById(chatMessageDTO.getChatroom().getChatroomId())
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found with id: " + chatMessageDTO.getChatroom().getChatroomId()));
 
         // 멤버 찾기
-        Member member = memberRepository.findById(UUID.fromString(chatMessageDTO.getMemberId()))
+        Member member = memberRepository.findById(UUID.fromString(chatMessageDTO.getMember().getMemberId()))
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
         ChatMessageEntity message = ChatMessageEntity.create(chatRoom, member, chatMessageDTO.getContent());
@@ -80,7 +80,7 @@ public class ChatService {
     // 입/퇴장
     public void userJoinChatRoom(Long chatroomId, UUID memberId) {
         // 채팅방 찾기
-        ChatRoomEntity chatRoom = chatRoomRepository.findById(chatroomId)
+        ChatroomEntity chatRoom = chatRoomRepository.findById(chatroomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
         // 멤버 찾기

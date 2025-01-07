@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 
 @Builder
 @Getter
@@ -17,5 +18,5 @@ public class LandmarkDTO {
     private Double longitude;
     private Integer radius;
     private String imagePath;
-    private Integer chatRoomId;
+    private ChatroomDTO chatroom;
 }

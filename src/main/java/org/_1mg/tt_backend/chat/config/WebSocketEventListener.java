@@ -31,6 +31,23 @@ public class WebSocketEventListener {
         }
 
         log.info("WebSocket connected: sessionId={}, user={}", headerAccessor.getSessionId(), headerAccessor.getUser().getName());
-        messagingTemplate.convertAndSend("");
+
+        //이거 경로 지정안해주면 No DefaultDestination configured 에러 남
+        //messagingTemplate.convertAndSend("");
     }
+//
+//    @EventListener
+//    public void handleWebSocketConnectListener(SessionConnectEvent event) {
+//        MessageHeaders headers = event.getMessage().getHeaders();
+//        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+//        log.info("accessor {}", accessor);
+//
+//        String token = accessor.getFirstNativeHeader("Authorization");
+//        log.info("token {}", token);
+//        System.out.println("Token from headers: " + token);
+//
+//
+//        // 추가적인 인증 로직 수행
+//    }
+
 }

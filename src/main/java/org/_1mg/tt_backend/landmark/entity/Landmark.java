@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.base.BaseEntity;
-import org._1mg.tt_backend.chat.entity.ChatRoomEntity;
+import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 
 @Entity
@@ -28,7 +28,7 @@ public class Landmark extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "chatroom_id")
-    private ChatRoomEntity chatRoom;
+    private ChatroomEntity chatroom;
 
     public LandmarkDTO convertToDTO() {
 
@@ -38,9 +38,7 @@ public class Landmark extends BaseEntity {
                 .longitude(this.getLongitude())
                 .radius(this.getRadius())
                 .imagePath(this.getImagePath())
-                //.chatRoomId(this.getChatRoomId())
-                //.chatRoomId(this.getChatRoom().getChatroomId())
+                .chatroom(this.chatroom.convertToDTO())
                 .build();
-
     }
 }
