@@ -9,8 +9,8 @@ public enum MessageType {
     ENTER("ENTER"), //입장
     DIE("DIE"), //탈퇴
     LEAVE("LEAVE"), //퇴장
-    MESSAGE("MESSAGE"), //메세지
-    ;
+    TEXT("TEXT"), //메세지
+    IMAGE("IMAGE");
 
     private final String value;
 
