@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org._1mg.tt_backend.auth.MemberController;
+import org._1mg.tt_backend.auth.controller.MemberController;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.exception.member.NicknameAlreadyExistsException;
 import org._1mg.tt_backend.exception.member.UserAlreadyExistsException;

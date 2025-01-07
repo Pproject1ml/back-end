@@ -2,8 +2,8 @@ package org._1mg.tt_backend.auth.security;
 
 
 import lombok.RequiredArgsConstructor;
-import org._1mg.tt_backend.auth.MemberRepository;
 import org._1mg.tt_backend.auth.entity.Member;
+import org._1mg.tt_backend.auth.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public CustomUserDetails loadUserByUsername(String oauthId) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByOauthId(oauthId);
-        if(member == null || member.getIsDeleted()){
+        if (member == null || member.getIsDeleted()) {
             throw new UsernameNotFoundException("USER NOT FOUND");
         }
 

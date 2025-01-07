@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageDTO {
-    private Integer messageId;
-    private Integer chatroomId;
+    private Long messageId;
+    private Long chatroomId;
     private String memberId;
     private String content;
     private String messageType; // "ENTER", "LEAVE", or "CHAT"
