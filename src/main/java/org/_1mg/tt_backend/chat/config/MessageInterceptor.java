@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class StompHandler implements ChannelInterceptor {
+public class MessageInterceptor implements ChannelInterceptor {
 
 
     @Override
-    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+    public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         String sessionId = accessor.getSessionId();
 
