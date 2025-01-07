@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.auth;
+package org._1mg.tt_backend.auth.repository;
 
 
 import org._1mg.tt_backend.auth.entity.Member;

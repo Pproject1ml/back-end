@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.auth;
+package org._1mg.tt_backend.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +14,7 @@ import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.SignupDTO;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.security.CustomUserDetails;
+import org._1mg.tt_backend.auth.service.MemberService;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

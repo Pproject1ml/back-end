@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.auth;
+package org._1mg.tt_backend.auth.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
+import org._1mg.tt_backend.auth.repository.MemberRepository;
 import org._1mg.tt_backend.exception.auth.CustomJwtException;
 import org._1mg.tt_backend.exception.auth.JwtExpiredTokenException;
 import org._1mg.tt_backend.exception.member.NicknameAlreadyExistsException;

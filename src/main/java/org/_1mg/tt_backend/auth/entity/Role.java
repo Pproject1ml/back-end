@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.auth;
+package org._1mg.tt_backend.auth.entity;
 
 import lombok.Getter;
 
@@ -15,8 +15,8 @@ public enum Role {
 
     public static Role getRole(String input) {
 
-        for(Role role : Role.values()) {
-            if(role.name().equals(input)) {
+        for (Role role : Role.values()) {
+            if (role.name().equals(input)) {
                 return role;
             }
         }
