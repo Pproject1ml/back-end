@@ -3,7 +3,7 @@ package org._1mg.tt_backend.auth.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org._1mg.tt_backend.auth.Role;
+import org._1mg.tt_backend.auth.entity.Role;
 import org._1mg.tt_backend.auth.jwt.JwtFilter;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +48,8 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
+                        //브라우저 환경에서 WebSocket과 CORS 설정이 충돌됨 그래서 Patterns() 메소드를 써야 함?
+                        //configuration.setAllowedOrigins(Collections.singletonList("*"));
                         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
@@ -73,6 +75,7 @@ public class SecurityConfig {
                             .requestMatchers("/", "/auth/**").permitAll()
                             .requestMatchers("/swagger/**", "/swagger-resources/**", "webjars/**").permitAll()
                             .requestMatchers("/test/**").permitAll()
+                            //.requestMatchers("/ws/**").permitAll()
 
                             .requestMatchers("/user").hasRole(Role.ROLE_USER.getValue())
                             .anyRequest().authenticated();
