@@ -43,12 +43,13 @@ public class Profile extends BaseEntity {
         this.introduction = dto.getIntroduction();
         this.age = dto.getAge();
         this.gender = dto.getGender();
-        this.isVisible = dto.isVisible();
+        this.isVisible = dto.getIsVisible();
     }
 
     public ProfileDTO convertToDTO() {
 
         return ProfileDTO.builder()
+                .profileId(this.profileId.toString())
                 .nickname(this.nickname)
                 .email(this.email)
                 .profileImage(this.profileImage)

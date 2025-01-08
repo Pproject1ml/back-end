@@ -19,7 +19,7 @@ public class MemberDTO {
     private String oauthProvider;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
     public MemberDTO(MemberDTO memberDTO) {
 

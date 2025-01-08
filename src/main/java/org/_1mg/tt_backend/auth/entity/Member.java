@@ -67,7 +67,7 @@ public class Member extends BaseEntity {
         this.oauthProvider = member.getOauthProvider();
         this.refreshToken = getRefreshToken();
         this.profile = createProfile(member.getProfile());
-        super.updateDeleted(member.isDeleted());
+        super.updateDeleted(member.getIsDeleted());
     }
 
     public static Member createMember(MemberDTO member) {
@@ -88,7 +88,7 @@ public class Member extends BaseEntity {
                 .introduction(profileDTO.getIntroduction())
                 .age(profileDTO.getAge())
                 .gender(profileDTO.getGender())
-                .isVisible(profileDTO.isVisible())
+                .isVisible(profileDTO.getIsVisible())
                 .build();
     }
 
@@ -100,11 +100,13 @@ public class Member extends BaseEntity {
                 .oauthId(this.oauthId)
                 .oauthProvider(this.oauthProvider)
                 .profile(this.profile.convertToDTO())
+                .createdAt(super.getCreatedAt())
+                .updatedAt(super.getUpdatedAt())
+                .isDeleted(super.isDeleted())
                 .build();
     }
 
     public void updateProfile(ProfileDTO profileDTO) {
-
         profile.updateProfile(profileDTO.checkNull(profileDTO, profile));
     }
 }
