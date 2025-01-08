@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.chat.dto.MemberChatDTO;
 
 import java.time.LocalDateTime;
 
@@ -15,12 +14,12 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "member_chat")
-public class MemberChatEntity {
+@Table(name = "profile_chatroom")
+public class ProfileChatroomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberChatId;
+    private Long profileChatroomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
@@ -34,11 +33,11 @@ public class MemberChatEntity {
 
     private LocalDateTime leftAt;
 
-    public static MemberChatEntity create(ChatroomEntity chatRoom, Profile profile) {
+    public static ProfileChatroomEntity create(ChatroomEntity chatroomEntity, Profile profile) {
 
-        return MemberChatEntity.builder()
+        return ProfileChatroomEntity.builder()
                 .profile(profile)
-                .chatroom(chatRoom)
+                .chatroom(chatroomEntity)
                 .joinedAt(LocalDateTime.now())
                 .build();
     }
@@ -47,13 +46,4 @@ public class MemberChatEntity {
         this.leftAt = LocalDateTime.now();
     }
 
-    public MemberChatDTO convertToDTO() {
-
-        return MemberChatDTO.builder()
-                .profile(profile.convertToDTO())
-                .chatRoom(chatroom.convertToDTO())
-                .joinedAt(joinedAt)
-                .leftAt(leftAt)
-                .build();
-    }
 }

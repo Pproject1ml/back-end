@@ -8,16 +8,15 @@ import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.MessageType;
-import org._1mg.tt_backend.chat.dto.ChatMessageDTO;
 
 // 채팅 메시지 엔터티
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "chat_message")
 @Builder
-public class ChatMessageEntity extends BaseEntity {
+@Table(name = "message")
+public class MessageEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,24 +37,13 @@ public class ChatMessageEntity extends BaseEntity {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    public static ChatMessageEntity create(ChatroomEntity chatRoom, Profile profile, String content) {
+    public static MessageEntity create(ChatroomEntity chatroomEntity, Profile profile, String content) {
 
-        return ChatMessageEntity.builder()
-                .chatroom(chatRoom)
+        return MessageEntity.builder()
+                .chatroom(chatroomEntity)
                 .profile(profile)
                 .content(content)
                 .build();
     }
 
-    public ChatMessageDTO convertToDTO() {
-
-        return ChatMessageDTO.builder()
-                .messageId(this.chatMessageId)
-                .content(this.content)
-                .profile(this.profile.convertToDTO())
-                .messageType(this.messageType)
-                .chatroom(this.chatroom.convertToDTO())
-                .build();
-
-    }
 }

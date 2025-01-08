@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.base.BaseEntity;
-import org._1mg.tt_backend.chat.entity.MemberChatEntity;
+import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
 
 import java.util.List;
 
@@ -16,6 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "unique_nickname", columnNames = {"nickname"})
+})
 public class Profile extends BaseEntity {
 
     @Id
@@ -39,7 +42,7 @@ public class Profile extends BaseEntity {
     private boolean isVisible;
 
     @OneToMany(mappedBy = "profile")
-    private List<MemberChatEntity> chatrooms;
+    private List<ProfileChatroomEntity> profileChatrooms;
 
     public void updateProfile(ProfileDTO dto) {
 
@@ -55,7 +58,7 @@ public class Profile extends BaseEntity {
     public ProfileDTO convertToDTO() {
 
         return ProfileDTO.builder()
-                .profileId(this.profileId.toString())
+                .profileId(this.profileId)
                 .nickname(this.nickname)
                 .email(this.email)
                 .profileImage(this.profileImage)

@@ -17,8 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "unique_id_for_login", columnNames = {"oauthId"}),
-        @UniqueConstraint(name = "unique_nickname", columnNames = {"nickname"})
+        @UniqueConstraint(name = "unique_id_for_login", columnNames = {"oauth_id"})
 })
 public class Member extends BaseEntity {
 
