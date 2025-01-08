@@ -18,25 +18,22 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     private final String oauthId;
     private final UUID memberId;
-    private final String email;
     private final String oauthProvider;
     private final Object principal;
 
-    public CustomAuthenticationToken(String oauthId, String email, String oauthProvider, Object principal) {
+    public CustomAuthenticationToken(String oauthId, String oauthProvider, Object principal) {
         super(null);
         this.oauthId = oauthId;
         this.memberId = null;
-        this.email = email;
         this.oauthProvider = oauthProvider;
         this.principal = principal;
         this.setAuthenticated(false);
     }
 
-    public CustomAuthenticationToken(UUID memberId, String email, String oauthProvider, Object principal, Collection<? extends GrantedAuthority> authorities) {
+    public CustomAuthenticationToken(UUID memberId, String oauthProvider, Object principal, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.oauthId = null;
         this.memberId = memberId;
-        this.email = email;
         this.oauthProvider = oauthProvider;
         this.principal = principal;
         super.setAuthenticated(true);
@@ -53,11 +50,11 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     }
 
 
-    public static CustomAuthenticationToken unauthenticated(String oauthId, String email, String oauthProvider, Object principal) {
-        return new CustomAuthenticationToken(oauthId, email, oauthProvider, principal);
+    public static CustomAuthenticationToken unauthenticated(String oauthId, String oauthProvider, Object principal) {
+        return new CustomAuthenticationToken(oauthId, oauthProvider, principal);
     }
 
-    public static CustomAuthenticationToken authenticated(UUID memberId, String email, String oauthProvider, Object principal, Collection<? extends GrantedAuthority> authorities) {
-        return new CustomAuthenticationToken(memberId, email, oauthProvider, principal, authorities);
+    public static CustomAuthenticationToken authenticated(UUID memberId, String oauthProvider, Object principal, Collection<? extends GrantedAuthority> authorities) {
+        return new CustomAuthenticationToken(memberId, oauthProvider, principal, authorities);
     }
 }

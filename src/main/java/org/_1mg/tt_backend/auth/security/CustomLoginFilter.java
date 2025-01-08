@@ -40,16 +40,14 @@ public class CustomLoginFilter extends AbstractAuthenticationProcessingFilter {
 
         String oauthId = check(input.getOauthId());
         String oauthProvider = check(input.getOauthProvider());
-        String email = check(input.getEmail());
 
         MemberDTO memberDto = MemberDTO.builder()
                 .oauthId(oauthId)
                 .oauthProvider(oauthProvider)
-                .email(email)
                 .build();
 
         //인증 전 Token의 Principal에는 입력된 memberDTO가 들어감
-        CustomAuthenticationToken authRequest = CustomAuthenticationToken.unauthenticated(oauthId, email, oauthProvider, memberDto);
+        CustomAuthenticationToken authRequest = CustomAuthenticationToken.unauthenticated(oauthId, oauthProvider, memberDto);
         this.setDetails(request, authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);
     }

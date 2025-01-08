@@ -75,7 +75,7 @@ public class JwtFilter extends OncePerRequestFilter {
         );
 
 
-        CustomAuthenticationToken authenticated = CustomAuthenticationToken.authenticated(UUID.fromString(memberId), null, null, userDetails, userDetails.getAuthorities());
+        CustomAuthenticationToken authenticated = CustomAuthenticationToken.authenticated(UUID.fromString(memberId), null, userDetails, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticated);
 
         log.info("JWT Token Validation End");

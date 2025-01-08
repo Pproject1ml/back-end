@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
+import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.entity.MemberChatEntity;
 
@@ -27,19 +28,6 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID memberId;
 
-    @Column(nullable = false)
-    private String nickname;
-
-    private String email;
-
-    private String profileImage;
-
-    private String introduction;
-
-    private Integer age;
-
-    private String gender;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
@@ -51,47 +39,72 @@ public class Member extends BaseEntity {
     @Column(updatable = false, nullable = false)
     private String oauthProvider;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean isDeleted = false;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean isVisible = false;
-
     private String refreshToken;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile;
 
     @OneToMany(mappedBy = "member")
     private List<MemberChatEntity> memberChatEntities;
 
+
     public void updateDelete(boolean deleted) {
-        this.isDeleted = deleted;
+        super.updateDeleted(deleted);
     }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
+    }
+
+    public void updateMember(MemberDTO member) {
+
+        this.oauthId = member.getOauthId();
+        this.oauthProvider = member.getOauthProvider();
+        this.refreshToken = getRefreshToken();
+        this.profile = createProfile(member.getProfile());
+        super.updateDeleted(member.isDeleted());
+    }
+
+    public static Member createMember(MemberDTO member) {
+
+        return Member.builder()
+                .oauthId(member.getOauthId())
+                .oauthProvider(member.getOauthProvider())
+                .profile(createProfile(member.getProfile()))
+                .build();
+    }
+
+    public static Profile createProfile(ProfileDTO profileDTO) {
+
+        return Profile.builder()
+                .nickname(profileDTO.getNickname())
+                .email(profileDTO.getEmail())
+                .profileImage(profileDTO.getProfileImage())
+                .introduction(profileDTO.getIntroduction())
+                .age(profileDTO.getAge())
+                .gender(profileDTO.getGender())
+                .isVisible(profileDTO.isVisible())
+                .build();
+    }
+
     public MemberDTO convertToDTO() {
 
         return MemberDTO.builder()
                 .memberId(this.memberId.toString())
-                .nickname(this.getNickname())
-                .email(this.getEmail()).profileImage(this.getProfileImage()).introduction(this.getIntroduction()).age(this.getAge()).gender(this.getGender()).role(this.getRole()).oauthId(this.getOauthId()).oauthProvider(this.getOauthProvider()).createdAt(this.getCreatedAt()).updatedAt(this.getUpdatedAt()).isDeleted(this.getIsDeleted()).isVisible(this.getIsVisible()).build();
+                .role(this.role)
+                .oauthId(this.oauthId)
+                .oauthProvider(this.oauthProvider)
+                .profile(this.profile.convertToDTO())
+                .build();
     }
 
-    public void updateMember(MemberDTO dto) {
+    public void updateProfile(ProfileDTO profileDTO) {
 
-        this.nickname = dto.getNickname();
-        this.profileImage = dto.getProfileImage();
-        this.introduction = dto.getIntroduction();
-        this.age = dto.getAge();
-        this.gender = dto.getGender();
-        this.isDeleted = dto.getIsDeleted();
-        this.isVisible = dto.getIsVisible();
-    }
-
-    public void deleteRefreshToken() {
-        this.refreshToken = null;
+        profile.updateProfile(profileDTO.checkNull(profileDTO, profile));
     }
 }

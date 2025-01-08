@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.LoginDTO;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
+import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.dto.SignupDTO;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.security.CustomUserDetails;
@@ -68,16 +69,21 @@ public class MemberController {
     public ResponseDTO<String> signup(@RequestBody SignupDTO signupDTO) {
 
         log.debug("SIGN UP START");
-        MemberDTO member = MemberDTO.builder()
+
+        ProfileDTO profile = ProfileDTO.builder()
                 .nickname(signupDTO.getNickname())
                 .email(signupDTO.getEmail())
                 .profileImage(signupDTO.getProfileImage())
                 .introduction(signupDTO.getIntroduction())
                 .age(signupDTO.getAge())
                 .gender(signupDTO.getGender())
+                .isVisible(signupDTO.getIsVisible())
+                .build();
+
+        MemberDTO member = MemberDTO.builder()
+                .profile(profile)
                 .oauthId(signupDTO.getOauthId())
                 .oauthProvider(signupDTO.getOauthProvider())
-                .isVisible(signupDTO.getIsVisible())
                 .build();
 
         memberService.signup(member);
@@ -162,11 +168,11 @@ public class MemberController {
     }
 
     @PatchMapping("/user")
-    public ResponseDTO<String> userinfo(@RequestBody MemberDTO memberDTO, Authentication authentication) {
+    public ResponseDTO<String> userinfo(@RequestBody ProfileDTO profileDTO, Authentication authentication) {
 
         log.debug("UPDATE USERINFO START");
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        memberService.updateMember(memberDTO, user.getMemberId());
+        memberService.updateMember(profileDTO, user.getMemberId());
 
         log.debug("UPDATE USERINFO FINISHED");
         return ResponseDTO.<String>builder()

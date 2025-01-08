@@ -62,7 +62,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         //주목할 점은 Principal로 UserDetails가 들어감
         CustomAuthenticationToken authenticatedToken = CustomAuthenticationToken.authenticated(
                 UUID.fromString(userDetails.getMemberId()),
-                userDetails.getEmail(),
                 unauthenticatedToken.getOauthProvider(),
                 userDetails,
                 userDetails.getAuthorities()
@@ -90,10 +89,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     //이메일과 oauthId 비교
     private void checkGoogle(CustomUserDetails userDetails, CustomAuthenticationToken authentication) throws AuthenticationException {
 
-        if (!userDetails.getOauthId().equals(authentication.getOauthId())
-            //|| !userDetails.getEmail().equals(authentication.getEmail())
-        ) {
-            log.error("WRONG CREDENTIALS GOOGLE {} {}", authentication.getOauthId(), authentication.getEmail());
+        if (!userDetails.getOauthId().equals(authentication.getOauthId())) {
+            log.error("WRONG CREDENTIALS GOOGLE {}", authentication.getOauthId());
             throw new BadCredentialsException("WRONG GOOGLE OAUTH ID OR EMAIL");
         }
     }

@@ -23,4 +23,8 @@ public class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    public void updateDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
