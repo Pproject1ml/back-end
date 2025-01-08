@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.base.BaseEntity;
-import org._1mg.tt_backend.chat.entity.MemberChatEntity;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -44,10 +42,6 @@ public class Member extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
-
-    @OneToMany(mappedBy = "member")
-    private List<MemberChatEntity> memberChatEntities;
-
 
     public void updateDelete(boolean deleted) {
         super.updateDeleted(deleted);

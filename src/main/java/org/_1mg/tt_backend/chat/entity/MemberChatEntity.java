@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org._1mg.tt_backend.auth.entity.Member;
+import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.chat.dto.MemberChatDTO;
 
 import java.time.LocalDateTime;
@@ -23,8 +23,8 @@ public class MemberChatEntity {
     private Long memberChatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // member 테이블과 연관
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile; // profile 테이블과 연관
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
@@ -34,10 +34,10 @@ public class MemberChatEntity {
 
     private LocalDateTime leftAt;
 
-    public static MemberChatEntity create(ChatroomEntity chatRoom, Member member) {
+    public static MemberChatEntity create(ChatroomEntity chatRoom, Profile profile) {
 
         return MemberChatEntity.builder()
-                .member(member)
+                .profile(profile)
                 .chatroom(chatRoom)
                 .joinedAt(LocalDateTime.now())
                 .build();
@@ -50,7 +50,7 @@ public class MemberChatEntity {
     public MemberChatDTO convertToDTO() {
 
         return MemberChatDTO.builder()
-                .member(member.convertToDTO())
+                .profile(profile.convertToDTO())
                 .chatRoom(chatroom.convertToDTO())
                 .joinedAt(joinedAt)
                 .leftAt(leftAt)

@@ -15,6 +15,9 @@ public class ChatroomDTO {
     private Long chatroomId;
     private String title;
     private List<ChatMessageDTO> messages;
-    private List<MemberChatDTO> members;
+    private List<MemberChatDTO> profiles;
+    private String lastMessage;
+    private String lastReadMessage;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

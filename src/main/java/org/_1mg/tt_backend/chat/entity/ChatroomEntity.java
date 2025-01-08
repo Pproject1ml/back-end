@@ -31,7 +31,7 @@ public class ChatroomEntity extends BaseEntity {
     private List<ChatMessageEntity> messages;
 
     @OneToMany(mappedBy = "chatroom")
-    private List<MemberChatEntity> members;
+    private List<MemberChatEntity> profiles;
 
     public ChatroomDTO convertToDTO() {
 
@@ -41,7 +41,7 @@ public class ChatroomEntity extends BaseEntity {
                 .messages(this.messages.stream()
                         .map(ChatMessageEntity::convertToDTO)
                         .collect(Collectors.toList()))
-                .members(this.members.stream()
+                .profiles(this.profiles.stream()
                         .map(MemberChatEntity::convertToDTO)
                         .collect(Collectors.toList()))
                 .build();

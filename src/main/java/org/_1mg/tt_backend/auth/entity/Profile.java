@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.base.BaseEntity;
+import org._1mg.tt_backend.chat.entity.MemberChatEntity;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,6 +37,9 @@ public class Profile extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isVisible;
+
+    @OneToMany(mappedBy = "profile")
+    private List<MemberChatEntity> chatrooms;
 
     public void updateProfile(ProfileDTO dto) {
 

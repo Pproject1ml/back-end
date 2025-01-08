@@ -2,14 +2,26 @@ package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.auth.entity.Profile;
+import org._1mg.tt_backend.auth.repository.ProfileRepository;
+import org._1mg.tt_backend.base.ResponseDTO;
+import org._1mg.tt_backend.chat.dto.ChatroomDTO;
+import org._1mg.tt_backend.chat.entity.MemberChatEntity;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static org._1mg.tt_backend.exception.CustomException.OK;
 
 @Slf4j
 @Controller
@@ -18,6 +30,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ProfileRepository profileRepository;
 
 //    public ChatController(ChatService chatService) {
 //        this.chatService = chatService;
@@ -84,6 +97,25 @@ public class ChatController {
 //        // /sub/cache 에 구독중인 client에 메세지를 보낸다.
 //        messagingTemplate.convertAndSend("/sub/cache/" + params.get("channelId"), params);
 //    }
+
+    @ResponseBody
+    @GetMapping("/chat/list")
+    public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") String id) {
+
+        Profile profile = profileRepository.findById(Long.parseLong(id)).orElse(null);
+
+        List<ChatroomDTO> chatroomDTOS = new ArrayList<>();
+
+        for (MemberChatEntity chatroom : profile.getChatrooms()) {
+            chatroomDTOS.add(chatService.getParticipants(chatroom.getChatroom()));
+        }
+
+        return ResponseDTO.<List<ChatroomDTO>>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .data(chatroomDTOS)
+                .build();
+    }
 
     @MessageMapping("/enter/{id}")
     @SendTo("/sub/room/{id}")
