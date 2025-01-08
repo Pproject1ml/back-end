@@ -31,7 +31,7 @@ public class MemberExceptionControllerAdvice {
 
         return ResponseDTO.<String>builder()
                 .status(ALREADY_EXISTS_USER.getStatus())
-                .message(exception.getMessage())
+                .message(ALREADY_EXISTS_USER.getMessage())
                 .build();
     }
 
@@ -41,7 +41,7 @@ public class MemberExceptionControllerAdvice {
 
         return ResponseDTO.<String>builder()
                 .status(ALREADY_EXISTS_NICKNAME.getStatus())
-                .message(exception.getMessage())
+                .message(ALREADY_EXISTS_NICKNAME.getMessage())
                 .data(objectMapper.writeValueAsString(Map.of("nickname", exception.getInvalidNickname())))
                 .build();
     }

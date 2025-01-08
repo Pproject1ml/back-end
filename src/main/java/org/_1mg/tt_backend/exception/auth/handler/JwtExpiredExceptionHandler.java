@@ -8,16 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import static org._1mg.tt_backend.exception.CustomException.*;
+import static org._1mg.tt_backend.exception.CustomException.EXPIRED_TOKEN;
 
 @Component
 public class JwtExpiredExceptionHandler implements UnauthenticatedExceptionHandler {
 
     @Override
-    public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception)  {
+    public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception) {
 
         responseDto.setStatus(EXPIRED_TOKEN.getStatus());
-        responseDto.setMessage("NEED TO TOKEN REFRESH");
+        responseDto.setMessage(EXPIRED_TOKEN.getMessage());
 
         resp.setStatus(HttpStatus.UNAUTHORIZED.value());
         resp.setHeader("Location", "/auth/refresh");
@@ -26,7 +26,7 @@ public class JwtExpiredExceptionHandler implements UnauthenticatedExceptionHandl
     @Override
     public boolean support(AuthenticationException exception, HttpServletRequest request) {
 
-        if(request.getAttribute("customException") == null){
+        if (request.getAttribute("customException") == null) {
             return false;
         }
         return request.getAttribute("customException") instanceof JwtExpiredTokenException || exception instanceof JwtExpiredTokenException;

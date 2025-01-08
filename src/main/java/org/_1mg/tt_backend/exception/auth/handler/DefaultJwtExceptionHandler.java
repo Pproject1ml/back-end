@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import static org._1mg.tt_backend.exception.CustomException.DEFAULT_AUTH_ERROR;
 import static org._1mg.tt_backend.exception.CustomException.DEFAULT_TOKEN_ERROR;
 
 @Component
@@ -17,7 +18,7 @@ public class DefaultJwtExceptionHandler implements UnauthenticatedExceptionHandl
     public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception) {
 
         responseDto.setStatus(DEFAULT_TOKEN_ERROR.getStatus());
-        responseDto.setMessage("ACCESS TOKEN ERROR");
+        responseDto.setMessage(DEFAULT_AUTH_ERROR.getMessage());
 
         resp.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
