@@ -38,7 +38,7 @@ public class Landmark extends BaseEntity {
                 .longitude(this.getLongitude())
                 .radius(this.getRadius())
                 .imagePath(this.getImagePath())
-                .chatroom(this.chatroom.convertToDTO())
+                .chatroom(this.chatroom.convertToDTOWithChatroomInfo())
                 .build();
     }
 }
