@@ -2,11 +2,8 @@ package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.repository.ProfileRepository;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
-import org._1mg.tt_backend.chat.entity.MemberChatEntity;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +26,6 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessageSendingOperations messagingTemplate;
-    private final ProfileRepository profileRepository;
 
 //    public ChatController(ChatService chatService) {
 //        this.chatService = chatService;
@@ -100,20 +95,14 @@ public class ChatController {
 
     @ResponseBody
     @GetMapping("/chat/list")
-    public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") String id) {
+    public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") Long id) {
 
-        Profile profile = profileRepository.findById(Long.parseLong(id)).orElse(null);
-
-        List<ChatroomDTO> chatroomDTOS = new ArrayList<>();
-
-        for (MemberChatEntity chatroom : profile.getChatrooms()) {
-            chatroomDTOS.add(chatService.getParticipants(chatroom.getChatroom()));
-        }
+        List<ChatroomDTO> result = chatService.getChatrooms(id);
 
         return ResponseDTO.<List<ChatroomDTO>>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
-                .data(chatroomDTOS)
+                .data(result)
                 .build();
     }
 
