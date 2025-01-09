@@ -71,11 +71,11 @@ public class ChatService {
 
     public List<MessageDTO> getMessagesByRange(Long chatroomId, Long start, Long end) {
 
-        /**
+        /*
          chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
          start : APP Local storage에 저장되어 있는 마지막 메세지
          end : STOMP Socket 연결 이후 APP cache에 들어가는 첫 메세지
-         **/
+         */
         return messageRepository.findMessagesByChatroomIdAndIdRange(chatroomId, start, end)
                 .stream()
                 .map(MessageEntity::convertToDTO)
