@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.MessageType;
+import org._1mg.tt_backend.chat.dto.MessageDTO;
 
 // 채팅 메시지 엔터티
 @Getter
@@ -20,7 +21,7 @@ public class MessageEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatMessageId;
+    private Long messageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
@@ -44,6 +45,18 @@ public class MessageEntity extends BaseEntity {
                 .profile(profile)
                 .content(content)
                 .build();
+    }
+
+    public MessageDTO convertToDTO() {
+
+        return MessageDTO.builder()
+                .messageId(this.messageId)
+                .profile(this.profile.convertToDTO())
+                .content(this.content)
+                .messageType(this.messageType)
+                .createdAt(super.getCreatedAt())
+                .build();
+
     }
 
 }

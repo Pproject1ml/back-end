@@ -13,10 +13,9 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageDTO {
+public class MessageDTO {
 
     private Long messageId;
-    private ChatroomDTO chatroom;
     private ProfileDTO profile;
     private String content;
     private MessageType messageType;
