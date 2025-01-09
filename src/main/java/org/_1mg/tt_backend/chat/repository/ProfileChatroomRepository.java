@@ -2,8 +2,15 @@ package org._1mg.tt_backend.chat.repository;
 
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ProfileChatroomRepository extends JpaRepository<ProfileChatroomEntity, Long> {
 
-    boolean existsByProfile_ProfileIdAndChatroom_ChatroomId(Long profileId, Long chatroomId);
+    @Query(value =
+            "SELECT * " +
+                    "FROM profile_chatroom " +
+                    "WHERE profile_id = :profileId AND chatroom_id = :chatroomId"
+            , nativeQuery = true)
+    ProfileChatroomEntity findByProfileIdAndChatroomId(@Param("profileId") Long profileId, @Param("chatroomId") Long chatroomId);
 }
