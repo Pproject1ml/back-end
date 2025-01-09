@@ -11,6 +11,7 @@ import org._1mg.tt_backend.chat.MessageType;
 public class JoinDTO {
 
     private String profileId;
+    private String chatroomId;
     private MessageType messageType;
     private String message;
 }

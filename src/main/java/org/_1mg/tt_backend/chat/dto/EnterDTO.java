@@ -13,5 +13,6 @@ import org._1mg.tt_backend.chat.MessageType;
 public class EnterDTO {
 
     private String profileId;
+    private String chatroomId;
     private MessageType messageType;
 }
