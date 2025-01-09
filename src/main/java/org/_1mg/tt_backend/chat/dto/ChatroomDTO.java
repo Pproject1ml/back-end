@@ -18,7 +18,7 @@ public class ChatroomDTO {
     private List<ProfileDTO> profiles;
     private String lastMessage;
     private LocalDateTime lastMessageAt;
-    private String lastReadMessage;
+    private String lastReadMessageId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
