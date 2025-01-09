@@ -33,6 +33,8 @@ public class ProfileChatroomEntity {
 
     private LocalDateTime leftAt;
 
+    private boolean isDeleted;
+
     public static ProfileChatroomEntity create(Profile profile, ChatroomEntity chatroomEntity) {
 
         return ProfileChatroomEntity.builder()
@@ -44,6 +46,10 @@ public class ProfileChatroomEntity {
 
     public void leave() {
         this.leftAt = LocalDateTime.now();
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 
 }

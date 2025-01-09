@@ -114,9 +114,10 @@ public class ChatService {
 
         //저장
         MessageEntity message = MessageEntity.create(chatroom, profile, textDTO.getMessageType(), textDTO.getContent());
-        messageRepository.save(message);
+        message = messageRepository.save(message);
 
         //createdAt 필드 초기화 후 반환
+        textDTO.setMessageId(message.getMessageId().toString());
         textDTO.setCreatedAt(message.getCreatedAt());
         return textDTO;
     }
@@ -161,5 +162,16 @@ public class ChatService {
 
         leaveDTO.setLeftAt(profileChatroom.getLeftAt());
         return leaveDTO;
+    }
+
+    public void dieChatroom(DieDTO dieDTO, Long chatroomId) {
+
+        Profile profile = findProfile(dieDTO.getProfileId());
+
+        ChatroomEntity chatroom = findChatroom(dieDTO.getProfileId(), chatroomId);
+
+        ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        profileChatroom.delete();
+
     }
 }

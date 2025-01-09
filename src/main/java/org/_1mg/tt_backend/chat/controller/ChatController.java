@@ -151,9 +151,23 @@ public class ChatController {
     public ResponseDTO<LeaveDTO> leaveMessage(@Payload LeaveDTO leaveDTO, @DestinationVariable Long chatroomId) {
 
         //읽음 처리 및 읽음 카운트 기능 필요
-        chatService.leaveChatroom(leaveDTO, chatroomId);
+        LeaveDTO leave = chatService.leaveChatroom(leaveDTO, chatroomId);
 
         return ResponseDTO.<LeaveDTO>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .data(leave)
+                .build();
+    }
+
+    @MessageMapping("/die/{chatroomId}")
+    @SendTo("/sub/room/{chatroomId}")
+    public ResponseDTO<DieDTO> dieMessage(@Payload DieDTO dieDTO, @DestinationVariable Long chatroomId) {
+
+        //읽음 처리 및 읽음 카운트 기능 필요
+        chatService.dieChatroom(dieDTO, chatroomId);
+
+        return ResponseDTO.<DieDTO>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
                 .build();
