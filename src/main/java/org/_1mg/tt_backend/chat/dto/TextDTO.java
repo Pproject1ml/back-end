@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 public class TextDTO extends BaseMessage {
 
+    private String messageId;
     private String content;
     private LocalDateTime createdAt;
 }

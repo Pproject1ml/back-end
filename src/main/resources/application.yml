@@ -19,8 +19,3 @@ springdoc:
     path: /swagger/swagger-ui.html
   #ControllerAdvice를 통해 만들어지는 응답은 무시하기 위한 설정 (이거 필수)
   override-with-generic-response: false
-
-#test
-#server:
-#  address: 0.0.0.0
-#  port: 8080
