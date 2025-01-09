@@ -1,14 +1,12 @@
 package org._1mg.tt_backend.chat.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
 import org._1mg.tt_backend.chat.MessageType;
-import org._1mg.tt_backend.chat.dto.ChatroomDTO;
-import org._1mg.tt_backend.chat.dto.JoinDTO;
-import org._1mg.tt_backend.chat.dto.MessageDTO;
-import org._1mg.tt_backend.chat.dto.TextDTO;
+import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
@@ -27,6 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ChatService {
 
     private final ChatroomRepository chatRoomRepository;
@@ -141,11 +140,26 @@ public class ChatService {
                 .orElseThrow(() -> new ChatroomNotFoundException(chatroomIdInDTO + " NOT FOUND"));
     }
 
-    public void checkParticipant(Long profileId, Long chatroomId) {
+    public ProfileChatroomEntity checkParticipant(Long profileId, Long chatroomId) {
 
-        if (!profileChatroomRepository.existsByProfile_ProfileIdAndChatroom_ChatroomId(profileId, chatroomId)) {
+        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
+        if (profileChatroom == null) {
             throw new ProfileNotParticipants(profileId + "IS NOT IN CHATROOM " + chatroomId);
         }
 
+        return profileChatroom;
+    }
+
+    public LeaveDTO leaveChatroom(LeaveDTO leaveDTO, Long chatroomId) {
+
+        Profile profile = findProfile(leaveDTO.getProfileId());
+
+        ChatroomEntity chatroom = findChatroom(leaveDTO.getChatroomId(), chatroomId);
+
+        ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        profileChatroom.leave();
+
+        leaveDTO.setLeftAt(profileChatroom.getLeftAt());
+        return leaveDTO;
     }
 }

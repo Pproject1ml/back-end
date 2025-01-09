@@ -145,4 +145,17 @@ public class ChatController {
                 .data(text)
                 .build();
     }
+
+    @MessageMapping("/leave/{chatroomId}")
+    @SendTo("/sub/room/{chatroomId}")
+    public ResponseDTO<LeaveDTO> leaveMessage(@Payload LeaveDTO leaveDTO, @DestinationVariable Long chatroomId) {
+
+        //읽음 처리 및 읽음 카운트 기능 필요
+        chatService.leaveChatroom(leaveDTO, chatroomId);
+
+        return ResponseDTO.<LeaveDTO>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .build();
+    }
 }
