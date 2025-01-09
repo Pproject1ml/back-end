@@ -2,12 +2,8 @@ package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.base.ResponseDTO;
-import org._1mg.tt_backend.chat.dto.ChatroomDTO;
-import org._1mg.tt_backend.chat.dto.EnterDTO;
-import org._1mg.tt_backend.chat.dto.JoinDTO;
-import org._1mg.tt_backend.chat.dto.MessageDTO;
+import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -114,14 +110,14 @@ public class ChatController {
 
     @MessageMapping("/join/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
+    public ResponseDTO<JoinDTO> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
 
-        ProfileDTO profile = chatService.joinChatroom(joinDTO, chatroomId);
+        JoinDTO join = chatService.joinChatroom(joinDTO, chatroomId);
 
-        return ResponseDTO.<String>builder()
+        return ResponseDTO.<JoinDTO>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
-                .data(profile.getNickname() + "님이 입장하셨습니다")
+                .data(join)
                 .build();
     }
 
@@ -139,13 +135,14 @@ public class ChatController {
 
     @MessageMapping("/text/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> textMessage(@Payload EnterDTO enterDTO, @DestinationVariable Long chatroomId) {
+    public ResponseDTO<TextDTO> textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
-        //읽음 처리 및 읽음 카운트 기능 필요
+        TextDTO text = chatService.sendText(textDTO, chatroomId);
 
-        return ResponseDTO.<String>builder()
+        return ResponseDTO.<TextDTO>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
+                .data(text)
                 .build();
     }
 }

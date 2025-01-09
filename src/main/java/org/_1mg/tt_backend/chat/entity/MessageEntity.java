@@ -38,11 +38,12 @@ public class MessageEntity extends BaseEntity {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    public static MessageEntity create(ChatroomEntity chatroomEntity, Profile profile, String content) {
+    public static MessageEntity create(ChatroomEntity chatroomEntity, Profile profile, MessageType messageType, String content) {
 
         return MessageEntity.builder()
                 .chatroom(chatroomEntity)
                 .profile(profile)
+                .messageType(messageType)
                 .content(content)
                 .build();
     }

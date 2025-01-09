@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
+import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.dto.MessageDTO;
+import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
@@ -14,6 +16,8 @@ import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
 import org._1mg.tt_backend.exception.chat.ChatroomNotFoundException;
+import org._1mg.tt_backend.exception.chat.NotMatchChatroomIdBetweenURLAndDTO;
+import org._1mg.tt_backend.exception.chat.ProfileNotParticipants;
 import org._1mg.tt_backend.exception.member.ProfileNotFoundException;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
@@ -84,19 +88,64 @@ public class ChatService {
                 .toList();
     }
 
-    public ProfileDTO joinChatroom(JoinDTO joinDTO, Long chatroomId) {
+    public JoinDTO joinChatroom(JoinDTO joinDTO, Long chatroomId) {
 
-        Long profileId = Long.parseLong(joinDTO.getProfileId());
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() ->
-                new ProfileNotFoundException(profileId + " NOT FOUND")
-        );
-
-        ChatroomEntity chatroom = chatRoomRepository.findById(chatroomId).orElseThrow(() ->
-                new ChatroomNotFoundException(chatroomId + " NOT FOUND")
-        );
+        Profile profile = findProfile(joinDTO.getProfileId());
+        ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId(), chatroomId);
 
         profileChatroomRepository.save(ProfileChatroomEntity.create(profile, chatroom));
 
-        return profile.convertToDTO();
+        return JoinDTO.builder()
+                .profileId(profile.getProfileId().toString())
+                .messageType(MessageType.JOIN)
+                .message(profile.getNickname() + "님이 입장하셨습니다")
+                .build();
+    }
+
+    public TextDTO sendText(TextDTO textDTO, Long chatroomId) {
+
+        //profile 조회
+        Profile profile = findProfile(textDTO.getProfileId());
+
+        //chatroom 조회
+        ChatroomEntity chatroom = findChatroom(textDTO.getChatroomId(), chatroomId);
+
+        //참가 여부 확인
+        checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+
+        //저장
+        MessageEntity message = MessageEntity.create(chatroom, profile, textDTO.getMessageType(), textDTO.getContent());
+        messageRepository.save(message);
+
+        //createdAt 필드 초기화 후 반환
+        textDTO.setCreatedAt(message.getCreatedAt());
+        return textDTO;
+    }
+
+    public Profile findProfile(String profileId) {
+
+        Long id = Long.parseLong(profileId);
+        return profileRepository.findById(id)
+                .orElseThrow(() -> new ProfileNotFoundException(profileId + " NOT FOUND")
+                );
+    }
+
+    public ChatroomEntity findChatroom(String chatroomIdInDTO, Long chatroomIdInURL) {
+
+        Long id = Long.parseLong(chatroomIdInDTO);
+        if (!id.equals(chatroomIdInURL)) {
+            throw new NotMatchChatroomIdBetweenURLAndDTO("CHATROOM IS NOT MATCH");
+        }
+
+        return chatRoomRepository.findById(id)
+                .orElseThrow(() -> new ChatroomNotFoundException(chatroomIdInDTO + " NOT FOUND"));
+    }
+
+    public void checkParticipant(Long profileId, Long chatroomId) {
+
+        if (!profileChatroomRepository.existsByProfile_ProfileIdAndChatroom_ChatroomId(profileId, chatroomId)) {
+            throw new ProfileNotParticipants(profileId + "IS NOT IN CHATROOM " + chatroomId);
+        }
+
     }
 }
