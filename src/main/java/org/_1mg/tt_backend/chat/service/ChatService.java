@@ -38,14 +38,12 @@ public class ChatService {
         //profileId에 해당하는 chatrooms 조회
         List<ChatroomEntity> chatroomEntityList = chatRoomRepository.findChatroomsByProfileId(profileId);
 
-
         //chatrooms에 각각 접근 chatroom의 profiles 조회
         //chatrooms에 각각 접근 마지막 message 조회
         for (ChatroomEntity chatroomEntity : chatroomEntityList) {
 
             //chatroom 기본 정보 저장
             ChatroomDTO chatroomDTO = chatroomEntity.convertToDTOWithChatroomInfo();
-
             Long chatroomId = chatroomEntity.getChatroomId();
 
             //chatroom 참가자 조회
@@ -90,7 +88,7 @@ public class ChatService {
 
     public ProfileDTO joinChatroom(JoinDTO joinDTO, Long chatroomId) {
 
-        Long profileId = joinDTO.getProfileId();
+        Long profileId = Long.parseLong(joinDTO.getProfileId());
         Profile profile = profileRepository.findById(profileId).orElseThrow(() ->
                 new ProfileNotFoundException(profileId + " NOT FOUND")
         );

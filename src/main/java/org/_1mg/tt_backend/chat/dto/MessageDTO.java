@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MessageDTO {
 
-    private Long messageId;
+    private String messageId;
     private ProfileDTO profile;
     private String content;
     private MessageType messageType;

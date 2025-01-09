@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org._1mg.tt_backend.auth.entity.Gender;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class SignupDTO {
     String profileImage;
     String introduction;
     Integer age;
-    String gender;
+    Gender gender;
     String oauthId;
     String oauthProvider;
     Boolean isVisible;

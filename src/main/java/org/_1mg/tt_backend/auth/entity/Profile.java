@@ -36,7 +36,9 @@ public class Profile extends BaseEntity {
 
     private Integer age;
 
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @Column(nullable = false)
     private boolean isVisible;
@@ -58,7 +60,7 @@ public class Profile extends BaseEntity {
     public ProfileDTO convertToDTO() {
 
         return ProfileDTO.builder()
-                .profileId(this.profileId)
+                .profileId(this.profileId.toString())
                 .nickname(this.nickname)
                 .email(this.email)
                 .profileImage(this.profileImage)

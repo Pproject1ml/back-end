@@ -1,6 +1,7 @@
 package org._1mg.tt_backend.auth.dto;
 
 import lombok.*;
+import org._1mg.tt_backend.auth.entity.Gender;
 import org._1mg.tt_backend.auth.entity.Profile;
 
 @Getter
@@ -10,20 +11,20 @@ import org._1mg.tt_backend.auth.entity.Profile;
 @Builder
 public class ProfileDTO {
 
-    private Long profileId;
+    private String profileId;
     private String nickname;
     private String email;
     private String profileImage;
     private String introduction;
     private Integer age;
-    private String gender;
+    private Gender gender;
     private Boolean isVisible;
 
 
     public ProfileDTO checkNull(ProfileDTO profileDTO, Profile profile) {
 
         return ProfileDTO.builder()
-                .profileId(profileDTO.profileId == null ? profile.getProfileId() : profileDTO.profileId)
+                .profileId(profileDTO.profileId == null ? profile.getProfileId().toString() : profileDTO.profileId)
                 .nickname(profileDTO.nickname == null ? profile.getNickname() : profileDTO.nickname)
                 .email(profileDTO.email == null ? profile.getEmail() : profileDTO.email)
                 .profileImage(profileDTO.profileImage == null ? profile.getProfileImage() : profileDTO.profileImage)

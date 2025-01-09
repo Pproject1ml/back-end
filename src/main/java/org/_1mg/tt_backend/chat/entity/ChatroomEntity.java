@@ -34,7 +34,7 @@ public class ChatroomEntity extends BaseEntity {
     public ChatroomDTO convertToDTOWithChatroomInfo() {
 
         return ChatroomDTO.builder()
-                .chatroomId(this.chatroomId)
+                .chatroomId(this.chatroomId.toString())
                 .title(this.title)
                 .createdAt(super.getCreatedAt())
                 .updatedAt(super.getUpdatedAt())

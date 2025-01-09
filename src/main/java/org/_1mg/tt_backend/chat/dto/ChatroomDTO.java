@@ -14,7 +14,7 @@ import java.util.Map;
 @Builder
 public class ChatroomDTO {
 
-    private Long chatroomId;
+    private String chatroomId;
     private String title;
     private Map<Long, List<ProfileDTO>> profiles;
     private String lastMessage;

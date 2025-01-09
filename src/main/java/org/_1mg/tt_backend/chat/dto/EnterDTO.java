@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org._1mg.tt_backend.chat.MessageType;
 
 @Getter
 @Setter
@@ -11,5 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EnterDTO {
 
-    private Long profileId;
+    private String profileId;
+    private MessageType messageType;
 }

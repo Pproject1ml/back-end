@@ -50,7 +50,7 @@ public class MessageEntity extends BaseEntity {
     public MessageDTO convertToDTO() {
 
         return MessageDTO.builder()
-                .messageId(this.messageId)
+                .messageId(this.messageId.toString())
                 .profile(this.profile.convertToDTO())
                 .content(this.content)
                 .messageType(this.messageType)
