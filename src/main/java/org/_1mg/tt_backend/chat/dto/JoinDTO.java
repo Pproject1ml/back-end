@@ -13,5 +13,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class JoinDTO extends BaseMessage {
 
-    private String message;
+
 }

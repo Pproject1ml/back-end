@@ -17,4 +17,15 @@ public enum MessageType {
     MessageType(String value) {
         this.value = value;
     }
+
+    public static MessageType getMessageType(String input) {
+
+        for (MessageType messageType : MessageType.values()) {
+            if (messageType.name().equals(input)) {
+                return messageType;
+            }
+        }
+
+        return null;
+    }
 }
