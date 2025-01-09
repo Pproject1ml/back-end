@@ -1,6 +1,9 @@
 package org._1mg.tt_backend.landmark;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org._1mg.tt_backend.chat.entity.ChatroomEntity;
+import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
 import org._1mg.tt_backend.landmark.entity.Landmark;
@@ -14,6 +17,7 @@ import java.util.stream.Collectors;
 public class LandmarkService {
 
     private final LandmarkRepository landmarkRepository;
+    private final ChatroomRepository chatroomRepository; // 채팅방 저장소 주입
 
     public List<LandmarkDTO> getLandmarks(LocationDTO location) {
 
@@ -54,18 +58,53 @@ public class LandmarkService {
         return distanceKm <= radiusKm;
     }
 
-    public void save(LandmarkDTO landmarkDTO) {
+//    public void save(LandmarkDTO landmarkDTO) {
+//
+//        landmarkRepository.save(
+//                Landmark.builder()
+//                        .name(landmarkDTO.getName())
+//                        .latitude(landmarkDTO.getLatitude())
+//                        .longitude(landmarkDTO.getLongitude())
+//                        .radius(landmarkDTO.getRadius())
+//                        .imagePath(landmarkDTO.getImagePath())
+//                        //.chatRoomId(landmarkDTO.getChatRoomId())
+//                        .build()
+//        );
+//    }
 
-        landmarkRepository.save(
-                Landmark.builder()
-                        .name(landmarkDTO.getName())
-                        .latitude(landmarkDTO.getLatitude())
-                        .longitude(landmarkDTO.getLongitude())
-                        .radius(landmarkDTO.getRadius())
-                        .imagePath(landmarkDTO.getImagePath())
-                        //.chatRoomId(landmarkDTO.getChatRoomId())
-                        .build()
-        );
+    /**
+     * 랜드마크 생성 시 자동으로 채팅방 생성
+     *
+     * @param landmarkDTO 랜드마크 데이터 (위치, 이름, 반경 등 정보를 포함)
+     * @return 생성된 랜드마크 엔터티
+     */
+    @Transactional
+    public Landmark saveWithChatroom(LandmarkDTO landmarkDTO) {
+        // 1. 랜드마크 엔티티 생성
+        Landmark landmark = Landmark.builder()
+                .name(landmarkDTO.getName())
+                .latitude(landmarkDTO.getLatitude())
+                .longitude(landmarkDTO.getLongitude())
+                .radius(landmarkDTO.getRadius())
+                .imagePath(landmarkDTO.getImagePath())
+                .build();
+
+        // 2. 랜드마크 저장 (채팅방 정보 없이 먼저 저장)
+        Landmark savedLandmark = landmarkRepository.save(landmark);
+
+        // 3. 해당 랜드마크와 연결된 채팅방 생성
+        ChatroomEntity chatroom = ChatroomEntity.builder()
+                .title("Chatroom for " + savedLandmark.getName())
+                .build();
+
+        // 4. 채팅방 저장
+        ChatroomEntity savedChatroom = chatroomRepository.save(chatroom);
+
+        // 5. 랜드마크와 채팅방 간 관계 설정
+        savedLandmark.assignChatroom(savedChatroom);
+
+        // 6. 연관 관계 업데이트 후 다시 저장
+        return landmarkRepository.save(savedLandmark); // 최종 저장 후 반환
     }
 }
 

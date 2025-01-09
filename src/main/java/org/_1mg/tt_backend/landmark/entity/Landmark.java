@@ -26,9 +26,21 @@ public class Landmark extends BaseEntity {
     private Integer radius = 5000;
     private String imagePath;
 
-    @OneToOne
-    @JoinColumn(name = "chatroom_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "chatroom_id", nullable = true) // 단방향 관계
     private ChatroomEntity chatroom;
+
+    /**
+     * 랜드마크와 채팅방을 연관짓는 메서드
+     *
+     * @param chatroom 연결할 채팅방 엔터티
+     */
+    public void assignChatroom(ChatroomEntity chatroom) {
+        if (this.chatroom != null) {
+            throw new IllegalStateException("Chatroom is already assigned to this landmark.");
+        }
+        this.chatroom = chatroom;
+    }
 
     public LandmarkDTO convertToDTO() {
 
@@ -38,7 +50,7 @@ public class Landmark extends BaseEntity {
                 .longitude(this.getLongitude())
                 .radius(this.getRadius())
                 .imagePath(this.getImagePath())
-                .chatroom(this.chatroom.convertToDTOWithChatroomInfo())
+                .chatroom(this.chatroom.convertToDTOWithChatroomInfo()) // Chatroom 정보 포함
                 .build();
     }
 }
