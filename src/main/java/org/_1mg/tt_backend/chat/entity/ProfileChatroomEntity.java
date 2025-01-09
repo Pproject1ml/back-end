@@ -33,7 +33,7 @@ public class ProfileChatroomEntity {
 
     private LocalDateTime leftAt;
 
-    public static ProfileChatroomEntity create(ChatroomEntity chatroomEntity, Profile profile) {
+    public static ProfileChatroomEntity create(Profile profile, ChatroomEntity chatroomEntity) {
 
         return ProfileChatroomEntity.builder()
                 .profile(profile)

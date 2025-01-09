@@ -2,12 +2,16 @@ package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
+import org._1mg.tt_backend.chat.dto.EnterDTO;
+import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.dto.MessageDTO;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
@@ -16,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Map;
 
 import static org._1mg.tt_backend.exception.CustomException.OK;
 
@@ -85,9 +88,9 @@ public class ChatController {
 
     @ResponseBody
     @GetMapping("/chat/list")
-    public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") Long id) {
+    public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") Long profileId) {
 
-        List<ChatroomDTO> result = chatService.getChatrooms(id);
+        List<ChatroomDTO> result = chatService.getChatrooms(profileId);
 
         return ResponseDTO.<List<ChatroomDTO>>builder()
                 .status(OK.getStatus())
@@ -109,14 +112,40 @@ public class ChatController {
                 .build();
     }
 
-    @MessageMapping("/enter/{id}")
-    @SendTo("/sub/room/{id}")
-    public String enterMessage(Map<String, Object> params, @DestinationVariable String id) {
+    @MessageMapping("/join/{chatroomId}")
+    @SendTo("/sub/room/{chatroomId}")
+    public ResponseDTO<String> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
 
-        log.info("send message: {}", params);
-        log.info("id: {}", id);
+        ProfileDTO profile = chatService.joinChatroom(joinDTO, chatroomId);
 
-        return id;
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .data(profile.getNickname() + "님이 입장하셨습니다")
+                .build();
     }
 
+    @MessageMapping("/enter/{chatroomId}")
+    @SendTo("/sub/room/{chatroomId}")
+    public ResponseDTO<String> enterMessage(@Payload EnterDTO enterDTO, @DestinationVariable Long chatroomId) {
+
+        //읽음 처리 및 읽음 카운트 기능 필요
+
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .build();
+    }
+
+    @MessageMapping("/text/{chatroomId}")
+    @SendTo("/sub/room/{chatroomId}")
+    public ResponseDTO<String> textMessage(@Payload EnterDTO enterDTO, @DestinationVariable Long chatroomId) {
+
+        //읽음 처리 및 읽음 카운트 기능 필요
+
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .build();
+    }
 }
