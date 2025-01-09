@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
-import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
@@ -14,7 +13,6 @@ import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
 import org._1mg.tt_backend.exception.chat.ChatroomNotFoundException;
-import org._1mg.tt_backend.exception.chat.NotMatchChatroomIdBetweenURLAndDTO;
 import org._1mg.tt_backend.exception.chat.ProfileNotParticipants;
 import org._1mg.tt_backend.exception.member.ProfileNotFoundException;
 import org.springframework.data.domain.Limit;
@@ -87,18 +85,12 @@ public class ChatService {
                 .toList();
     }
 
-    public JoinDTO joinChatroom(JoinDTO joinDTO, Long chatroomId) {
+    public void joinChatroom(JoinDTO joinDTO) {
 
         Profile profile = findProfile(joinDTO.getProfileId());
-        ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId(), chatroomId);
+        ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId());
 
         profileChatroomRepository.save(ProfileChatroomEntity.create(profile, chatroom));
-
-        return JoinDTO.builder()
-                .profileId(profile.getProfileId().toString())
-                .messageType(MessageType.JOIN)
-                .message(profile.getNickname() + "님이 입장하셨습니다")
-                .build();
     }
 
     public TextDTO sendText(TextDTO textDTO, Long chatroomId) {
@@ -107,7 +99,7 @@ public class ChatService {
         Profile profile = findProfile(textDTO.getProfileId());
 
         //chatroom 조회
-        ChatroomEntity chatroom = findChatroom(textDTO.getChatroomId(), chatroomId);
+        ChatroomEntity chatroom = findChatroom(textDTO.getChatroomId());
 
         //참가 여부 확인
         checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
@@ -130,15 +122,11 @@ public class ChatService {
                 );
     }
 
-    public ChatroomEntity findChatroom(String chatroomIdInDTO, Long chatroomIdInURL) {
+    public ChatroomEntity findChatroom(String chatroomId) {
 
-        Long id = Long.parseLong(chatroomIdInDTO);
-        if (!id.equals(chatroomIdInURL)) {
-            throw new NotMatchChatroomIdBetweenURLAndDTO("CHATROOM IS NOT MATCH");
-        }
-
+        Long id = Long.parseLong(chatroomId);
         return chatRoomRepository.findById(id)
-                .orElseThrow(() -> new ChatroomNotFoundException(chatroomIdInDTO + " NOT FOUND"));
+                .orElseThrow(() -> new ChatroomNotFoundException(id + " NOT FOUND"));
     }
 
     public ProfileChatroomEntity checkParticipant(Long profileId, Long chatroomId) {
@@ -151,27 +139,24 @@ public class ChatService {
         return profileChatroom;
     }
 
-    public LeaveDTO leaveChatroom(LeaveDTO leaveDTO, Long chatroomId) {
+    public void leaveChatroom(LeaveDTO leaveDTO) {
 
         Profile profile = findProfile(leaveDTO.getProfileId());
 
-        ChatroomEntity chatroom = findChatroom(leaveDTO.getChatroomId(), chatroomId);
+        ChatroomEntity chatroom = findChatroom(leaveDTO.getChatroomId());
 
         ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.leave();
 
-        leaveDTO.setLeftAt(profileChatroom.getLeftAt());
-        return leaveDTO;
     }
 
-    public void dieChatroom(DieDTO dieDTO, Long chatroomId) {
+    public void dieChatroom(DieDTO dieDTO) {
 
         Profile profile = findProfile(dieDTO.getProfileId());
 
-        ChatroomEntity chatroom = findChatroom(dieDTO.getProfileId(), chatroomId);
+        ChatroomEntity chatroom = findChatroom(dieDTO.getProfileId());
 
         ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.delete();
-
     }
 }

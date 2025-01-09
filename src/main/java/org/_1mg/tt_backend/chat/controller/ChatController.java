@@ -3,7 +3,9 @@ package org._1mg.tt_backend.chat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
-import org._1mg.tt_backend.chat.dto.*;
+import org._1mg.tt_backend.chat.dto.ChatroomDTO;
+import org._1mg.tt_backend.chat.dto.MessageDTO;
+import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -108,30 +110,30 @@ public class ChatController {
                 .build();
     }
 
-    @MessageMapping("/join/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<JoinDTO> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
+//    @MessageMapping("/join/{chatroomId}")
+//    @SendTo("/sub/room/{chatroomId}")
+//    public ResponseDTO<JoinDTO> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
+//
+//        JoinDTO join = chatService.joinChatroom(joinDTO, chatroomId);
+//
+//        return ResponseDTO.<JoinDTO>builder()
+//                .status(OK.getStatus())
+//                .message(OK.getMessage())
+//                .data(join)
+//                .build();
+//    }
 
-        JoinDTO join = chatService.joinChatroom(joinDTO, chatroomId);
-
-        return ResponseDTO.<JoinDTO>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .data(join)
-                .build();
-    }
-
-    @MessageMapping("/enter/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> enterMessage(@Payload EnterDTO enterDTO, @DestinationVariable Long chatroomId) {
-
-        //읽음 처리 및 읽음 카운트 기능 필요
-
-        return ResponseDTO.<String>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .build();
-    }
+//    @MessageMapping("/enter/{chatroomId}")
+//    @SendTo("/sub/room/{chatroomId}")
+//    public ResponseDTO<String> enterMessage(@Payload EnterDTO enterDTO, @DestinationVariable Long chatroomId) {
+//
+//        //읽음 처리 및 읽음 카운트 기능 필요
+//
+//        return ResponseDTO.<String>builder()
+//                .status(OK.getStatus())
+//                .message(OK.getMessage())
+//                .build();
+//    }
 
     @MessageMapping("/text/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
@@ -146,30 +148,30 @@ public class ChatController {
                 .build();
     }
 
-    @MessageMapping("/leave/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<LeaveDTO> leaveMessage(@Payload LeaveDTO leaveDTO, @DestinationVariable Long chatroomId) {
-
-        //읽음 처리 및 읽음 카운트 기능 필요
-        LeaveDTO leave = chatService.leaveChatroom(leaveDTO, chatroomId);
-
-        return ResponseDTO.<LeaveDTO>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .data(leave)
-                .build();
-    }
-
-    @MessageMapping("/die/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<DieDTO> dieMessage(@Payload DieDTO dieDTO, @DestinationVariable Long chatroomId) {
-
-        //읽음 처리 및 읽음 카운트 기능 필요
-        chatService.dieChatroom(dieDTO, chatroomId);
-
-        return ResponseDTO.<DieDTO>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .build();
-    }
+//    @MessageMapping("/leave/{chatroomId}")
+//    @SendTo("/sub/room/{chatroomId}")
+//    public ResponseDTO<LeaveDTO> leaveMessage(@Payload LeaveDTO leaveDTO, @DestinationVariable Long chatroomId) {
+//
+//        //읽음 처리 및 읽음 카운트 기능 필요
+//        LeaveDTO leave = chatService.leaveChatroom(leaveDTO, chatroomId);
+//
+//        return ResponseDTO.<LeaveDTO>builder()
+//                .status(OK.getStatus())
+//                .message(OK.getMessage())
+//                .data(leave)
+//                .build();
+//    }
+//
+//    @MessageMapping("/die/{chatroomId}")
+//    @SendTo("/sub/room/{chatroomId}")
+//    public ResponseDTO<DieDTO> dieMessage(@Payload DieDTO dieDTO, @DestinationVariable Long chatroomId) {
+//
+//        //읽음 처리 및 읽음 카운트 기능 필요
+//        chatService.dieChatroom(dieDTO, chatroomId);
+//
+//        return ResponseDTO.<DieDTO>builder()
+//                .status(OK.getStatus())
+//                .message(OK.getMessage())
+//                .build();
+//    }
 }
