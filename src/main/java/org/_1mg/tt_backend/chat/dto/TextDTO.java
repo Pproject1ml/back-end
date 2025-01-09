@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org._1mg.tt_backend.chat.MessageType;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -12,11 +12,9 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TextDTO {
+@SuperBuilder
+public class TextDTO extends BaseMessage {
 
-    private String profileId;
-    private String chatroomId;
-    private MessageType messageType;
     private String content;
     private LocalDateTime createdAt;
 }

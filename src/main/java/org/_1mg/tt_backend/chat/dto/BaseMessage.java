@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org._1mg.tt_backend.chat.MessageType;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class JoinDTO extends BaseMessage {
+public class BaseMessage {
 
-    private String message;
+    private String profileId;
+    private String chatroomId;
+    private MessageType messageType;
 }
