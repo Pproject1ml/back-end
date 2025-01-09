@@ -5,7 +5,6 @@ import org._1mg.tt_backend.auth.dto.ProfileDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -16,7 +15,7 @@ public class ChatroomDTO {
 
     private String chatroomId;
     private String title;
-    private Map<Long, List<ProfileDTO>> profiles;
+    private List<ProfileDTO> profiles;
     private String lastMessage;
     private LocalDateTime lastMessageAt;
     private String lastReadMessage;

@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +52,8 @@ public class ChatService {
                     .map(Profile::convertToDTO)
                     .toList();
 
-            //chatroom 별 참가자 List를 Map에 저장
-            Map<Long, List<ProfileDTO>> tmp = Map.of(chatroomEntity.getChatroomId(), profileDTOs);
-            chatroomDTO.setProfiles(tmp);
+            //chatroom 별 참가자 List 추가
+            chatroomDTO.setProfiles(profileDTOs);
 
             //채팅방 별 마지막 메세지 조회
             MessageEntity lastMessage = messageRepository.findLastMessageWithChatroom(chatroomId, Limit.of(1));
