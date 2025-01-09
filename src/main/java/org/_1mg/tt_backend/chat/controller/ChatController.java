@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
+import org._1mg.tt_backend.chat.dto.MessageDTO;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -27,15 +28,6 @@ public class ChatController {
     private final ChatService chatService;
     private final SimpMessageSendingOperations messagingTemplate;
 
-//    public ChatController(ChatService chatService) {
-//        this.chatService = chatService;
-//    }
-
-//    @GetMapping("/chat")
-//    public String chatPage() {
-//        return "chat"; // templates/chat.html 파일을 렌더링
-//    }
-//
 //    @MessageMapping("/chat")
 //    @SendTo("/topic/messages")
 //    public ChatMessageDTO saveMessage(ChatMessageDTO chatMessageDTO) {
@@ -54,12 +46,10 @@ public class ChatController {
 //
 //
 //    // 클릭 시 메세지 읽음처리
-//    /*
 //    @MessageMapping("/read")
 //    public void markAsRead(ChatMessageDTO chatMessageDTO) {
 //        chatService.markMessageAsRead(chatMessageDTO.getMessageId(), chatMessageDTO.getMemberId());
 //    }
-//     */
 //
 //    @MessageMapping("/chat/enter")
 //    @SendTo("/topic/messages")
@@ -83,7 +73,7 @@ public class ChatController {
 //        return chatMessageDTO;
 //    }
 
-    // /pub/cache 로 메시지를 발행한다.
+// /pub/cache 로 메시지를 발행한다.
 //    @MessageMapping("/")
 //    @SendTo("/sub/room/{id}")
 //    public void sendMessage(Map<String, Object> params) {
@@ -100,6 +90,19 @@ public class ChatController {
         List<ChatroomDTO> result = chatService.getChatrooms(id);
 
         return ResponseDTO.<List<ChatroomDTO>>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .data(result)
+                .build();
+    }
+
+    @ResponseBody
+    @GetMapping("/chat/refresh")
+    public ResponseDTO<List<MessageDTO>> refresh(@RequestParam("chatroom") Long chatroomId, @RequestParam("start") Long startId, @RequestParam("end") Long endId) {
+
+        List<MessageDTO> result = chatService.getMessagesByRange(chatroomId, startId, endId);
+
+        return ResponseDTO.<List<MessageDTO>>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
                 .data(result)
