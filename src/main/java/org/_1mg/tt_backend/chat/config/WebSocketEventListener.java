@@ -54,6 +54,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String value = headerAccessor.getFirstNativeHeader("COMMAND");
         if (value == null) {
+            log.info("Subscribe COMMAND IS NULL");
             return;
         }
 
@@ -78,7 +79,7 @@ public class WebSocketEventListener {
 
                 chatService.joinChatroom(joinDTO);
                 String joinMessage = nickname + "님이 입장하셨습니다";
-                messagingTemplate.convertAndSend("/sub/chat/" + chatroomId, joinMessage);
+                messagingTemplate.convertAndSend("/sub/room/" + chatroomId, joinMessage);
             }
             default -> {
                 log.info("Subscribe UNKNOWN");
@@ -99,6 +100,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String value = headerAccessor.getFirstNativeHeader("COMMAND");
         if (value == null) {
+            log.info("Unsubscribe COMMAND IS NULL");
             return;
         }
 
@@ -109,7 +111,7 @@ public class WebSocketEventListener {
 
         switch (messageType) {
             case LEAVE -> {
-                log.info("Subscribe LEAVE");
+                log.info("UnSubscribe LEAVE");
                 String profileId = headerAccessor.getFirstNativeHeader("profileId");
                 String chatroomId = headerAccessor.getFirstNativeHeader("chatroomId");
                 LeaveDTO leaveDTO = LeaveDTO.builder()
@@ -120,7 +122,7 @@ public class WebSocketEventListener {
                 chatService.leaveChatroom(leaveDTO);
             }
             case DIE -> {
-                log.info("Subscribe DIE");
+                log.info("UnSubscribe DIE");
                 String profileId = headerAccessor.getFirstNativeHeader("profileId");
                 String chatroomId = headerAccessor.getFirstNativeHeader("chatroomId");
                 DieDTO dieDTO = DieDTO.builder()
