@@ -58,20 +58,6 @@ public class LandmarkService {
         return distanceKm <= radiusKm;
     }
 
-//    public void save(LandmarkDTO landmarkDTO) {
-//
-//        landmarkRepository.save(
-//                Landmark.builder()
-//                        .name(landmarkDTO.getName())
-//                        .latitude(landmarkDTO.getLatitude())
-//                        .longitude(landmarkDTO.getLongitude())
-//                        .radius(landmarkDTO.getRadius())
-//                        .imagePath(landmarkDTO.getImagePath())
-//                        //.chatRoomId(landmarkDTO.getChatRoomId())
-//                        .build()
-//        );
-//    }
-
     /**
      * 랜드마크 생성 시 자동으로 채팅방 생성
      *
