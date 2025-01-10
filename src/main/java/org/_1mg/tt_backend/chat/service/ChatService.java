@@ -118,8 +118,7 @@ public class ChatService {
 
         Long id = Long.parseLong(profileId);
         return profileRepository.findById(id)
-                .orElseThrow(() -> new ProfileNotFoundException(profileId + " NOT FOUND")
-                );
+                .orElseThrow(() -> new ProfileNotFoundException(profileId + " NOT FOUND"));
     }
 
     public ChatroomEntity findChatroom(String chatroomId) {
