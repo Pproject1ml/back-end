@@ -12,6 +12,7 @@ import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 import org._1mg.tt_backend.chat.dto.MessageDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.ChatService;
+import org._1mg.tt_backend.chat.service.ChatroomService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -32,13 +33,14 @@ import static org._1mg.tt_backend.exception.CustomException.OK;
 public class ChatController {
 
     private final ChatService chatService;
+    private final ChatroomService chatroomService;
     private final SimpMessageSendingOperations messagingTemplate;
 
     @ResponseBody
     @GetMapping("/chat/list")
     public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") Long profileId) {
 
-        List<ChatroomDTO> result = chatService.getChatrooms(profileId);
+        List<ChatroomDTO> result = chatroomService.getChatrooms(profileId);
 
         return ResponseDTO.<List<ChatroomDTO>>builder()
                 .status(OK.getStatus())
