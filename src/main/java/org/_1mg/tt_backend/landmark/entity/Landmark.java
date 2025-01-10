@@ -42,6 +42,16 @@ public class Landmark extends BaseEntity {
         this.chatroom = chatroom;
     }
 
+    public static Landmark create(String name, Double latitude, Double longitude, Integer radius, String imagePath) {
+        return Landmark.builder()
+                .name(name)
+                .latitude(latitude)
+                .longitude(longitude)
+                .radius(radius)
+                .imagePath(imagePath)
+                .build();
+    }
+
     public LandmarkDTO convertToDTO() {
 
         return LandmarkDTO.builder()
