@@ -17,7 +17,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +33,6 @@ public class ChatController {
 
     private final ChatService chatService;
     private final ChatroomService chatroomService;
-    private final SimpMessageSendingOperations messagingTemplate;
 
     @ResponseBody
     @GetMapping("/chat/list")
@@ -80,6 +78,7 @@ public class ChatController {
                     )
             ) @Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
+        log.info("textDTO : {}", textDTO.toString());
         TextDTO text = chatService.sendText(textDTO, chatroomId);
 
         return ResponseDTO.<TextDTO>builder()
