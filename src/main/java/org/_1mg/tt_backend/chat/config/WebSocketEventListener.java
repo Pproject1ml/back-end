@@ -144,9 +144,10 @@ public class WebSocketEventListener {
 
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
 
-        if ("SEND".equals(headerAccessor.getCommand().name())) {
-            log.info("SEND EVENT");
-            log.info("payload = {}", message.getPayload());
-        }
+        log.info("================EVENT================");
+        log.info("header Accessor = {}", headerAccessor.getCommand());
+        log.info("header Accessor = {}", headerAccessor.getSessionId());
+        log.info("header Accessor = {}", headerAccessor.getUser());
+        log.info("payload = {}", message.getPayload());
     }
 }
