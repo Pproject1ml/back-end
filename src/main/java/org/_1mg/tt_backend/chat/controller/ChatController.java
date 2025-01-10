@@ -1,10 +1,5 @@
 package org._1mg.tt_backend.chat.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
@@ -60,23 +55,9 @@ public class ChatController {
                 .build();
     }
 
-    @Operation(
-            summary = "STOMP 소켓을 통한 chat",
-            description = "메세지 전송 URL : /pub/message/{chatroomId}\n" +
-                    "구독 URL : /sub/room/{chatroomId}"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "정상 로그인 - body.status : 20"),
-    })
     @MessageMapping("/message/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<TextDTO> textMessage(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON BODY",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(example = "{ " + '\"' + "profileId" + '\"' + ":" + '\"' + "value" + '\"' + "}")
-                    )
-            ) @Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
+    public ResponseDTO<TextDTO> textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
         log.info("textDTO : {}", textDTO.toString());
         TextDTO text = chatService.sendText(textDTO, chatroomId);
