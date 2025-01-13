@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.auth.exception.jwt;
+package org._1mg.tt_backend.auth.exception.jwt.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

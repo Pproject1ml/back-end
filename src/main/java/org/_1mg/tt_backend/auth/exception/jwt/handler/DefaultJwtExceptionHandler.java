@@ -1,7 +1,8 @@
-package org._1mg.tt_backend.auth.exception.jwt;
+package org._1mg.tt_backend.auth.exception.jwt.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org._1mg.tt_backend.auth.exception.jwt.custom.CustomJwtException;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

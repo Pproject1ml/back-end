@@ -11,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.entity.Role;
-import org._1mg.tt_backend.auth.exception.jwt.CustomJwtException;
-import org._1mg.tt_backend.auth.exception.jwt.JwtExpiredTokenException;
+import org._1mg.tt_backend.auth.exception.jwt.custom.CustomJwtException;
+import org._1mg.tt_backend.auth.exception.jwt.custom.JwtExpiredTokenException;
+import org._1mg.tt_backend.auth.exception.jwt.custom.JwtInvalidSignException;
 import org._1mg.tt_backend.auth.security.CustomAuthenticationToken;
 import org._1mg.tt_backend.auth.security.CustomUserDetails;
 import org.springframework.security.core.AuthenticationException;
@@ -52,8 +53,9 @@ public class JwtFilter extends OncePerRequestFilter {
             throw newE;
         } catch (SignatureException e) {
             log.error("Invalid JWT Signature");
-            request.setAttribute("customException", e);
-            throw e;
+            AuthenticationException newE = new JwtInvalidSignException("INVALID JWT SIGNATURE : " + e.getMessage());
+            request.setAttribute("customException", newE);
+            throw newE;
         } catch (Exception e) {
             log.error("JWT ERROR {}", e.getMessage());
             AuthenticationException newE = new CustomJwtException("JWT ERROR : " + e.getMessage());

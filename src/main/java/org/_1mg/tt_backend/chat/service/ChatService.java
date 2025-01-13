@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.exception.member.ProfileNotFoundException;
+import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
 import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;

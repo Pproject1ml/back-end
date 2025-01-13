@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.auth.exception.jwt;
+package org._1mg.tt_backend.auth.exception.jwt.custom;
 
 import org.springframework.security.core.AuthenticationException;
 

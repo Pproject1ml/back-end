@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org._1mg.tt_backend.auth.exception.jwt.JwtExceptionHandler;
+import org._1mg.tt_backend.auth.exception.jwt.handler.JwtExceptionHandler;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
