@@ -40,4 +40,11 @@ public class ChatroomEntity extends BaseEntity {
                 .updatedAt(super.getUpdatedAt())
                 .build();
     }
+
+    public static ChatroomEntity create(String title) {
+    
+        return ChatroomEntity.builder()
+                .title(title)
+                .build();
+    }
 }

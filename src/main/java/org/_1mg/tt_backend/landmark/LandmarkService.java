@@ -3,7 +3,7 @@ package org._1mg.tt_backend.landmark;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
-import org._1mg.tt_backend.chat.repository.ChatroomRepository;
+import org._1mg.tt_backend.chat.service.ChatroomService;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
 import org._1mg.tt_backend.landmark.entity.Landmark;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class LandmarkService {
 
     private final LandmarkRepository landmarkRepository;
-    private final ChatroomRepository chatroomRepository; // 채팅방 저장소 주입
+    private final ChatroomService chatroomService;
 
     public List<LandmarkDTO> getLandmarks(LocationDTO location) {
 
@@ -58,20 +58,6 @@ public class LandmarkService {
         return distanceKm <= radiusKm;
     }
 
-//    public void save(LandmarkDTO landmarkDTO) {
-//
-//        landmarkRepository.save(
-//                Landmark.builder()
-//                        .name(landmarkDTO.getName())
-//                        .latitude(landmarkDTO.getLatitude())
-//                        .longitude(landmarkDTO.getLongitude())
-//                        .radius(landmarkDTO.getRadius())
-//                        .imagePath(landmarkDTO.getImagePath())
-//                        //.chatRoomId(landmarkDTO.getChatRoomId())
-//                        .build()
-//        );
-//    }
-
     /**
      * 랜드마크 생성 시 자동으로 채팅방 생성
      *
@@ -80,31 +66,40 @@ public class LandmarkService {
      */
     @Transactional
     public Landmark saveWithChatroom(LandmarkDTO landmarkDTO) {
-        // 1. 랜드마크 엔티티 생성
-        Landmark landmark = Landmark.builder()
-                .name(landmarkDTO.getName())
-                .latitude(landmarkDTO.getLatitude())
-                .longitude(landmarkDTO.getLongitude())
-                .radius(landmarkDTO.getRadius())
-                .imagePath(landmarkDTO.getImagePath())
-                .build();
+        // 1. 위도와 경도를 기준으로 랜드마크 존재 여부 확인
+        //    이미 존재하는 랜드마크가 있으면 예외를 던져 중복 생성 방지
+        landmarkRepository.findByLatitudeAndLongitude(
+                        landmarkDTO.getLatitude(),
+                        landmarkDTO.getLongitude())
+                .ifPresent(existing -> {
+                    throw new IllegalArgumentException("이미 존재하는 랜드마크입니다.");
+                });
 
-        // 2. 랜드마크 저장 (채팅방 정보 없이 먼저 저장)
+        // 2. 랜드마크 엔터티 생성
+        //    전달받은 데이터를 기반으로 랜드마크 객체를 생성
+        Landmark landmark = Landmark.create(
+                landmarkDTO.getName(),
+                landmarkDTO.getLatitude(),
+                landmarkDTO.getLongitude(),
+                landmarkDTO.getRadius(),
+                landmarkDTO.getImagePath()
+        );
+
+        // 3. 랜드마크 저장
+        //    먼저 랜드마크를 데이터베이스에 저장 (채팅방 정보는 아직 포함되지 않음)
         Landmark savedLandmark = landmarkRepository.save(landmark);
 
-        // 3. 해당 랜드마크와 연결된 채팅방 생성
-        ChatroomEntity chatroom = ChatroomEntity.builder()
-                .title("Chatroom for " + savedLandmark.getName())
-                .build();
-
-        // 4. 채팅방 저장
-        ChatroomEntity savedChatroom = chatroomRepository.save(chatroom);
+        // 4. 채팅방 생성
+        //    랜드마크와 연관된 채팅방을 ChatroomService를 통해 생성
+        ChatroomEntity chatroom = chatroomService.createChatroomForLandmark(savedLandmark);
 
         // 5. 랜드마크와 채팅방 간 관계 설정
-        savedLandmark.assignChatroom(savedChatroom);
+        //    생성된 채팅방을 랜드마크와 연결 (양방향 관계 설정이 필요한 경우 사용)
+        savedLandmark.assignChatroom(chatroom);
 
-        // 6. 연관 관계 업데이트 후 다시 저장
-        return landmarkRepository.save(savedLandmark); // 최종 저장 후 반환
+        // 6. 연관 관계 업데이트 후 랜드마크 최종 저장
+        //    채팅방과 연관 관계가 포함된 상태로 랜드마크를 데이터베이스에 최종 저장
+        return landmarkRepository.save(savedLandmark);
     }
 }
 

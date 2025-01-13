@@ -1,10 +1,5 @@
 package org._1mg.tt_backend.chat.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
@@ -12,11 +7,11 @@ import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 import org._1mg.tt_backend.chat.dto.MessageDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.ChatService;
+import org._1mg.tt_backend.chat.service.ChatroomService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,13 +27,13 @@ import static org._1mg.tt_backend.base.CustomException.OK;
 public class ChatController {
 
     private final ChatService chatService;
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatroomService chatroomService;
 
     @ResponseBody
     @GetMapping("/chat/list")
     public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") Long profileId) {
 
-        List<ChatroomDTO> result = chatService.getChatrooms(profileId);
+        List<ChatroomDTO> result = chatroomService.getChatrooms(profileId);
 
         return ResponseDTO.<List<ChatroomDTO>>builder()
                 .status(OK.getStatus())
@@ -60,24 +55,11 @@ public class ChatController {
                 .build();
     }
 
-    @Operation(
-            summary = "STOMP 소켓을 통한 chat",
-            description = "메세지 전송 URL : /pub/message/{chatroomId}\n" +
-                    "구독 URL : /sub/room/{chatroomId}"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "정상 로그인 - body.status : 20"),
-    })
     @MessageMapping("/message/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<TextDTO> textMessage(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON BODY",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(example = "{ " + '\"' + "profileId" + '\"' + ":" + '\"' + "value" + '\"' + "}")
-                    )
-            ) @Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
+    public ResponseDTO<TextDTO> textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
+        log.info("textDTO : {}", textDTO.toString());
         TextDTO text = chatService.sendText(textDTO, chatroomId);
 
         return ResponseDTO.<TextDTO>builder()
