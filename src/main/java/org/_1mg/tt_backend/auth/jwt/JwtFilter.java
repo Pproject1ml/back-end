@@ -2,6 +2,7 @@ package org._1mg.tt_backend.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.entity.Role;
+import org._1mg.tt_backend.auth.exception.jwt.CustomJwtException;
+import org._1mg.tt_backend.auth.exception.jwt.JwtExpiredTokenException;
 import org._1mg.tt_backend.auth.security.CustomAuthenticationToken;
 import org._1mg.tt_backend.auth.security.CustomUserDetails;
-import org._1mg.tt_backend.exception.auth.CustomJwtException;
-import org._1mg.tt_backend.exception.auth.JwtExpiredTokenException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -49,6 +50,10 @@ public class JwtFilter extends OncePerRequestFilter {
             AuthenticationException newE = new JwtExpiredTokenException("EXPIRED JWT TOKEN : " + e.getMessage());
             request.setAttribute("customException", newE);
             throw newE;
+        } catch (SignatureException e) {
+            log.error("Invalid JWT Signature");
+            request.setAttribute("customException", e);
+            throw e;
         } catch (Exception e) {
             log.error("JWT ERROR {}", e.getMessage());
             AuthenticationException newE = new CustomJwtException("JWT ERROR : " + e.getMessage());

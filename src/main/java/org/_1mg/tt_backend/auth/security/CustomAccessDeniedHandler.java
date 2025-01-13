@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org._1mg.tt_backend.exception.CustomException.*;
+import static org._1mg.tt_backend.base.CustomException.UNAUTHORIZED;
 
 /**
  * 인증되었지만 권한이 없는 요청에 대한 예외 처리
@@ -29,7 +29,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
-        
+
         response.getWriter().write(
                 objectMapper.writeValueAsString(
                         ResponseDTO.<String>builder()

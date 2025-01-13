@@ -10,13 +10,13 @@ import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.entity.Profile;
+import org._1mg.tt_backend.auth.exception.jwt.CustomJwtException;
+import org._1mg.tt_backend.auth.exception.jwt.JwtExpiredTokenException;
+import org._1mg.tt_backend.auth.exception.member.NicknameAlreadyExistsException;
+import org._1mg.tt_backend.auth.exception.member.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
-import org._1mg.tt_backend.exception.auth.CustomJwtException;
-import org._1mg.tt_backend.exception.auth.JwtExpiredTokenException;
-import org._1mg.tt_backend.exception.member.NicknameAlreadyExistsException;
-import org._1mg.tt_backend.exception.member.UserAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

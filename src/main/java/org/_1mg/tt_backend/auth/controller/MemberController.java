@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static org._1mg.tt_backend.exception.CustomException.OK;
+import static org._1mg.tt_backend.base.CustomException.OK;
 
 @Slf4j
 @RestController

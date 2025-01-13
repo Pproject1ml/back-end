@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.exception.auth.handler;
+package org._1mg.tt_backend.auth.exception.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,10 +8,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import static org._1mg.tt_backend.exception.CustomException.NEED_SIGN_UP;
+import static org._1mg.tt_backend.base.CustomException.NEED_SIGN_UP;
 
 @Component
-public class UsernameNotFoundExceptionHandler implements AuthenticationExceptionHandler {
+public class UsernameNotFoundExceptionHandler implements AuthenticationFailureExceptionHandler {
 
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception) {

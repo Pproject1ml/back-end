@@ -74,8 +74,8 @@ public class SecurityConfig {
                     auth
                             .requestMatchers("/", "/auth/**", "/error").permitAll()
                             .requestMatchers("/swagger/**", "/swagger-resources/**", "webjars/**").permitAll()
+                            .requestMatchers("/chat/**", "/pub/**", "/sub/**").hasRole(Role.ROLE_USER.getValue())
                             .requestMatchers("/test/**").permitAll()
-                            //.requestMatchers("/ws/**").permitAll()
 
                             .requestMatchers("/user").hasRole(Role.ROLE_USER.getValue())
                             .anyRequest().authenticated();

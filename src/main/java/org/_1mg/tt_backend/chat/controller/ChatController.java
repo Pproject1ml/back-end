@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static org._1mg.tt_backend.exception.CustomException.OK;
+import static org._1mg.tt_backend.base.CustomException.OK;
 
 @Slf4j
 @Controller

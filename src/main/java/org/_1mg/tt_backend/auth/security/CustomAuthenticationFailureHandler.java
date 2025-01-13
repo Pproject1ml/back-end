@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.auth.exception.auth.AuthenticationFailureExceptionHandler;
 import org._1mg.tt_backend.base.ResponseDTO;
-import org._1mg.tt_backend.exception.auth.handler.AuthenticationExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
-import static org._1mg.tt_backend.exception.CustomException.*;
+import static org._1mg.tt_backend.base.CustomException.DEFAULT_AUTH_ERROR;
 
 /**
  * 인증 실패했을 때 발생하는 예외 처리
@@ -27,7 +27,7 @@ import static org._1mg.tt_backend.exception.CustomException.*;
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private final ObjectMapper objectMapper;
-    private final List<AuthenticationExceptionHandler> handlers;
+    private final List<AuthenticationFailureExceptionHandler> handlers;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
@@ -40,8 +40,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
         //특별히 처리해야 할 예외
         //현재 등록되어 있는 Handler : UsernameNotFoundExceptionHandler
-        for(AuthenticationExceptionHandler handler : handlers) {
-            if(handler.support(exception)){
+        for (AuthenticationFailureExceptionHandler handler : handlers) {
+            if (handler.support(exception)) {
                 handler.handle(request, response, responseDTO, exception);
                 break;
             }

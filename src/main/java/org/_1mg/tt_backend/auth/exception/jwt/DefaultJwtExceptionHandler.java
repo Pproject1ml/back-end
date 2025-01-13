@@ -1,18 +1,17 @@
-package org._1mg.tt_backend.exception.auth.handler;
+package org._1mg.tt_backend.auth.exception.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org._1mg.tt_backend.base.ResponseDTO;
-import org._1mg.tt_backend.exception.auth.CustomJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import static org._1mg.tt_backend.exception.CustomException.DEFAULT_AUTH_ERROR;
-import static org._1mg.tt_backend.exception.CustomException.DEFAULT_TOKEN_ERROR;
+import static org._1mg.tt_backend.base.CustomException.DEFAULT_AUTH_ERROR;
+import static org._1mg.tt_backend.base.CustomException.DEFAULT_TOKEN_ERROR;
 
 @Component
-public class DefaultJwtExceptionHandler implements UnauthenticatedExceptionHandler {
+public class DefaultJwtExceptionHandler implements JwtExceptionHandler {
 
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception) {

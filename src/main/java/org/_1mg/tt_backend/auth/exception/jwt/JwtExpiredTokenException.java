@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.exception.auth;
+package org._1mg.tt_backend.auth.exception.jwt;
 
 
 public class JwtExpiredTokenException extends CustomJwtException {

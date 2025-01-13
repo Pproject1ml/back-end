@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.exception;
+package org._1mg.tt_backend.base;
 
 import lombok.Getter;
 
@@ -33,11 +33,11 @@ public enum CustomException {
     /**
      * 기본 토큰 관련 예외
      * 만료된 토큰 예외
+     * 올바르지 않은 JWT 서명
      */
     DEFAULT_TOKEN_ERROR(50, "토큰 관련 에러가 발생했습니다"),
     EXPIRED_TOKEN(51, "만료된 토큰입니다"),
-
-    ;
+    SIGNATURE_INVALID(52, "JWT 서명이 일치하지 않습니다");
 
     private final int status;
     private final String message;

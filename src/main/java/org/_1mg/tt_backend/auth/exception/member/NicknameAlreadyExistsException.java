@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.exception.member;
+package org._1mg.tt_backend.auth.exception.member;
 
 import lombok.Getter;
 
