@@ -37,7 +37,7 @@ public class Landmark extends BaseEntity {
      */
     public void assignChatroom(ChatroomEntity chatroom) {
         if (this.chatroom != null) {
-            throw new IllegalStateException("Chatroom is already assigned to this landmark.");
+            throw new IllegalStateException("이미 채팅방이 연결된 랜드마크입니다.");
         }
         this.chatroom = chatroom;
     }

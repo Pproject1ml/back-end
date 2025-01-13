@@ -66,6 +66,10 @@ public class LandmarkService {
      */
     @Transactional
     public Landmark saveWithChatroom(LandmarkDTO landmarkDTO) {
+        // 랜드마크 필수 값 검증
+        if (landmarkDTO.getName() == null || landmarkDTO.getLatitude() == null || landmarkDTO.getLongitude() == null) {
+            throw new IllegalArgumentException("랜드마크 생성 시 필수 데이터가 누락되었습니다.");
+        }
         // 1. 위도와 경도를 기준으로 랜드마크 존재 여부 확인
         //    이미 존재하는 랜드마크가 있으면 예외를 던져 중복 생성 방지
         landmarkRepository.findByLatitudeAndLongitude(
