@@ -47,7 +47,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             }
         }
 
-        response.setContentType("application/json");
+        //content-type을 직접 설정하면 utf-8로 명시해야 제대로 인코딩 됨
+        response.setContentType("application/json; charset=utf-8");
         response.getWriter().write(
                 objectMapper.writeValueAsString(responseDTO)
         );
