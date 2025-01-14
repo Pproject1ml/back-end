@@ -42,9 +42,17 @@ public class ChatroomEntity extends BaseEntity {
     }
 
     public static ChatroomEntity create(String title) {
-    
+
         return ChatroomEntity.builder()
                 .title(title)
                 .build();
+    }
+
+    public void deleteTrue() {
+        super.updateDeleted(true);
+    }
+
+    public void deleteFalse() {
+        super.updateDeleted(false);
     }
 }
