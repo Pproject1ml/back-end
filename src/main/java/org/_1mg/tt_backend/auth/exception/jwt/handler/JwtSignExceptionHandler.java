@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import static org._1mg.tt_backend.base.CustomException.SIGNATURE_INVALID;
 
 @Component
-public class JwtSignatureExceptionHandler implements JwtExceptionHandler {
+public class JwtSignExceptionHandler implements JwtExceptionHandler {
 
     @Override
     public void handle(HttpServletRequest req, HttpServletResponse resp, ResponseDTO<String> responseDto, AuthenticationException exception) {

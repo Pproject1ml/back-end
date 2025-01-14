@@ -42,7 +42,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .collect(Collectors.joining(","));
 
         Long EXPIRED_ACCESS = 3 * 30 * 24 * 60 * 60 * 1000L;
-        //Long EXPIRED_ACCESS = 30 * 1000L;
+        //Long EXPIRED_ACCESS = 30L;
         String access = jwtUtils.createJwt("access", memberId, roles, EXPIRED_ACCESS);
         log.info("ACCESS TOKEN : {}", access);
 
