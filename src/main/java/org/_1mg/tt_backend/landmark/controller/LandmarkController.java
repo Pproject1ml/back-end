@@ -50,7 +50,7 @@ public class LandmarkController {
 
         return ResponseDTO.<LandmarkDTO>builder()
                 .status(OK.getStatus()) // 성공 상태 코드
-                .message("Landmark and Chatroom 생성 성공") // 응답 메시지
+                .message(OK.getMessage()) // 응답 메시지
                 .data(savedLandmark.convertToDTO()) // 저장된 랜드마크 정보를 반환
                 .build();
     }
@@ -63,7 +63,7 @@ public class LandmarkController {
 
         return ResponseDTO.<String>builder()
                 .status(HttpStatus.OK.value()) // 성공 상태 코드
-                .message("Landmark 삭제 성공")
+                .message(OK.getMessage())
                 .data("Deleted Landmark : " + deletedLandmarkName) // 삭제된 랜드마크 제목 반환
                 .build();
     }

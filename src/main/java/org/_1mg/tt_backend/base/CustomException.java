@@ -37,7 +37,25 @@ public enum CustomException {
      */
     DEFAULT_TOKEN_ERROR(50, "토큰 관련 에러가 발생했습니다"),
     EXPIRED_TOKEN(51, "만료된 토큰입니다"),
-    SIGNATURE_INVALID(52, "JWT 서명이 일치하지 않습니다");
+    SIGNATURE_INVALID(52, "JWT 서명이 일치하지 않습니다"),
+
+
+    /**
+     * 랜드마크 관련 예외
+     */
+    LANDMARK_NOT_FOUND(60, "존재하지 않는 랜드마크입니다."),
+    LANDMARK_ALREADY_EXISTS(61, "이미 생성된 랜드마크입니다."),
+    LANDMARK_ALREADY_DELETED(62, "이미 삭제된 랜드마크입니다."),
+    LANDMARK_MISSING_REQUIRED_FIELDS(63, "랜드마크 생성 시 필수 데이터가 누락되었습니다."),
+    LANDMARK_ALREADY_HAS_CHATROOM(64, "이미 채팅방이 연결된 랜드마크입니다."),
+    LANDMARK_ILLEGAL_ARGUMENT(90, "랜드마크 관련 잘못된 요청이 전달되었습니다."),
+    LANDMARK_GENERAL_ERROR(91, "랜드마크 관련 내부 서버 오류가 발생했습니다."),
+
+    /**
+     * 채팅방 관련 예외
+     */
+    CHATROOM_ALREADY_DELETED(70, "이미 삭제된 채팅방입니다."),
+    CHATROOM_ALREADY_EXISTS(71, "이미 생성된 채팅방입니다.");
 
     private final int status;
     private final String message;
