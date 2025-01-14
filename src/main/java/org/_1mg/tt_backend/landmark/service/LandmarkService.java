@@ -3,6 +3,7 @@ package org._1mg.tt_backend.landmark.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
+import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.service.ChatroomService;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
@@ -11,6 +12,7 @@ import org._1mg.tt_backend.landmark.repository.LandmarkRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +21,7 @@ public class LandmarkService {
 
     private final LandmarkRepository landmarkRepository;
     private final ChatroomService chatroomService;
+    private final ChatroomRepository chatroomRepository;
 
     public List<LandmarkDTO> getLandmarks(LocationDTO location) {
 
@@ -72,17 +75,35 @@ public class LandmarkService {
             throw new IllegalArgumentException("랜드마크 생성 시 필수 데이터가 누락되었습니다.");
         }
         // 1. 위도와 경도를 기준으로 랜드마크 존재 여부 확인
-        //    이미 존재하는 랜드마크가 있으면 예외를 던져 중복 생성 방지
-        landmarkRepository.findByLatitudeAndLongitude(
-                        landmarkDTO.getLatitude(),
-                        landmarkDTO.getLongitude())
-                .ifPresent(existing -> {
-                    throw new IllegalArgumentException("이미 존재하는 랜드마크입니다.");
-                });
+        Optional<Landmark> existingLandmark = landmarkRepository.findByLatitudeAndLongitude(
+                landmarkDTO.getLatitude(),
+                landmarkDTO.getLongitude()
+        );
 
-        // 2. 랜드마크 엔터티 생성
-        //    전달받은 데이터를 기반으로 랜드마크 객체를 생성
-        Landmark landmark = Landmark.create(
+        if (existingLandmark.isPresent()) {
+            Landmark landmark = existingLandmark.get();
+            if (!landmark.isDeleted()) {
+                throw new IllegalArgumentException("이미 생성된 랜드마크입니다.");
+            }
+
+            // 2. 랜드마크가 삭제 상태일 경우 is_deleted를 false로 변경
+            landmark.deleteFalse();
+
+            // 3. 연관된 채팅방도 is_deleted를 false로 변경
+            ChatroomEntity chatroom = landmark.getChatroom();
+            if (chatroom != null) {
+                if (!chatroom.isDeleted()) {
+                    throw new IllegalArgumentException("이미 생성된 채팅방입니다.");
+                }
+                chatroom.deleteFalse();
+                chatroomRepository.save(chatroom); // 채팅방 변경 사항 저장
+            }
+
+            return landmarkRepository.save(landmark); // 기존 랜드마크 복구
+        }
+
+        // 4. 새 랜드마크 생성
+        Landmark newLandmark = Landmark.create(
                 landmarkDTO.getName(),
                 landmarkDTO.getLatitude(),
                 landmarkDTO.getLongitude(),
@@ -90,21 +111,44 @@ public class LandmarkService {
                 landmarkDTO.getImagePath()
         );
 
-        // 3. 랜드마크 저장
-        //    먼저 랜드마크를 데이터베이스에 저장 (채팅방 정보는 아직 포함되지 않음)
-        Landmark savedLandmark = landmarkRepository.save(landmark);
+        Landmark savedLandmark = landmarkRepository.save(newLandmark);
 
-        // 4. 채팅방 생성
-        //    랜드마크와 연관된 채팅방을 ChatroomService를 통해 생성
+        // 5. 새 채팅방 생성 및 랜드마크와 연관
         ChatroomEntity chatroom = chatroomService.createChatroomForLandmark(savedLandmark);
-
-        // 5. 랜드마크와 채팅방 간 관계 설정
-        //    생성된 채팅방을 랜드마크와 연결 (양방향 관계 설정이 필요한 경우 사용)
         savedLandmark.assignChatroom(chatroom);
 
-        // 6. 연관 관계 업데이트 후 랜드마크 최종 저장
-        //    채팅방과 연관 관계가 포함된 상태로 랜드마크를 데이터베이스에 최종 저장
-        return landmarkRepository.save(savedLandmark);
+        return landmarkRepository.save(savedLandmark); // 최종 저장
+    }
+
+    // 랜드마크 삭제
+    @Transactional
+    public String deleteLandmark(Long id) {
+        // 1. 랜드마크 조회
+        Landmark landmark = landmarkRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 랜드마크입니다."));
+
+        // 2. is_deleted 상태 확인
+        if (landmark.isDeleted()) {
+            throw new IllegalStateException("이미 삭제된 랜드마크입니다.");
+        }
+
+        // 3. 랜드마크 삭제 처리
+        landmark.deleteTrue();
+
+        // 4. 연관된 채팅방 삭제 처리
+        ChatroomEntity chatroom = landmark.getChatroom();
+        if (chatroom != null) {
+            if (chatroom.isDeleted()) {
+                throw new IllegalStateException("채팅방은 이미 삭제된 상태입니다.");
+            }
+            chatroom.deleteTrue();
+            chatroomRepository.save(chatroom); // 채팅방 변경 사항 저장
+        }
+
+        landmarkRepository.save(landmark); // 랜드마크 변경 사항 저장
+
+        // 삭제된 랜드마크의 제목 반환
+        return landmark.getName();
     }
 }
 
