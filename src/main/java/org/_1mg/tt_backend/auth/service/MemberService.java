@@ -2,7 +2,6 @@ package org._1mg.tt_backend.auth.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +9,13 @@ import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.exception.jwt.custom.CustomJwtException;
-import org._1mg.tt_backend.auth.exception.jwt.custom.JwtExpiredTokenException;
 import org._1mg.tt_backend.auth.exception.member.custom.NicknameAlreadyExistsException;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
+import org._1mg.tt_backend.base.CustomException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -35,7 +34,8 @@ public class MemberService {
 
     public Member findMember(String memberId) {
 
-        return memberRepository.findById(UUID.fromString(memberId)).orElseThrow();
+        return memberRepository.findById(UUID.fromString(memberId)).orElseThrow(() ->
+                new UsernameNotFoundException(CustomException.USER_NOT_FOUND.getMessage()));
     }
 
     public void updateMember(ProfileDTO profileDTO, String memberId) {
@@ -48,7 +48,6 @@ public class MemberService {
 
         Profile profile = profileRepository.findByNickname(nickname);
         if (profile != null) {
-            log.error("NOT UNIQUE NICKNAME");
             throw new NicknameAlreadyExistsException("NOT UNIQUE NICKNAME", nickname);
         }
 
@@ -61,7 +60,6 @@ public class MemberService {
         Member beforeJoin = memberRepository.findByOauthId(memberDTO.getOauthId());
 
         if (beforeJoin != null) {
-            log.error("USER ALREADY EXISTS");
             if (!beforeJoin.isDeleted()) {
                 throw new UserAlreadyExistsException("USER ALREADY EXISTS");
             } else {
@@ -75,28 +73,19 @@ public class MemberService {
 
     public void saveRefreshToken(String memberId, String refreshToken) {
 
-        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow();
+        Member member = findMember(memberId);
         member.updateRefreshToken(refreshToken);
     }
 
     public String refresh(String memberId) {
 
-        Member member = memberRepository.findById(UUID.fromString(memberId)).orElseThrow();
+        Member member = findMember(memberId);
 
         if (member.getRefreshToken() == null) {
-            log.error("REFRESH TOKEN IS NULL");
-            throw new CustomJwtException("REFRESH TOKEN IS NULL");
+            throw new IllegalArgumentException(CustomException.REFRESH_TOKEN_IS_NULL.getMessage());
         }
 
-        try {
-            jwtUtils.verifyToken(member.getRefreshToken());
-        } catch (ExpiredJwtException e) {
-            log.error("REFRESH TOKEN EXPIRED");
-            throw new JwtExpiredTokenException("REFRESH TOKEN EXPIRED");
-        } catch (Exception e) {
-            log.error("REFRESH TOKEN ERROR");
-            throw new CustomJwtException("REFRESH TOKEN ERROR");
-        }
+        jwtUtils.verifyToken(member.getRefreshToken());
 
         Long EXPIRED_REFRESH = 12 * 30 * 24 * 60 * 60L;
         String refresh = jwtUtils.createJwt("refresh", memberId, member.getRole().toString(), EXPIRED_REFRESH);

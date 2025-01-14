@@ -1,8 +1,8 @@
 package org._1mg.tt_backend.auth.exception.jwt.handler;
 
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org._1mg.tt_backend.auth.exception.jwt.custom.JwtInvalidSignException;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -28,6 +28,6 @@ public class JwtSignExceptionHandler implements JwtExceptionHandler {
         if (request.getAttribute("customException") == null) {
             return false;
         }
-        return request.getAttribute("customException") instanceof JwtInvalidSignException;
+        return request.getAttribute("customException") instanceof SignatureException;
     }
 }

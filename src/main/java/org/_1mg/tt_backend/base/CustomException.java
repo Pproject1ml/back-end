@@ -29,6 +29,7 @@ public enum CustomException {
      */
     ALREADY_EXISTS_USER(41, "이미 회원가입이 된 계정입니다"),
     ALREADY_EXISTS_NICKNAME(42, "이미 존재하는 닉네임입니다"),
+    USER_NOT_FOUND(43, "존재하지 않는 사용자입니다"),
 
     /**
      * 기본 토큰 관련 예외
@@ -37,7 +38,8 @@ public enum CustomException {
      */
     DEFAULT_TOKEN_ERROR(50, "토큰 관련 에러가 발생했습니다"),
     EXPIRED_TOKEN(51, "만료된 토큰입니다"),
-    SIGNATURE_INVALID(52, "JWT 서명이 일치하지 않습니다");
+    SIGNATURE_INVALID(52, "JWT 서명이 일치하지 않습니다"),
+    REFRESH_TOKEN_IS_NULL(53, "리프레쉬 토큰이 없습니다");
 
     private final int status;
     private final String message;

@@ -1,8 +1,8 @@
 package org._1mg.tt_backend.auth.exception.jwt.handler;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org._1mg.tt_backend.auth.exception.jwt.custom.JwtExpiredTokenException;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -29,6 +29,6 @@ public class JwtExpiredExceptionHandler implements JwtExceptionHandler {
         if (request.getAttribute("customException") == null) {
             return false;
         }
-        return request.getAttribute("customException") instanceof JwtExpiredTokenException || exception instanceof JwtExpiredTokenException;
+        return request.getAttribute("customException") instanceof ExpiredJwtException;
     }
 }

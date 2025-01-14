@@ -2,6 +2,7 @@ package org._1mg.tt_backend.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,12 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.entity.Role;
-import org._1mg.tt_backend.auth.exception.jwt.custom.CustomJwtException;
-import org._1mg.tt_backend.auth.exception.jwt.custom.JwtExpiredTokenException;
-import org._1mg.tt_backend.auth.exception.jwt.custom.JwtInvalidSignException;
 import org._1mg.tt_backend.auth.security.CustomAuthenticationToken;
 import org._1mg.tt_backend.auth.security.CustomUserDetails;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -48,19 +45,16 @@ public class JwtFilter extends OncePerRequestFilter {
             claims = jwtUtils.verifyToken(token);
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token");
-            AuthenticationException newE = new JwtExpiredTokenException("EXPIRED JWT TOKEN : " + e.getMessage());
-            request.setAttribute("customException", newE);
-            throw newE;
+            request.setAttribute("customException", e);
+            throw e;
         } catch (SignatureException e) {
             log.error("Invalid JWT Signature");
-            AuthenticationException newE = new JwtInvalidSignException("INVALID JWT SIGNATURE : " + e.getMessage());
-            request.setAttribute("customException", newE);
-            throw newE;
-        } catch (Exception e) {
+            request.setAttribute("customException", e);
+            throw e;
+        } catch (JwtException e) {
             log.error("JWT ERROR {}", e.getMessage());
-            AuthenticationException newE = new CustomJwtException("JWT ERROR : " + e.getMessage());
-            request.setAttribute("customException", newE);
-            throw newE;
+            request.setAttribute("customException", e);
+            throw e;
         }
 
         //claims.getExpiration().before(new Date())

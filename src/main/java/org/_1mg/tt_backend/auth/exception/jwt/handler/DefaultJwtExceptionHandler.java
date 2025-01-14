@@ -1,8 +1,8 @@
 package org._1mg.tt_backend.auth.exception.jwt.handler;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org._1mg.tt_backend.auth.exception.jwt.custom.CustomJwtException;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -31,6 +31,6 @@ public class DefaultJwtExceptionHandler implements JwtExceptionHandler {
             return false;
         }
 
-        return request.getAttribute("customException").getClass().equals(CustomJwtException.class);
+        return request.getAttribute("customException").getClass().equals(JwtException.class);
     }
 }
