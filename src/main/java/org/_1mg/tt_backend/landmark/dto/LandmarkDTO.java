@@ -1,18 +1,17 @@
 package org._1mg.tt_backend.landmark.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class LandmarkDTO {
 
+    private String landmarkId;
     private String name;
     private Double latitude;
     private Double longitude;
