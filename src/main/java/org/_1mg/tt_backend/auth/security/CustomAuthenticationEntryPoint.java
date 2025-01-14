@@ -33,7 +33,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         //기본적인 예외 응답 메시지 양식
         ResponseDTO<String> responseDTO = ResponseDTO.<String>builder()
                 .status(NEED_SIGN_IN.getStatus())
-                .message(url + " NEED TO SING IN")
+                .message(url + " " + NEED_SIGN_IN.getMessage())
                 .build();
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

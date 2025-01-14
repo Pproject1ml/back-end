@@ -26,7 +26,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 src/test/
-src/main/java/org/_1mg/tt_backend/base/TestController.java
+src/main/java/org/_1mg/tt_backend/base/test/
 src/main/resources/application-secret.yml
 
 ### NetBeans ###

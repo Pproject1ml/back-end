@@ -82,9 +82,9 @@ public class SecurityConfig {
                             .anyRequest().authenticated();
                 });
         http
-                .addFilterBefore(new JwtFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
-        http
                 .addFilterAt(customLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JwtFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .exceptionHandling(exception ->
@@ -111,6 +111,8 @@ public class SecurityConfig {
         return http
                 .getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(authenticationProvider)
+                //parent를 null로 해줘야 인증 실패 시 두 번 인증하지 않음
+                .parentAuthenticationManager(null)
                 .build();
     }
 }
