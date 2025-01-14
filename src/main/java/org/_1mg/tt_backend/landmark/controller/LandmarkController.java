@@ -1,10 +1,11 @@
-package org._1mg.tt_backend.landmark;
+package org._1mg.tt_backend.landmark.controller;
 
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
 import org._1mg.tt_backend.landmark.entity.Landmark;
+import org._1mg.tt_backend.landmark.service.LandmarkService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class LandmarkController {
                 .build();
     }
 
+    // 랜드마크 생성 -> 채팅방 생성
     @PostMapping("/landmark")
     public ResponseDTO<LandmarkDTO> createLandmark(@RequestBody LandmarkDTO landmarkDTO) {
         // 랜드마크 및 채팅방 생성 서비스 호출

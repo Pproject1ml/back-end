@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.landmark;
+package org._1mg.tt_backend.landmark.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +7,7 @@ import org._1mg.tt_backend.chat.service.ChatroomService;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
 import org._1mg.tt_backend.landmark.entity.Landmark;
+import org._1mg.tt_backend.landmark.repository.LandmarkRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

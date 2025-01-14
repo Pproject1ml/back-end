@@ -1,4 +1,4 @@
-package org._1mg.tt_backend.landmark;
+package org._1mg.tt_backend.landmark.repository;
 
 import org._1mg.tt_backend.landmark.entity.Landmark;
 import org.springframework.data.jpa.repository.JpaRepository;
