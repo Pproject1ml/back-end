@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.base.BaseEntity;
+import org._1mg.tt_backend.base.CustomException;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 
@@ -37,7 +38,7 @@ public class Landmark extends BaseEntity {
      */
     public void assignChatroom(ChatroomEntity chatroom) {
         if (this.chatroom != null) {
-            throw new IllegalStateException("이미 채팅방이 연결된 랜드마크입니다.");
+            throw new IllegalStateException(CustomException.LANDMARK_ALREADY_HAS_CHATROOM.getMessage());
         }
         this.chatroom = chatroom;
     }
