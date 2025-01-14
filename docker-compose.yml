@@ -1,3 +1,4 @@
+#여기있는 파일이 동작하는게 아님 실제 docker compose는 따로 존재함
 services:
   server:
     image: teamonemg/tt-server:latest
@@ -7,6 +8,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mariadb://testDBContainer:3306/testdb
       - SPRING_DATASOURCE_USERNAME=testuser
       - SPRING_DATASOURCE_PASSWORD=232323
+      - spring.jwt.secret=
     networks:
       - testnet
     ports:
