@@ -155,5 +155,22 @@ public class LandmarkService {
         // 삭제된 랜드마크의 제목 반환
         return landmark.getName();
     }
+
+    public void checkLocation(org._1mg.tt_backend.chat.dto.LocationDTO location) {
+
+        Landmark landmark = landmarkRepository.findByChatroomId(location.getChatroom());
+        double centralLat = location.getLatitude();
+        double centralLon = location.getLongitude();
+        Integer radius = location.getRadius();
+
+        if (!isWithinRadius(
+                centralLat,
+                centralLon,
+                landmark.getLatitude(),
+                landmark.getLongitude(),
+                radius)) {
+            throw new IllegalArgumentException(CustomException.LANDMARK_INVALID_LOCATION.getMessage());
+        }
+    }
 }
 
