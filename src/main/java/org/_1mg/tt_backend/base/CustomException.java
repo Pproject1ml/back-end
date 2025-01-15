@@ -53,6 +53,7 @@ public enum CustomException {
     LANDMARK_ALREADY_HAS_CHATROOM(64, "이미 채팅방이 연결된 랜드마크입니다."),
     LANDMARK_ILLEGAL_ARGUMENT(65, "랜드마크 관련 잘못된 요청이 전달되었습니다."),
     LANDMARK_GENERAL_ERROR(66, "랜드마크 관련 내부 서버 오류가 발생했습니다."),
+    LANDMARK_INVALID_LOCATION(69, "랜드마크가 가용 위치 내에 존재하지 않습니다"),
     /**
      * 좌표 관련 예외
      */
