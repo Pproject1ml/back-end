@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
-import org._1mg.tt_backend.chat.dto.DieDTO;
-import org._1mg.tt_backend.chat.dto.JoinDTO;
-import org._1mg.tt_backend.chat.dto.LeaveDTO;
-import org._1mg.tt_backend.chat.dto.TextDTO;
+import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
@@ -34,7 +31,7 @@ public class ChatService {
     private final ProfileRepository profileRepository;
     private final ProfileChatroomRepository profileChatroomRepository;
 
-    public List<TextDTO> getMessagesByRange(Long chatroomId, Long start, Long end) {
+    public List<TextDTO> getMessagesByRange(RefreshDTO refreshDTO) {
 
         /*
          chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
@@ -42,18 +39,22 @@ public class ChatService {
          end : STOMP Socket 연결 이후 APP cache에 들어가는 첫 메세지
          */
 
+        Long start = refreshDTO.getStart();
+        Long end = refreshDTO.getEnd();
+        Long chatroom = refreshDTO.getChatroom();
+
         if (start == null) {
             return new ArrayList<>();
         }
 
         if (end == null) {
-            return messageRepository.findMessagesFromStart(chatroomId, start)
+            return messageRepository.findMessagesFromStart(chatroom, start)
                     .stream()
                     .map(MessageEntity::convertToText)
                     .toList();
         }
 
-        return messageRepository.findMessagesBetweenStartAndEnd(chatroomId, start, end)
+        return messageRepository.findMessagesBetweenStartAndEnd(chatroom, start, end)
                 .stream()
                 .map(MessageEntity::convertToText)
                 .toList();
