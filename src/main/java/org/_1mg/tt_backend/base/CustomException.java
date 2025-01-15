@@ -50,8 +50,13 @@ public enum CustomException {
     LANDMARK_ALREADY_DELETED(62, "이미 삭제된 랜드마크입니다."),
     LANDMARK_MISSING_REQUIRED_FIELDS(63, "랜드마크 생성 시 필수 데이터가 누락되었습니다."),
     LANDMARK_ALREADY_HAS_CHATROOM(64, "이미 채팅방이 연결된 랜드마크입니다."),
-    LANDMARK_ILLEGAL_ARGUMENT(90, "랜드마크 관련 잘못된 요청이 전달되었습니다."),
-    LANDMARK_GENERAL_ERROR(91, "랜드마크 관련 내부 서버 오류가 발생했습니다."),
+    LANDMARK_ILLEGAL_ARGUMENT(65, "랜드마크 관련 잘못된 요청이 전달되었습니다."),
+    LANDMARK_GENERAL_ERROR(66, "랜드마크 관련 내부 서버 오류가 발생했습니다."),
+    /**
+     * 좌표 관련 예외
+     */
+    INVALID_LATITUDE(67, "위도(Latitude)는 -90에서 90 사이여야 합니다."),
+    INVALID_LONGITUDE(68, "경도(Longitude)는 -180에서 180 사이여야 합니다."),
 
     /**
      * 채팅방 관련 예외
