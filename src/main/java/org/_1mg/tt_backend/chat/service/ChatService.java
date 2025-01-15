@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
+import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
@@ -14,8 +15,10 @@ import org._1mg.tt_backend.chat.exception.ProfileNotParticipants;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,15 +63,29 @@ public class ChatService {
                 .toList();
     }
 
-    public void joinChatroom(JoinDTO joinDTO) {
+    public String joinChatroom(JoinDTO joinDTO) {
 
         Profile profile = findProfile(joinDTO.getProfileId());
         ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId());
 
         profileChatroomRepository.save(ProfileChatroomEntity.create(profile, chatroom));
+
+        return profile.getNickname();
     }
 
-    public TextDTO sendText(TextDTO textDTO, Long chatroomId) {
+    public boolean checkFirstMessage(Long chatroomId, LocalDateTime now) {
+
+        MessageEntity lastMessage = messageRepository.findLastMessageWithChatroom(chatroomId, Limit.of(1));
+        if (lastMessage == null) {
+            return true;
+        }
+        return now.toLocalDate().isAfter(lastMessage.getCreatedAt().toLocalDate());
+    }
+
+    public List<TextDTO> sendText(TextDTO textDTO, Long chatroomId) {
+
+        List<TextDTO> result = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
 
         //profile 조회
         Profile profile = findProfile(textDTO.getProfileId());
@@ -79,6 +96,14 @@ public class ChatService {
         //참가 여부 확인
         checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
 
+        //오늘의 첫 메세지인지 확인
+        if (checkFirstMessage(chatroomId, now)) {
+
+            MessageEntity date = MessageEntity.create(chatroom, profile, MessageType.DATE, now.toString());
+            messageRepository.save(date);
+            result.add(date.convertToText());
+        }
+
         //저장
         MessageEntity message = MessageEntity.create(chatroom, profile, textDTO.getMessageType(), textDTO.getContent());
         message = messageRepository.save(message);
@@ -86,7 +111,9 @@ public class ChatService {
         //createdAt 필드 초기화 후 반환
         textDTO.setMessageId(message.getMessageId().toString());
         textDTO.setCreatedAt(message.getCreatedAt());
-        return textDTO;
+        result.add(textDTO);
+
+        return result;
     }
 
     public Profile findProfile(String profileId) {
