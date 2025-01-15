@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
-import org._1mg.tt_backend.chat.dto.MessageDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.ChatService;
 import org._1mg.tt_backend.chat.service.ChatroomService;
@@ -44,11 +43,13 @@ public class ChatController {
 
     @ResponseBody
     @GetMapping("/chat/refresh")
-    public ResponseDTO<List<MessageDTO>> refresh(@RequestParam("chatroom") Long chatroomId, @RequestParam("start") Long startId, @RequestParam("end") Long endId) {
+    public ResponseDTO<List<TextDTO>> refresh(@RequestParam(name = "chatroom") Long chatroomId,
+                                              @RequestParam(name = "start", required = false) Long startId,
+                                              @RequestParam(name = "end", required = false) Long endId) {
 
-        List<MessageDTO> result = chatService.getMessagesByRange(chatroomId, startId, endId);
+        List<TextDTO> result = chatService.getMessagesByRange(chatroomId, startId, endId);
 
-        return ResponseDTO.<List<MessageDTO>>builder()
+        return ResponseDTO.<List<TextDTO>>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
                 .data(result)
