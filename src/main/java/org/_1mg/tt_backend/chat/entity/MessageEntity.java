@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.MessageType;
-import org._1mg.tt_backend.chat.dto.MessageDTO;
+import org._1mg.tt_backend.chat.dto.TextDTO;
 
 // 채팅 메시지 엔터티
 @Getter
@@ -48,11 +48,12 @@ public class MessageEntity extends BaseEntity {
                 .build();
     }
 
-    public MessageDTO convertToDTO() {
+    public TextDTO convertToText() {
 
-        return MessageDTO.builder()
+        return TextDTO.builder()
                 .messageId(this.messageId.toString())
-                .profile(this.profile.convertToDTO())
+                .profileId(this.profile.getProfileId().toString())
+                .chatroomId(this.chatroom.getChatroomId().toString())
                 .content(this.content)
                 .messageType(this.messageType)
                 .createdAt(super.getCreatedAt())

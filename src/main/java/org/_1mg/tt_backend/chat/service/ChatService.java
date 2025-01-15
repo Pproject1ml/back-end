@@ -5,7 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
 import org._1mg.tt_backend.auth.repository.ProfileRepository;
-import org._1mg.tt_backend.chat.dto.*;
+import org._1mg.tt_backend.chat.dto.DieDTO;
+import org._1mg.tt_backend.chat.dto.JoinDTO;
+import org._1mg.tt_backend.chat.dto.LeaveDTO;
+import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
@@ -16,7 +19,10 @@ import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org._1mg.tt_backend.base.CustomException.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +34,28 @@ public class ChatService {
     private final ProfileRepository profileRepository;
     private final ProfileChatroomRepository profileChatroomRepository;
 
-    public List<MessageDTO> getMessagesByRange(Long chatroomId, Long start, Long end) {
+    public List<TextDTO> getMessagesByRange(Long chatroomId, Long start, Long end) {
 
         /*
          chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
          start : APP Local storage에 저장되어 있는 마지막 메세지
          end : STOMP Socket 연결 이후 APP cache에 들어가는 첫 메세지
          */
-        return messageRepository.findMessagesByChatroomIdAndIdRange(chatroomId, start, end)
+
+        if (start == null) {
+            return new ArrayList<>();
+        }
+
+        if (end == null) {
+            return messageRepository.findMessagesFromStart(chatroomId, start)
+                    .stream()
+                    .map(MessageEntity::convertToText)
+                    .toList();
+        }
+
+        return messageRepository.findMessagesBetweenStartAndEnd(chatroomId, start, end)
                 .stream()
-                .map(MessageEntity::convertToDTO)
+                .map(MessageEntity::convertToText)
                 .toList();
     }
 
@@ -74,21 +92,21 @@ public class ChatService {
 
         Long id = Long.parseLong(profileId);
         return profileRepository.findById(id)
-                .orElseThrow(() -> new ProfileNotFoundException(profileId + " NOT FOUND"));
+                .orElseThrow(() -> new ProfileNotFoundException(USER_NOT_FOUND.getMessage()));
     }
 
     public ChatroomEntity findChatroom(String chatroomId) {
 
         Long id = Long.parseLong(chatroomId);
         return chatroomRepository.findById(id)
-                .orElseThrow(() -> new ChatroomNotFoundException(id + " NOT FOUND"));
+                .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
     }
 
     public ProfileChatroomEntity checkParticipant(Long profileId, Long chatroomId) {
 
         ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
         if (profileChatroom == null) {
-            throw new ProfileNotParticipants(profileId + "IS NOT IN CHATROOM " + chatroomId);
+            throw new ProfileNotParticipants(USER_NOT_IN_CHATROOM.getMessage());
         }
 
         return profileChatroom;
@@ -102,7 +120,6 @@ public class ChatService {
 
         ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.leave();
-
     }
 
     public void dieChatroom(DieDTO dieDTO) {

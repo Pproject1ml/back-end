@@ -30,6 +30,7 @@ public enum CustomException {
     ALREADY_EXISTS_USER(41, "이미 회원가입이 된 계정입니다"),
     ALREADY_EXISTS_NICKNAME(42, "이미 존재하는 닉네임입니다"),
     USER_NOT_FOUND(43, "존재하지 않는 사용자입니다"),
+    USER_NOT_IN_CHATROOM(44, "사용자가 채팅방에 참여 중이지 않습니다"),
 
     /**
      * 기본 토큰 관련 예외
@@ -62,7 +63,8 @@ public enum CustomException {
      * 채팅방 관련 예외
      */
     CHATROOM_ALREADY_DELETED(70, "이미 삭제된 채팅방입니다."),
-    CHATROOM_ALREADY_EXISTS(71, "이미 생성된 채팅방입니다.");
+    CHATROOM_ALREADY_EXISTS(71, "이미 생성된 채팅방입니다."),
+    CHATROOM_NOT_FOUND(72, "채팅방이 없습니다");
 
     private final int status;
     private final String message;

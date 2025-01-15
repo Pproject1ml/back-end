@@ -18,9 +18,17 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     @Query("SELECT m FROM MessageEntity m " +
             "JOIN FETCH m.profile p " +
             "WHERE m.chatroom.chatroomId = :chatroomId " +
-            "AND m.messageId BETWEEN :startId " + "AND :endId " +
+            "AND m.messageId > :startId " + "AND m.messageId < :endId " +
             "ORDER BY m.messageId ASC")
-    List<MessageEntity> findMessagesByChatroomIdAndIdRange(@Param("chatroomId") Long chatroomId,
-                                                           @Param("startId") Long startId,
-                                                           @Param("endId") Long endId);
+    List<MessageEntity> findMessagesBetweenStartAndEnd(@Param("chatroomId") Long chatroomId,
+                                                       @Param("startId") Long startId,
+                                                       @Param("endId") Long endId);
+
+    @Query("SELECT m FROM MessageEntity m " +
+            "JOIN FETCH m.profile p " +
+            "WHERE m.chatroom.chatroomId = :chatroomId " +
+            "AND m.messageId > :startId " +
+            "ORDER BY m.messageId ASC")
+    List<MessageEntity> findMessagesFromStart(@Param("chatroomId") Long chatroomId,
+                                              @Param("startId") Long startId);
 }
