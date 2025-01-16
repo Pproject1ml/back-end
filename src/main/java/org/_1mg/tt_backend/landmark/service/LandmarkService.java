@@ -76,7 +76,7 @@ public class LandmarkService {
                 * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        double distanceKm = R * c;
+        double distanceKm = R * c * 1000;
 
         return distanceKm <= radiusKm;
     }
