@@ -34,25 +34,17 @@ public class LandmarkController {
     }
 
     @GetMapping("/landmark")
-    public ResponseDTO<List<LandmarkDTO>> getLandmarks(@RequestParam("longitude") Double longitude,
-                                                       @RequestParam("latitude") Double latitude,
-                                                       @RequestParam("radius") Integer radius) {
-
-        LocationDTO location = LocationDTO.builder()
-                .longitude(longitude)
-                .latitude(latitude)
-                .radius(radius)
-                .build();
+    public ResponseDTO<List<LandmarkDTO>> getLandmarks(@ModelAttribute LocationDTO location) {
 
         // 위도 및 경도 범위 검증
-        validateCoordinates(latitude, longitude);
+        validateCoordinates(location.getLatitude(), location.getLongitude());
 
         // 가까운 랜드마크 목록 가져오기 (최대 50개)
         List<LandmarkDTO> result = landmarkService.getLandmarks(location);
 
         return ResponseDTO.<List<LandmarkDTO>>builder()
                 .status(OK.getStatus())
-                .message("NEARBY LANDMARK FOR " + location.getLatitude() + "," + location.getLongitude())
+                .message(OK.getMessage())
                 .data(result)
                 .build();
     }

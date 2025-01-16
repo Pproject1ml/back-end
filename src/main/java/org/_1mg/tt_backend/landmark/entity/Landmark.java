@@ -62,11 +62,11 @@ public class Landmark extends BaseEntity {
                 .longitude(this.getLongitude())
                 .radius(this.getRadius())
                 .imagePath(this.getImagePath())
-                .chatroom(this.chatroom.convertToDTOWithChatroomInfo()) // Chatroom 정보 포함
+                .chatroom(this.chatroom.convertToDTOForMap(this.getLongitude(), this.getLatitude())) // Chatroom 정보 포함
                 .build();
     }
 
-    
+
     public void deleteTrue() {
         super.updateDeleted(true);
     }

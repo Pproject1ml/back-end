@@ -35,7 +35,6 @@ public class LandmarkService {
         // 위도 및 경도 범위 검증
         validateCoordinates(location.getLatitude(), location.getLongitude());
 
-
         // 페이징 정보 설정 (최대 50개)
         Pageable pageable = PageRequest.of(0, 50);
 
