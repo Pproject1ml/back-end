@@ -10,6 +10,7 @@ import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
+import org._1mg.tt_backend.chat.exception.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.exception.ProfileNotParticipants;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
@@ -68,6 +69,10 @@ public class ChatService {
         Profile profile = findProfile(joinDTO.getProfileId());
         ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId());
 
+        ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        if (profileChatroom != null) {
+            throw new AlreadyInChatroomException(USER_ALREADY_IN_CHATROOM.getMessage());
+        }
         profileChatroomRepository.save(ProfileChatroomEntity.create(profile, chatroom));
 
         return profile.getNickname();
