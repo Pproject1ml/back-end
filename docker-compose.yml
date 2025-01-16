@@ -9,6 +9,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=testuser
       - SPRING_DATASOURCE_PASSWORD=232323
       - spring.jwt.secret=
+      - TZ=Asia/Seoul
     networks:
       - testnet
     ports:
