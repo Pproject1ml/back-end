@@ -9,8 +9,9 @@ import java.util.List;
 
 public interface ChatroomRepository extends JpaRepository<ChatroomEntity, Long> {
 
-    @Query("SELECT DISTINCT c FROM ChatroomEntity c " +
+    @Query("SELECT c FROM ChatroomEntity c " +
             "JOIN FETCH c.profileChatrooms pc " +
+            "JOIN FETCH c.landmark l " +
             "JOIN FETCH pc.profile p " +
             "WHERE p.profileId = :profileId")
     List<ChatroomEntity> findChatroomsByProfileId(@Param("profileId") Long profileId);

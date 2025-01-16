@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
+import org._1mg.tt_backend.landmark.entity.Landmark;
 
 import java.util.List;
 
@@ -31,11 +32,28 @@ public class ChatroomEntity extends BaseEntity {
     @OneToMany(mappedBy = "chatroom")
     private List<ProfileChatroomEntity> profileChatrooms;
 
-    public ChatroomDTO convertToDTOWithChatroomInfo() {
+    @OneToOne(mappedBy = "chatroom")
+    private Landmark landmark;
+
+    public ChatroomDTO convertToDTOForMap(double longitude, double latitude) {
 
         return ChatroomDTO.builder()
                 .chatroomId(this.chatroomId.toString())
                 .title(this.title)
+                .longitude(longitude)
+                .latitude(latitude)
+                .createdAt(super.getCreatedAt())
+                .updatedAt(super.getUpdatedAt())
+                .build();
+    }
+
+    public ChatroomDTO convertToDTOForTab() {
+
+        return ChatroomDTO.builder()
+                .chatroomId(this.chatroomId.toString())
+                .title(this.title)
+                .longitude(this.landmark.getLongitude())
+                .latitude(this.landmark.getLatitude())
                 .createdAt(super.getCreatedAt())
                 .updatedAt(super.getUpdatedAt())
                 .build();

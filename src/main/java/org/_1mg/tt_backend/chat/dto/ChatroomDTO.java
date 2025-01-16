@@ -16,6 +16,8 @@ public class ChatroomDTO {
     private String chatroomId;
     private String title;
     private List<ProfileDTO> profiles;
+    private double longitude;
+    private double latitude;
     private String lastMessage;
     private LocalDateTime lastMessageAt;
     private String lastReadMessageId;
