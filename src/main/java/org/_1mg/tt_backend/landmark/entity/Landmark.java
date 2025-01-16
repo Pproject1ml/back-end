@@ -66,6 +66,7 @@ public class Landmark extends BaseEntity {
                 .build();
     }
 
+    
     public void deleteTrue() {
         super.updateDeleted(true);
     }

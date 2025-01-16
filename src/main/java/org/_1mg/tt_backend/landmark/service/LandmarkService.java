@@ -2,6 +2,7 @@ package org._1mg.tt_backend.landmark.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.CustomException;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
@@ -10,12 +11,16 @@ import org._1mg.tt_backend.landmark.dto.LandmarkDTO;
 import org._1mg.tt_backend.landmark.dto.LocationDTO;
 import org._1mg.tt_backend.landmark.entity.Landmark;
 import org._1mg.tt_backend.landmark.repository.LandmarkRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LandmarkService {
@@ -24,21 +29,35 @@ public class LandmarkService {
     private final ChatroomService chatroomService;
     private final ChatroomRepository chatroomRepository;
 
+    // 랜드마크 목록
     public List<LandmarkDTO> getLandmarks(LocationDTO location) {
 
-        double centralLat = location.getLatitude();
-        double centralLon = location.getLongitude();
-        Integer radius = location.getRadius();
+        // 위도 및 경도 범위 검증
+        validateCoordinates(location.getLatitude(), location.getLongitude());
 
-        return landmarkRepository.findAll().stream()
-                .filter(landmark -> isWithinRadius(
-                        centralLat,
-                        centralLon,
-                        landmark.getLatitude(),
-                        landmark.getLongitude(),
-                        radius))
-                .map(Landmark::convertToDTO)
+
+        // 페이징 정보 설정 (최대 50개)
+        Pageable pageable = PageRequest.of(0, 50);
+
+        // JPA에서 필터링, 정렬, 제한, 채팅방 조인까지 처리
+        return landmarkRepository.findNearbyLandmarksWithChatroom(
+                        location.getLatitude(),
+                        location.getLongitude(),
+                        location.getRadius(),
+                        pageable
+                ).stream()
+                .map(Landmark::convertToDTO) // DTO 변환
                 .collect(Collectors.toList());
+    }
+
+    // 위도 경도 검증
+    private void validateCoordinates(Double latitude, Double longitude) {
+        if (latitude < -90 || latitude > 90) {
+            throw new IllegalArgumentException(CustomException.INVALID_LATITUDE.getMessage());
+        }
+        if (longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException(CustomException.INVALID_LONGITUDE.getMessage());
+        }
     }
 
     public boolean isWithinRadius(double centralLat, double centralLon, double targetLat, double targetLon, double radiusKm) {
@@ -69,12 +88,16 @@ public class LandmarkService {
      * @param landmarkDTO 랜드마크 데이터 (위치, 이름, 반경 등 정보를 포함)
      * @return 생성된 랜드마크 엔터티
      */
+    // 랜드마크 개별 추가
     @Transactional
     public Landmark saveWithChatroom(LandmarkDTO landmarkDTO) {
         // 랜드마크 필수 값 검증
         if (landmarkDTO.getName() == null || landmarkDTO.getLatitude() == null || landmarkDTO.getLongitude() == null) {
             throw new IllegalArgumentException(CustomException.LANDMARK_MISSING_REQUIRED_FIELDS.getMessage());
         }
+        // 위도와 경도 검증
+        validateCoordinates(landmarkDTO.getLatitude(), landmarkDTO.getLongitude());
+
         // 1. 위도와 경도를 기준으로 랜드마크 존재 여부 확인
         Optional<Landmark> existingLandmark = landmarkRepository.findByLatitudeAndLongitude(
                 landmarkDTO.getLatitude(),
@@ -119,6 +142,25 @@ public class LandmarkService {
         savedLandmark.assignChatroom(chatroom);
 
         return landmarkRepository.save(savedLandmark); // 최종 저장
+    }
+
+    // 랜드마크 여러개 추가
+    @Transactional
+    public List<Landmark> saveMultipleWithChatrooms(List<LandmarkDTO> landmarkDTOs) {
+        List<Landmark> savedLandmarks = new ArrayList<>();
+
+        for (LandmarkDTO landmarkDTO : landmarkDTOs) {
+            try {
+                // 기존 단일 저장 로직을 재사용
+                Landmark savedLandmark = saveWithChatroom(landmarkDTO);
+                savedLandmarks.add(savedLandmark); // 성공한 랜드마크만 리스트에 추가
+            } catch (IllegalArgumentException ex) {
+                // 실패한 항목은 로그로 기록하고 처리 건너뜀
+                log.warn("Failed to save landmark: {}", ex.getMessage());
+            }
+        }
+
+        return savedLandmarks; // 저장된 랜드마크 리스트 반환
     }
 
     // 랜드마크 삭제

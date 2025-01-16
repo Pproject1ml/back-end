@@ -6,6 +6,7 @@ import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -18,4 +19,5 @@ public class LandmarkDTO {
     private Integer radius;
     private String imagePath;
     private ChatroomDTO chatroom;
+
 }
