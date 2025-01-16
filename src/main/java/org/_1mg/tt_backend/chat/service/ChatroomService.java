@@ -48,7 +48,7 @@ public class ChatroomService {
         for (ChatroomEntity chatroomEntity : chatroomEntityList) {
 
             //chatroom 기본 정보 저장
-            ChatroomDTO chatroomDTO = chatroomEntity.convertToDTOWithChatroomInfo();
+            ChatroomDTO chatroomDTO = chatroomEntity.convertToDTOForTab();
             Long chatroomId = chatroomEntity.getChatroomId();
 
             //chatroom 참가자 조회
