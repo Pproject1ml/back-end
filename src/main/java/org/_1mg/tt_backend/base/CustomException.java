@@ -65,7 +65,8 @@ public enum CustomException {
      */
     CHATROOM_ALREADY_DELETED(70, "이미 삭제된 채팅방입니다."),
     CHATROOM_ALREADY_EXISTS(71, "이미 생성된 채팅방입니다."),
-    CHATROOM_NOT_FOUND(72, "채팅방이 없습니다");
+    CHATROOM_NOT_FOUND(72, "채팅방이 없습니다"),
+    USER_ALREADY_IN_CHATROOM(73, "이미 채팅방에 참가 중입니다");
 
     private final int status;
     private final String message;
