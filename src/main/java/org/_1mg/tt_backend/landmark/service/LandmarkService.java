@@ -59,7 +59,7 @@ public class LandmarkService {
         }
     }
 
-    public boolean isWithinRadius(double centralLat, double centralLon, double targetLat, double targetLon, double radiusKm) {
+    public boolean isWithinRadius(double centralLat, double centralLon, double targetLat, double targetLon, double radiusM) {
 
         final double R = 6371.0; // Earth's radius in kilometers
 
@@ -76,9 +76,9 @@ public class LandmarkService {
                 * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        double distanceKm = R * c * 1000;
+        double distanceM = R * c * 1000;
 
-        return distanceKm <= radiusKm;
+        return distanceM <= radiusM;
     }
 
     /**
