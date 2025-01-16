@@ -3,7 +3,6 @@ package org._1mg.tt_backend.landmark.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org._1mg.tt_backend.base.CustomException;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.service.ChatroomService;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org._1mg.tt_backend.base.CustomException.*;
 
 @Slf4j
 @Service
@@ -52,10 +53,10 @@ public class LandmarkService {
     // 위도 경도 검증
     private void validateCoordinates(Double latitude, Double longitude) {
         if (latitude < -90 || latitude > 90) {
-            throw new IllegalArgumentException(CustomException.INVALID_LATITUDE.getMessage());
+            throw new IllegalArgumentException(INVALID_LATITUDE.getMessage());
         }
         if (longitude < -180 || longitude > 180) {
-            throw new IllegalArgumentException(CustomException.INVALID_LONGITUDE.getMessage());
+            throw new IllegalArgumentException(INVALID_LONGITUDE.getMessage());
         }
     }
 
@@ -92,7 +93,7 @@ public class LandmarkService {
     public Landmark saveWithChatroom(LandmarkDTO landmarkDTO) {
         // 랜드마크 필수 값 검증
         if (landmarkDTO.getName() == null || landmarkDTO.getLatitude() == null || landmarkDTO.getLongitude() == null) {
-            throw new IllegalArgumentException(CustomException.LANDMARK_MISSING_REQUIRED_FIELDS.getMessage());
+            throw new IllegalArgumentException(LANDMARK_MISSING_REQUIRED_FIELDS.getMessage());
         }
         // 위도와 경도 검증
         validateCoordinates(landmarkDTO.getLatitude(), landmarkDTO.getLongitude());
@@ -106,7 +107,7 @@ public class LandmarkService {
         if (existingLandmark.isPresent()) {
             Landmark landmark = existingLandmark.get();
             if (!landmark.isDeleted()) {
-                throw new IllegalArgumentException(CustomException.LANDMARK_ALREADY_EXISTS.getMessage());
+                throw new IllegalArgumentException(LANDMARK_ALREADY_EXISTS.getMessage());
             }
 
             // 2. 랜드마크가 삭제 상태일 경우 is_deleted를 false로 변경
@@ -116,7 +117,7 @@ public class LandmarkService {
             ChatroomEntity chatroom = landmark.getChatroom();
             if (chatroom != null) {
                 if (!chatroom.isDeleted()) {
-                    throw new IllegalArgumentException(CustomException.LANDMARK_ALREADY_EXISTS.getMessage());
+                    throw new IllegalArgumentException(LANDMARK_ALREADY_EXISTS.getMessage());
                 }
                 chatroom.deleteFalse();
                 chatroomRepository.save(chatroom); // 채팅방 변경 사항 저장
@@ -167,11 +168,11 @@ public class LandmarkService {
     public String deleteLandmark(Long id) {
         // 1. 랜드마크 조회
         Landmark landmark = landmarkRepository.findById(Math.toIntExact(id))
-                .orElseThrow(() -> new IllegalArgumentException(CustomException.LANDMARK_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new IllegalArgumentException(LANDMARK_NOT_FOUND.getMessage()));
 
         // 2. is_deleted 상태 확인
         if (landmark.isDeleted()) {
-            throw new IllegalStateException(CustomException.LANDMARK_ALREADY_DELETED.getMessage());
+            throw new IllegalStateException(LANDMARK_ALREADY_DELETED.getMessage());
         }
 
         // 3. 랜드마크 삭제 처리
@@ -181,7 +182,7 @@ public class LandmarkService {
         ChatroomEntity chatroom = landmark.getChatroom();
         if (chatroom != null) {
             if (chatroom.isDeleted()) {
-                throw new IllegalStateException(CustomException.CHATROOM_ALREADY_DELETED.getMessage());
+                throw new IllegalStateException(CHATROOM_ALREADY_DELETED.getMessage());
             }
 
             // 채팅방을 삭제 상태로 변경
@@ -210,7 +211,7 @@ public class LandmarkService {
                 landmark.getLatitude(),
                 landmark.getLongitude(),
                 radius)) {
-            throw new IllegalArgumentException(CustomException.LANDMARK_INVALID_LOCATION.getMessage());
+            throw new IllegalArgumentException(LANDMARK_INVALID_LOCATION.getMessage());
         }
     }
 }
