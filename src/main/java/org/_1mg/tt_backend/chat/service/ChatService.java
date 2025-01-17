@@ -10,12 +10,9 @@ import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
-import org._1mg.tt_backend.chat.exception.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
-import org._1mg.tt_backend.chat.exception.ProfileNotParticipants;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
-import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +20,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org._1mg.tt_backend.base.CustomException.*;
+import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
+import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class ChatService {
     private final ChatroomRepository chatroomRepository;
     private final MessageRepository messageRepository;
     private final ProfileRepository profileRepository;
-    private final ProfileChatroomRepository profileChatroomRepository;
+    private final ProfileChatroomService profileChatroomService;
 
     public List<TextDTO> getMessagesByRange(RefreshDTO refreshDTO) {
 
@@ -70,11 +68,8 @@ public class ChatService {
         ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId());
         chatroom.join();
 
-        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profile.getProfileId(), chatroom.getChatroomId());
-        if (profileChatroom != null) {
-            throw new AlreadyInChatroomException(USER_ALREADY_IN_CHATROOM.getMessage());
-        }
-        profileChatroomRepository.save(ProfileChatroomEntity.create(profile, chatroom));
+        profileChatroomService.checkAlreadyIn(profile.getProfileId(), chatroom.getChatroomId());
+        profileChatroomService.join(ProfileChatroomEntity.create(profile, chatroom));
 
         return profile.getNickname();
     }
@@ -100,7 +95,7 @@ public class ChatService {
         ChatroomEntity chatroom = findChatroom(textDTO.getChatroomId());
 
         //참가 여부 확인
-        checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
 
         //오늘의 첫 메세지인지 확인
         if (checkFirstMessage(chatroomId, now)) {
@@ -136,16 +131,6 @@ public class ChatService {
                 .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
     }
 
-    public ProfileChatroomEntity checkParticipant(Long profileId, Long chatroomId) {
-
-        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
-        //여기 수정 필요 흠..
-        if (profileChatroom == null) {
-            throw new ProfileNotParticipants(USER_NOT_IN_CHATROOM.getMessage());
-        }
-
-        return profileChatroom;
-    }
 
     public void leaveChatroom(LeaveDTO leaveDTO) {
 
@@ -153,7 +138,7 @@ public class ChatService {
 
         ChatroomEntity chatroom = findChatroom(leaveDTO.getChatroomId());
 
-        ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.leave();
     }
 
@@ -164,7 +149,7 @@ public class ChatService {
         ChatroomEntity chatroom = findChatroom(dieDTO.getProfileId());
         chatroom.die();
 
-        ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.delete();
     }
 }

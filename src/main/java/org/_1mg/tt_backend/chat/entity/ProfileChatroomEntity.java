@@ -29,6 +29,8 @@ public class ProfileChatroomEntity {
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatroomEntity chatroom;
 
+    private boolean alarm;
+
     private LocalDateTime joinedAt;
 
     private LocalDateTime leftAt;
@@ -52,4 +54,7 @@ public class ProfileChatroomEntity {
         this.isDeleted = true;
     }
 
+    public void changeAlarm(boolean alarm) {
+        this.alarm = alarm;
+    }
 }
