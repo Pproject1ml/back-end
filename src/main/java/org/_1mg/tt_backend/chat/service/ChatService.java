@@ -12,6 +12,7 @@ import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
 import org._1mg.tt_backend.chat.exception.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
+import org._1mg.tt_backend.chat.exception.ProfileNotParticipants;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
@@ -69,7 +70,7 @@ public class ChatService {
         ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId());
         chatroom.join();
 
-        ProfileChatroomEntity profileChatroom = checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profile.getProfileId(), chatroom.getChatroomId());
         if (profileChatroom != null) {
             throw new AlreadyInChatroomException(USER_ALREADY_IN_CHATROOM.getMessage());
         }
@@ -140,8 +141,7 @@ public class ChatService {
         ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
         //여기 수정 필요 흠..
         if (profileChatroom == null) {
-            return null;
-            //throw new ProfileNotParticipants(USER_NOT_IN_CHATROOM.getMessage());
+            throw new ProfileNotParticipants(USER_NOT_IN_CHATROOM.getMessage());
         }
 
         return profileChatroom;
