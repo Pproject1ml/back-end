@@ -15,6 +15,7 @@ public class ChatroomDTO {
 
     private String chatroomId;
     private String title;
+    private Integer count;
     private List<ProfileDTO> profiles;
     private double longitude;
     private double latitude;

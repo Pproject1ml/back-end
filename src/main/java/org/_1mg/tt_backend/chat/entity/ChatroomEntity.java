@@ -26,6 +26,9 @@ public class ChatroomEntity extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private int count;
+
     @OneToMany(mappedBy = "chatroom")
     private List<MessageEntity> messageEntities;
 
@@ -40,6 +43,7 @@ public class ChatroomEntity extends BaseEntity {
         return ChatroomDTO.builder()
                 .chatroomId(this.chatroomId.toString())
                 .title(this.title)
+                .count(this.count)
                 .longitude(longitude)
                 .latitude(latitude)
                 .createdAt(super.getCreatedAt())
@@ -52,6 +56,7 @@ public class ChatroomEntity extends BaseEntity {
         return ChatroomDTO.builder()
                 .chatroomId(this.chatroomId.toString())
                 .title(this.title)
+                .count(this.count)
                 .longitude(this.landmark.getLongitude())
                 .latitude(this.landmark.getLatitude())
                 .createdAt(super.getCreatedAt())
@@ -72,5 +77,17 @@ public class ChatroomEntity extends BaseEntity {
 
     public void deleteFalse() {
         super.updateDeleted(false);
+    }
+
+    public void updateTmp(int count) {
+        this.count = count;
+    }
+
+    public int join() {
+        return ++this.count;
+    }
+
+    public int die() {
+        return --this.count;
     }
 }
