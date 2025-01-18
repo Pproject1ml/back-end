@@ -59,6 +59,7 @@ public class ChatroomEntity extends BaseEntity {
                 .count(this.count)
                 .longitude(this.landmark.getLongitude())
                 .latitude(this.landmark.getLatitude())
+                .imagePath(this.landmark.getImagePath())
                 .createdAt(super.getCreatedAt())
                 .updatedAt(super.getUpdatedAt())
                 .build();
@@ -77,10 +78,6 @@ public class ChatroomEntity extends BaseEntity {
 
     public void deleteFalse() {
         super.updateDeleted(false);
-    }
-
-    public void updateTmp(int count) {
-        this.count = count;
     }
 
     public int join() {

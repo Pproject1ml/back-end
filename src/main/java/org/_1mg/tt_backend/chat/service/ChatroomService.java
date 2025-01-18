@@ -47,6 +47,13 @@ public class ChatroomService {
 
         //profileId에 해당하는 chatrooms 조회
         List<ChatroomEntity> chatroomEntityList = chatroomRepository.findChatroomsByProfileId(profileId);
+        /*
+         * 필요한 예외
+         * - profileId에 해당하는 chatroom이 존재하지 않는 겯우
+         * - chatroom에 본인 외에 profile이 존재하지 않는 경우
+         * - chatroom에 해당하는 landmark가 존재하지 않는 경우
+         */
+
 
         //chatrooms에 각각 접근 chatroom의 profiles 조회
         //chatrooms에 각각 접근 마지막 message 조회
