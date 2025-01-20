@@ -131,6 +131,7 @@ public class LandmarkService {
                 landmarkDTO.getName(),
                 landmarkDTO.getLatitude(),
                 landmarkDTO.getLongitude(),
+                landmarkDTO.getAddress(),
                 landmarkDTO.getRadius(),
                 landmarkDTO.getImagePath()
         );

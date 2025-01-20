@@ -16,6 +16,7 @@ public class LandmarkDTO {
     private String name;
     private Double latitude;
     private Double longitude;
+    private String address;
     private Integer radius;
     private String imagePath;
     private ChatroomDTO chatroom;

@@ -23,6 +23,7 @@ public class Landmark extends BaseEntity {
     private String name;
     private Double latitude;
     private Double longitude;
+    private String address;
     @Builder.Default
     private Integer radius = 5000;
     private String imagePath;
@@ -43,11 +44,12 @@ public class Landmark extends BaseEntity {
         this.chatroom = chatroom;
     }
 
-    public static Landmark create(String name, Double latitude, Double longitude, Integer radius, String imagePath) {
+    public static Landmark create(String name, Double latitude, Double longitude, String address, Integer radius, String imagePath) {
         return Landmark.builder()
                 .name(name)
                 .latitude(latitude)
                 .longitude(longitude)
+                .address(address)
                 .radius(radius)
                 .imagePath(imagePath)
                 .build();
@@ -60,6 +62,7 @@ public class Landmark extends BaseEntity {
                 .name(this.getName())
                 .latitude(this.getLatitude())
                 .longitude(this.getLongitude())
+                .address(this.address)
                 .radius(this.getRadius())
                 .imagePath(this.getImagePath())
                 .chatroom(this.chatroom.convertToDTOForMap(this.getLongitude(), this.getLatitude())) // Chatroom 정보 포함
