@@ -4,23 +4,20 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.repository.ProfileRepository;
+import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.dto.AlarmDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
+import org._1mg.tt_backend.chat.dto.DieDTO;
+import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
-import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
-import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.landmark.entity.Landmark;
-import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -28,23 +25,16 @@ import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
 public class ChatroomService {
 
     private final ChatroomRepository chatroomRepository;
-    private final ProfileRepository profileRepository;
-    private final MessageRepository messageRepository;
-    private final ProfileChatroomService profileChatroomService;
-
-    public ChatroomEntity findChatroom(String chatroomId) {
-
-        Long id = Long.parseLong(chatroomId);
-        return chatroomRepository.findById(id)
-                .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
-    }
+    private final ChatUtils chatUtils;
+    private final ProfileService profileService;
 
     /**
      * 랜드마크와 연관된 채팅방을 생성합니다.
      */
     public ChatroomEntity createChatroomForLandmark(Landmark landmark) {
 
-        String chatroomTitle = "Chatroom for " + landmark.getName();
+        //Landmark 이름과 채팅방 이름 통일
+        String chatroomTitle = landmark.getName();
         return chatroomRepository.save(ChatroomEntity.create(chatroomTitle));
     }
 
@@ -75,18 +65,15 @@ public class ChatroomService {
 
             //chatroom 참가자 조회
             //각 chatroom 별 참가자 List 생성
-            List<ProfileDTO> profileDTOs = profileRepository.findProfilesByChatroomId(chatroomId)
-                    .stream()
-                    .map(Profile::convertToDTO)
-                    .toList();
+            List<ProfileDTO> profileDTOs = profileService.findProfiles(chatroomId);
 
             //chatroom 별 참가자 List 추가
             chatroomDTO.setProfiles(profileDTOs);
 
             //채팅방 별 마지막 메세지 조회
-            MessageEntity lastMessage = messageRepository.findLastMessageWithChatroom(chatroomId, Limit.of(1));
-            //채팅방에 메세지가 없는 경우에 대한 처리
-            //이 부분에 대한 예외 처리 필요? 아니면 그냥 NULL로 넘겨도 상관없지 않나..?
+            MessageEntity lastMessage = chatUtils.getLastMessage(chatroomId);
+
+            //마지막 메세지가 없는 경우엔 그냥 NULL로 놔두면 됨
             if (lastMessage != null) {
                 chatroomDTO.setLastMessage(lastMessage.getContent());
                 chatroomDTO.setLastMessageAt(lastMessage.getCreatedAt());
@@ -104,7 +91,30 @@ public class ChatroomService {
         Long profileId = Long.parseLong(alarmDTO.getProfileId());
         Long chatroomId = Long.parseLong(alarmDTO.getChatroomId());
 
-        ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profileId, chatroomId);
+        ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profileId, chatroomId);
         profileChatroom.changeAlarm(alarmDTO.isAlarm());
+    }
+
+    public String joinChatroom(JoinDTO joinDTO) {
+
+        Profile profile = profileService.findProfile(joinDTO.getProfileId());
+        ChatroomEntity chatroom = chatUtils.findChatroom(joinDTO.getChatroomId());
+        chatroom.join();
+
+        chatUtils.checkAlreadyIn(profile.getProfileId(), chatroom.getChatroomId());
+        chatUtils.join(ProfileChatroomEntity.create(profile, chatroom));
+
+        return profile.getNickname();
+    }
+
+    public void dieChatroom(DieDTO dieDTO) {
+
+        Profile profile = profileService.findProfile((dieDTO.getProfileId()));
+
+        ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getProfileId()));
+        chatroom.die();
+
+        ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        profileChatroom.delete();
     }
 }

@@ -3,8 +3,11 @@ package org._1mg.tt_backend.chat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
-import org._1mg.tt_backend.chat.dto.*;
-import org._1mg.tt_backend.chat.service.ChatService;
+import org._1mg.tt_backend.chat.dto.EnterDTO;
+import org._1mg.tt_backend.chat.dto.LeaveDTO;
+import org._1mg.tt_backend.chat.dto.RefreshDTO;
+import org._1mg.tt_backend.chat.dto.TextDTO;
+import org._1mg.tt_backend.chat.service.MessageService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -24,14 +27,14 @@ import static org._1mg.tt_backend.base.CustomException.OK;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatService chatService;
+    private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
 
     @ResponseBody
     @GetMapping("/chat/refresh")
     public ResponseDTO<List<TextDTO>> refresh(@ModelAttribute RefreshDTO refreshDTO) {
 
-        List<TextDTO> result = chatService.getMessagesByRange(refreshDTO);
+        List<TextDTO> result = messageService.getMessagesByRange(refreshDTO);
 
         return ResponseDTO.<List<TextDTO>>builder()
                 .status(OK.getStatus())
@@ -54,25 +57,11 @@ public class ChatController {
                 .build();
     }
 
-    @MessageMapping("/join/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
-
-        String nickname = chatService.joinChatroom(joinDTO);
-        String message = nickname + "님이 채팅방에 입장하셨습니다";
-
-        return ResponseDTO.<String>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .data(message)
-                .build();
-    }
-
     @MessageMapping("/message/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
     public ResponseDTO<TextDTO> textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
-        List<TextDTO> text = chatService.sendText(textDTO, chatroomId);
+        List<TextDTO> text = messageService.sendText(textDTO, chatroomId);
 
         if (text.size() > 1) {
             messagingTemplate.convertAndSend("/sub/room/" + chatroomId,
@@ -94,19 +83,6 @@ public class ChatController {
     @SendTo("/sub/room/{chatroomId}")
     public ResponseDTO<String> leaveMessage(@Payload LeaveDTO leaveDTO, @DestinationVariable Long chatroomId) {
 
-        chatService.leaveChatroom(leaveDTO);
-
-        return ResponseDTO.<String>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .build();
-    }
-
-    @MessageMapping("/die/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> dieMessage(@Payload DieDTO dieDTO, @DestinationVariable Long chatroomId) {
-
-        chatService.dieChatroom(dieDTO);
 
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())

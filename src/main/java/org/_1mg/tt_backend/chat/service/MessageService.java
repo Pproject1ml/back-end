@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
-import org._1mg.tt_backend.chat.dto.*;
+import org._1mg.tt_backend.chat.dto.EnterDTO;
+import org._1mg.tt_backend.chat.dto.LeaveDTO;
+import org._1mg.tt_backend.chat.dto.RefreshDTO;
+import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
-import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,21 +22,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ChatService {
+public class MessageService {
 
     private final MessageRepository messageRepository;
-
-    private final ChatroomService chatroomService;
     private final ProfileService profileService;
-    private final ProfileChatroomService profileChatroomService;
+    private final ChatUtils chatUtils;
 
+    /**
+     * chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
+     * start : APP Local storage에 저장되어 있는 마지막 메세지
+     * end : STOMP Socket 연결 이후 APP cache에 들어가는 첫 메세지
+     */
     public List<TextDTO> getMessagesByRange(RefreshDTO refreshDTO) {
-
-        /*
-         chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
-         start : APP Local storage에 저장되어 있는 마지막 메세지
-         end : STOMP Socket 연결 이후 APP cache에 들어가는 첫 메세지
-         */
 
         Long start = refreshDTO.getStart();
         Long end = refreshDTO.getEnd();
@@ -57,27 +56,6 @@ public class ChatService {
                 .toList();
     }
 
-    public String joinChatroom(JoinDTO joinDTO) {
-
-        Profile profile = profileService.findProfile(joinDTO.getProfileId());
-        ChatroomEntity chatroom = chatroomService.findChatroom(joinDTO.getChatroomId());
-        chatroom.join();
-
-        profileChatroomService.checkAlreadyIn(profile.getProfileId(), chatroom.getChatroomId());
-        profileChatroomService.join(ProfileChatroomEntity.create(profile, chatroom));
-
-        return profile.getNickname();
-    }
-
-    public boolean checkFirstMessage(Long chatroomId, LocalDateTime now) {
-
-        MessageEntity lastMessage = messageRepository.findLastMessageWithChatroom(chatroomId, Limit.of(1));
-        if (lastMessage == null) {
-            return true;
-        }
-        return now.toLocalDate().isAfter(lastMessage.getCreatedAt().toLocalDate());
-    }
-
     public List<TextDTO> sendText(TextDTO textDTO, Long chatroomId) {
 
         List<TextDTO> result = new ArrayList<>();
@@ -87,13 +65,13 @@ public class ChatService {
         Profile profile = profileService.findProfile((textDTO.getProfileId()));
 
         //chatroom 조회
-        ChatroomEntity chatroom = chatroomService.findChatroom((textDTO.getChatroomId()));
+        ChatroomEntity chatroom = chatUtils.findChatroom((textDTO.getChatroomId()));
 
         //참가 여부 확인
-        profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
 
         //오늘의 첫 메세지인지 확인
-        if (checkFirstMessage(chatroomId, now)) {
+        if (chatUtils.checkFirstMessage(chatroomId, now)) {
 
             MessageEntity date = MessageEntity.create(chatroom, profile, MessageType.DATE, now.toString());
             messageRepository.save(date);
@@ -112,25 +90,17 @@ public class ChatService {
         return result;
     }
 
-
     public void leaveChatroom(LeaveDTO leaveDTO) {
 
         Profile profile = profileService.findProfile((leaveDTO.getProfileId()));
 
-        ChatroomEntity chatroom = chatroomService.findChatroom((leaveDTO.getChatroomId()));
+        ChatroomEntity chatroom = chatUtils.findChatroom((leaveDTO.getChatroomId()));
 
-        ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+        ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.leave();
     }
 
-    public void dieChatroom(DieDTO dieDTO) {
-
-        Profile profile = profileService.findProfile((dieDTO.getProfileId()));
-
-        ChatroomEntity chatroom = chatroomService.findChatroom((dieDTO.getProfileId()));
-        chatroom.die();
-
-        ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
-        profileChatroom.delete();
+    public void enterChatroom(EnterDTO enterDTO) {
+        
     }
 }

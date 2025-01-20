@@ -8,12 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Member;
-import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.exception.member.custom.NicknameAlreadyExistsException;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
-import org._1mg.tt_backend.auth.repository.ProfileRepository;
 import org._1mg.tt_backend.base.CustomException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,9 +25,9 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ProfileService profileService;
     private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
-    private final ProfileRepository profileRepository;
 
     public Member findMember(String memberId) {
 
@@ -46,11 +43,7 @@ public class MemberService {
 
     public String checkUniqueNickname(String nickname) throws JsonProcessingException {
 
-        Profile profile = profileRepository.findByNickname(nickname);
-        if (profile != null) {
-            throw new NicknameAlreadyExistsException("NOT UNIQUE NICKNAME", nickname);
-        }
-
+        profileService.checkUniqueNickname(nickname);
         return objectMapper.writeValueAsString(Map.of("nickname", nickname));
     }
 
