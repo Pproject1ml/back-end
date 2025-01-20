@@ -20,7 +20,7 @@ public class MessageInterceptor implements ChannelInterceptor {
         log.info("========== STOMP SEND EVENT ==========");
         log.info("Command: {}", headerAccessor.getCommand());
         log.info("Session ID: {}", headerAccessor.getSessionId());
-        log.info("User: {}", headerAccessor.getUser());
+        log.info("User: {}", headerAccessor.getUser().getName());
         log.info("Destination: {}", headerAccessor.getDestination());
         log.info("Payload: {}", new String((byte[]) message.getPayload()));
 
