@@ -10,6 +10,7 @@ import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
+import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.landmark.entity.Landmark;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,13 @@ public class ChatroomService {
     private final ProfileRepository profileRepository;
     private final MessageRepository messageRepository;
     private final ProfileChatroomService profileChatroomService;
+
+    public ChatroomEntity findChatroom(String chatroomId) {
+
+        Long id = Long.parseLong(chatroomId);
+        return chatroomRepository.findById(id)
+                .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
+    }
 
     /**
      * 랜드마크와 연관된 채팅방을 생성합니다.

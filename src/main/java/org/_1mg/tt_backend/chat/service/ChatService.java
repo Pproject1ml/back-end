@@ -3,15 +3,12 @@ package org._1mg.tt_backend.chat.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
-import org._1mg.tt_backend.auth.repository.ProfileRepository;
+import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.*;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
-import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
-import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
@@ -20,17 +17,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
-import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ChatService {
 
-    private final ChatroomRepository chatroomRepository;
     private final MessageRepository messageRepository;
-    private final ProfileRepository profileRepository;
+
+    private final ChatroomService chatroomService;
+    private final ProfileService profileService;
     private final ProfileChatroomService profileChatroomService;
 
     public List<TextDTO> getMessagesByRange(RefreshDTO refreshDTO) {
@@ -64,8 +59,8 @@ public class ChatService {
 
     public String joinChatroom(JoinDTO joinDTO) {
 
-        Profile profile = findProfile(joinDTO.getProfileId());
-        ChatroomEntity chatroom = findChatroom(joinDTO.getChatroomId());
+        Profile profile = profileService.findProfile(joinDTO.getProfileId());
+        ChatroomEntity chatroom = chatroomService.findChatroom(joinDTO.getChatroomId());
         chatroom.join();
 
         profileChatroomService.checkAlreadyIn(profile.getProfileId(), chatroom.getChatroomId());
@@ -89,10 +84,10 @@ public class ChatService {
         LocalDateTime now = LocalDateTime.now();
 
         //profile 조회
-        Profile profile = findProfile(textDTO.getProfileId());
+        Profile profile = profileService.findProfile((textDTO.getProfileId()));
 
         //chatroom 조회
-        ChatroomEntity chatroom = findChatroom(textDTO.getChatroomId());
+        ChatroomEntity chatroom = chatroomService.findChatroom((textDTO.getChatroomId()));
 
         //참가 여부 확인
         profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
@@ -117,26 +112,12 @@ public class ChatService {
         return result;
     }
 
-    public Profile findProfile(String profileId) {
-
-        Long id = Long.parseLong(profileId);
-        return profileRepository.findById(id)
-                .orElseThrow(() -> new ProfileNotFoundException(USER_NOT_FOUND.getMessage()));
-    }
-
-    public ChatroomEntity findChatroom(String chatroomId) {
-
-        Long id = Long.parseLong(chatroomId);
-        return chatroomRepository.findById(id)
-                .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
-    }
-
 
     public void leaveChatroom(LeaveDTO leaveDTO) {
 
-        Profile profile = findProfile(leaveDTO.getProfileId());
+        Profile profile = profileService.findProfile((leaveDTO.getProfileId()));
 
-        ChatroomEntity chatroom = findChatroom(leaveDTO.getChatroomId());
+        ChatroomEntity chatroom = chatroomService.findChatroom((leaveDTO.getChatroomId()));
 
         ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
         profileChatroom.leave();
@@ -144,9 +125,9 @@ public class ChatService {
 
     public void dieChatroom(DieDTO dieDTO) {
 
-        Profile profile = findProfile(dieDTO.getProfileId());
+        Profile profile = profileService.findProfile((dieDTO.getProfileId()));
 
-        ChatroomEntity chatroom = findChatroom(dieDTO.getProfileId());
+        ChatroomEntity chatroom = chatroomService.findChatroom((dieDTO.getProfileId()));
         chatroom.die();
 
         ProfileChatroomEntity profileChatroom = profileChatroomService.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
