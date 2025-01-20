@@ -9,6 +9,7 @@ public enum CustomException {
      * 정상 응답
      */
     OK(20, "정상 응답"),
+    ERROR(21, "오류 응답"),
 
     /**
      * 기본 인증 관련 예외
