@@ -13,7 +13,8 @@ import java.util.List;
 
 import static org._1mg.tt_backend.base.CustomException.OK;
 
-@RestController("/chat")
+@RequestMapping("/chat")
+@RestController
 @RequiredArgsConstructor
 public class ChatroomController {
 
