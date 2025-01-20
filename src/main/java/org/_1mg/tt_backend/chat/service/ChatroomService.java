@@ -95,16 +95,18 @@ public class ChatroomService {
         profileChatroom.changeAlarm(alarmDTO.isAlarm());
     }
 
-    public String joinChatroom(JoinDTO joinDTO) {
+    public void joinChatroom(JoinDTO joinDTO) {
 
         Profile profile = profileService.findProfile(joinDTO.getProfileId());
         ChatroomEntity chatroom = chatUtils.findChatroom(joinDTO.getChatroomId());
-        chatroom.join();
 
+        /*
+            이 사이에 유효성 검사 4가지 필요
+         */
+
+        chatroom.join();
         chatUtils.checkAlreadyIn(profile.getProfileId(), chatroom.getChatroomId());
         chatUtils.join(ProfileChatroomEntity.create(profile, chatroom));
-
-        return profile.getNickname();
     }
 
     public void dieChatroom(DieDTO dieDTO) {

@@ -23,16 +23,6 @@ public class ChatroomController {
     private final ChatroomService chatroomService;
     private final LandmarkService landmarkService;
 
-    @PostMapping("/join")
-    public ResponseDTO<String> join(@RequestBody JoinDTO joinDTO) {
-
-
-        return ResponseDTO.<String>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .build();
-    }
-
 
     @GetMapping("/list")
     public ResponseDTO<List<ChatroomDTO>> chatList(@RequestParam("id") Long profileId) {
@@ -68,16 +58,14 @@ public class ChatroomController {
                 .build();
     }
 
-    @MessageMapping("/join/{chatroomId}")
-    public ResponseDTO<String> joinMessage(@Payload JoinDTO joinDTO, @DestinationVariable Long chatroomId) {
+    @PostMapping("/join")
+    public ResponseDTO<String> joinMessage(@RequestBody JoinDTO joinDTO) {
 
-        String nickname = chatroomService.joinChatroom(joinDTO);
-        String message = nickname + "님이 채팅방에 입장하셨습니다";
+        chatroomService.joinChatroom(joinDTO);
 
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
-                .data(message)
                 .build();
     }
 

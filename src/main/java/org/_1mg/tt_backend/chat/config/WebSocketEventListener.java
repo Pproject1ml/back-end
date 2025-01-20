@@ -2,6 +2,8 @@ package org._1mg.tt_backend.chat.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.auth.entity.Profile;
+import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,6 +20,7 @@ import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 public class WebSocketEventListener {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final ProfileService profileService;
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
@@ -52,12 +55,16 @@ public class WebSocketEventListener {
         if (messageType == null) {
             throw new RuntimeException("Unsupported message type: " + command);
         }
+
         switch (messageType) {
-            case ENTER -> {
-                log.info("Subscribe ENTER");
-            }
             case JOIN -> {
-                log.info("Subscribe JOIN");
+                log.info("SUBSCRIBE JOIN");
+
+                String profileId = headerAccessor.getFirstNativeHeader("profileId");
+                String destination = headerAccessor.getFirstNativeHeader("destination");
+                Profile profile = profileService.findProfile(profileId);
+                String message = profile.getNickname() + "님이 입장하셨습니다";
+                messagingTemplate.convertAndSend(destination, message);
             }
             default -> {
                 log.info("ERROR");
