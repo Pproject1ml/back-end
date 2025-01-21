@@ -41,5 +41,4 @@ public class ProfileService {
                 .map(Profile::convertToDTO)
                 .toList();
     }
-
 }

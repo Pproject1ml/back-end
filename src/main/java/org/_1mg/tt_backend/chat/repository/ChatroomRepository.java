@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatroomRepository extends JpaRepository<ChatroomEntity, Long> {
 
@@ -13,6 +14,14 @@ public interface ChatroomRepository extends JpaRepository<ChatroomEntity, Long> 
             "JOIN FETCH c.profileChatrooms pc " +
             "JOIN FETCH c.landmark l " +
             "JOIN FETCH pc.profile p " +
-            "WHERE p.profileId = :profileId")
-    List<ChatroomEntity> findChatroomsByProfileId(@Param("profileId") Long profileId);
+            "WHERE p.profileId = :profileId " +
+            "AND c.isDeleted = false " +
+            "AND pc.isDeleted = false " +
+            "AND l.isDeleted = false")
+    List<ChatroomEntity> findChatroomsByProfileIdNotDeleted(@Param("profileId") Long profileId);
+
+    @Query("SELECT c FROM ChatroomEntity c " +
+            "WHERE c.chatroomId = :chatroomId " +
+            "AND c.isDeleted = false ")
+    Optional<ChatroomEntity> findByIdNotDeleted(Long chatroomId);
 }

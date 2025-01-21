@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
-import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
-import org._1mg.tt_backend.chat.exception.ProfileNotParticipants;
+import org._1mg.tt_backend.chat.exception.custom.ChatroomNotFoundException;
+import org._1mg.tt_backend.chat.exception.custom.ProfileNotParticipants;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
 import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
@@ -30,7 +30,7 @@ public class ChatUtils {
 
     public MessageEntity getLastMessage(Long chatroom) {
 
-        return messageRepository.findLastMessageWithChatroom(chatroom, Limit.of(1));
+        return messageRepository.findLastMessageWithChatroomNotDeleted(chatroom, Limit.of(1));
     }
 
     public boolean checkFirstMessage(Long chatroomId, LocalDateTime now) {
@@ -45,14 +45,14 @@ public class ChatUtils {
     public ChatroomEntity findChatroom(String chatroomId) {
 
         Long id = Long.parseLong(chatroomId);
-        return chatroomRepository.findById(id)
+        return chatroomRepository.findByIdNotDeleted(id)
                 .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
     }
 
 
     public ProfileChatroomEntity checkParticipant(Long profileId, Long chatroomId) {
 
-        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
+        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomIdNotDeleted(profileId, chatroomId);
         if (profileChatroom == null) {
             throw new ProfileNotParticipants(USER_NOT_IN_CHATROOM.getMessage());
         }
@@ -62,7 +62,7 @@ public class ChatUtils {
 
     public ProfileChatroomEntity getProfileChatroom(Long profileId, Long chatroomId) {
 
-        return profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
+        return profileChatroomRepository.findByProfileIdAndChatroomIdNotDeleted(profileId, chatroomId);
     }
 
     public void join(ProfileChatroomEntity profileChatroom) {

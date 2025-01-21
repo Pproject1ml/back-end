@@ -12,7 +12,7 @@ import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
-import org._1mg.tt_backend.chat.exception.AlreadyInChatroomException;
+import org._1mg.tt_backend.chat.exception.custom.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.landmark.entity.Landmark;
 import org.springframework.stereotype.Service;
@@ -49,14 +49,13 @@ public class ChatroomService {
         List<ChatroomDTO> chatrooms = new ArrayList<>();
 
         //profileId에 해당하는 chatrooms 조회
-        List<ChatroomEntity> chatroomEntityList = chatroomRepository.findChatroomsByProfileId(profileId);
         /*
-         * 필요한 예외
-         * - profileId에 해당하는 chatroom이 존재하지 않는 겯우
-         * - chatroom에 본인 외에 profile이 존재하지 않는 경우
-         * - chatroom에 해당하는 landmark가 존재하지 않는 경우
+         * 발생 가능한 예외
+         * - profileId에 해당하는 chatroom이 존재하지 않는 겯우 : 그냥 빈 배열 반환
+         * - chatroom에 본인 외에 profile이 존재하지 않는 경우 : 그냥 빈 배열 반환
+         * - chatroom에 해당하는 landmark가 존재하지 않는 경우 : 그냥 join 자체가 안되서 null 값 반환함
          */
-
+        List<ChatroomEntity> chatroomEntityList = chatroomRepository.findChatroomsByProfileIdNotDeleted(profileId);
 
         //chatrooms에 각각 접근 chatroom의 profiles 조회
         //chatrooms에 각각 접근 마지막 message 조회

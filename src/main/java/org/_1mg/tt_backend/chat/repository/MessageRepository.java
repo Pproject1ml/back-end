@@ -12,23 +12,26 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
     @Query("SELECT m FROM MessageEntity m " +
             "WHERE m.chatroom.chatroomId = :chatroomId " +
+            "AND m.isDeleted = false " +
             "ORDER BY m.createdAt DESC")
-    MessageEntity findLastMessageWithChatroom(@Param("chatroomId") Long chatroomId, Limit limit);
+    MessageEntity findLastMessageWithChatroomNotDeleted(@Param("chatroomId") Long chatroomId, Limit limit);
 
     @Query("SELECT m FROM MessageEntity m " +
             "JOIN FETCH m.profile p " +
             "WHERE m.chatroom.chatroomId = :chatroomId " +
-            "AND m.messageId > :startId " + "AND m.messageId < :endId " +
+            "AND m.messageId > :startId AND m.messageId < :endId " +
+            "AND m.isDeleted = false " +
             "ORDER BY m.messageId ASC")
-    List<MessageEntity> findMessagesBetweenStartAndEnd(@Param("chatroomId") Long chatroomId,
-                                                       @Param("startId") Long startId,
-                                                       @Param("endId") Long endId);
+    List<MessageEntity> findMessagesBetweenStartAndEndNotDeleted(@Param("chatroomId") Long chatroomId,
+                                                                 @Param("startId") Long startId,
+                                                                 @Param("endId") Long endId);
 
     @Query("SELECT m FROM MessageEntity m " +
             "JOIN FETCH m.profile p " +
             "WHERE m.chatroom.chatroomId = :chatroomId " +
             "AND m.messageId > :startId " +
+            "AND m.isDeleted = false " +
             "ORDER BY m.messageId ASC")
-    List<MessageEntity> findMessagesFromStart(@Param("chatroomId") Long chatroomId,
-                                              @Param("startId") Long startId);
+    List<MessageEntity> findMessagesFromStartNotDeleted(@Param("chatroomId") Long chatroomId,
+                                                        @Param("startId") Long startId);
 }

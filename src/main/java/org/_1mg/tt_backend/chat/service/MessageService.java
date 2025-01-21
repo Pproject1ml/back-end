@@ -44,13 +44,13 @@ public class MessageService {
         }
 
         if (end == null) {
-            return messageRepository.findMessagesFromStart(chatroom, start)
+            return messageRepository.findMessagesFromStartNotDeleted(chatroom, start)
                     .stream()
                     .map(MessageEntity::convertToText)
                     .toList();
         }
 
-        return messageRepository.findMessagesBetweenStartAndEnd(chatroom, start, end)
+        return messageRepository.findMessagesBetweenStartAndEndNotDeleted(chatroom, start, end)
                 .stream()
                 .map(MessageEntity::convertToText)
                 .toList();
@@ -101,6 +101,6 @@ public class MessageService {
     }
 
     public void enterChatroom(EnterDTO enterDTO) {
-        
+
     }
 }

@@ -38,7 +38,7 @@ public class ChatroomEntity extends BaseEntity {
     @OneToOne(mappedBy = "chatroom")
     private Landmark landmark;
 
-    public ChatroomDTO convertToDTOForMap(double longitude, double latitude) {
+    public ChatroomDTO convertToDTOForMap(double longitude, double latitude, String imagePath) {
 
         return ChatroomDTO.builder()
                 .chatroomId(this.chatroomId.toString())
@@ -46,6 +46,7 @@ public class ChatroomEntity extends BaseEntity {
                 .count(this.count)
                 .longitude(longitude)
                 .latitude(latitude)
+                .imagePath(imagePath)
                 .createdAt(super.getCreatedAt())
                 .updatedAt(super.getUpdatedAt())
                 .build();
