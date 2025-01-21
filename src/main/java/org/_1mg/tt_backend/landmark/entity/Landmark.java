@@ -58,14 +58,14 @@ public class Landmark extends BaseEntity {
     public LandmarkDTO convertToDTO() {
 
         return LandmarkDTO.builder()
-                .landmarkId(String.valueOf(this.getLandmarkId()))
-                .name(this.getName())
-                .latitude(this.getLatitude())
-                .longitude(this.getLongitude())
+                .landmarkId(String.valueOf(this.landmarkId))
+                .name(this.name)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
                 .address(this.address)
-                .radius(this.getRadius())
-                .imagePath(this.getImagePath())
-                .chatroom(this.chatroom.convertToDTOForMap(this.getLongitude(), this.getLatitude())) // Chatroom 정보 포함
+                .radius(this.radius)
+                .imagePath(this.imagePath)
+                .chatroom(this.chatroom.convertToDTOForMap(this.getLongitude(), this.getLatitude(), this.imagePath)) // Chatroom 정보 포함
                 .build();
     }
 
