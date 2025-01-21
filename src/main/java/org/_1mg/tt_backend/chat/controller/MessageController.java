@@ -25,7 +25,7 @@ import static org._1mg.tt_backend.base.CustomException.OK;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class ChatController {
+public class MessageController {
 
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
