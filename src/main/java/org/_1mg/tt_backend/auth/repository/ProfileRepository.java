@@ -14,8 +14,9 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     @Query("SELECT DISTINCT p FROM Profile p " +
             "JOIN FETCH p.profileChatrooms pc " +
             "JOIN FETCH pc.chatroom c " +
-            "WHERE c.chatroomId = :chatroomId")
-    List<Profile> findProfilesByChatroomId(Long chatroomId);
+            "WHERE c.chatroomId = :chatroomId " +
+            "AND p.isDeleted = false")
+    List<Profile> findProfilesNotDeletedByChatroomId(Long chatroomId);
 
     @Query("SELECT p FROM Profile p " +
             "WHERE p.isDeleted = false " +
