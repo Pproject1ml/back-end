@@ -157,7 +157,7 @@ public class MemberController {
         log.debug("GET USERINFO START");
 
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        Member member = memberService.findMember(user.getMemberId());
+        Member member = memberService.findMemberNotDeleted(user.getMemberId());
 
         log.debug("GET USERINFO FINISHED");
         return ResponseDTO.<MemberDTO>builder()
@@ -181,7 +181,7 @@ public class MemberController {
                 .build();
     }
 
-    @PostMapping
+    @PostMapping("/logout")
     public ResponseDTO<String> logout(Authentication authentication) {
 
         log.debug("LOGOUT START");

@@ -10,6 +10,7 @@ import org._1mg.tt_backend.auth.exception.member.custom.NicknameAlreadyExistsExc
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +22,16 @@ import static org._1mg.tt_backend.base.CustomException.*;
 @RequiredArgsConstructor
 public class MemberExceptionControllerAdvice {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseDTO<String> userAlreadyExists(UsernameNotFoundException exception) {
+
+        log.error("USER NOT FOUND");
+        return ResponseDTO.<String>builder()
+                .status(USER_NOT_FOUND.getStatus())
+                .message(USER_NOT_FOUND.getMessage())
+                .build();
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAlreadyExistsException.class)

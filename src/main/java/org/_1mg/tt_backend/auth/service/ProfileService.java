@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org._1mg.tt_backend.base.CustomException.ALREADY_EXISTS_NICKNAME;
 import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
 
 @Service
@@ -22,14 +23,14 @@ public class ProfileService {
 
         Profile profile = profileRepository.findByNickname(nickname);
         if (profile != null) {
-            throw new NicknameAlreadyExistsException("NOT UNIQUE NICKNAME", nickname);
+            throw new NicknameAlreadyExistsException(ALREADY_EXISTS_NICKNAME.getMessage(), nickname);
         }
     }
-    
+
     public Profile findProfile(String profileId) {
 
         Long id = Long.parseLong(profileId);
-        return profileRepository.findById(id)
+        return profileRepository.findByIdNotDeleted(id)
                 .orElseThrow(() -> new ProfileNotFoundException(USER_NOT_FOUND.getMessage()));
     }
 

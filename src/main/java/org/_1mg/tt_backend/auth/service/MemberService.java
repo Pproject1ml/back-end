@@ -11,12 +11,13 @@ import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
-import org._1mg.tt_backend.base.CustomException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.UUID;
+
+import static org._1mg.tt_backend.base.CustomException.*;
 
 @Slf4j
 @Service
@@ -29,15 +30,15 @@ public class MemberService {
     private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
 
-    public Member findMember(String memberId) {
+    public Member findMemberNotDeleted(String memberId) {
 
-        return memberRepository.findById(UUID.fromString(memberId)).orElseThrow(() ->
-                new UsernameNotFoundException(CustomException.USER_NOT_FOUND.getMessage()));
+        return memberRepository.findByIdNotDeleted(UUID.fromString(memberId)).orElseThrow(() ->
+                new UsernameNotFoundException(USER_NOT_FOUND.getMessage()));
     }
 
     public void updateMember(ProfileDTO profileDTO, String memberId) {
 
-        Member member = findMember(memberId);
+        Member member = findMemberNotDeleted(memberId);
         member.updateProfile(profileDTO);
     }
 
@@ -54,11 +55,11 @@ public class MemberService {
 
         if (beforeJoin != null) {
             if (!beforeJoin.isDeleted()) {
-                throw new UserAlreadyExistsException("USER ALREADY EXISTS");
-            } else {
-                beforeJoin.updateMember(memberDTO);
-                return;
+                throw new UserAlreadyExistsException(ALREADY_EXISTS_USER.getMessage());
             }
+
+            beforeJoin.updateMember(memberDTO);
+            return;
         }
 
         memberRepository.save(Member.createMember(memberDTO));
@@ -66,16 +67,16 @@ public class MemberService {
 
     public void saveRefreshToken(String memberId, String refreshToken) {
 
-        Member member = findMember(memberId);
+        Member member = findMemberNotDeleted(memberId);
         member.updateRefreshToken(refreshToken);
     }
 
     public String refresh(String memberId) {
 
-        Member member = findMember(memberId);
+        Member member = findMemberNotDeleted(memberId);
 
         if (member.getRefreshToken() == null) {
-            throw new IllegalArgumentException(CustomException.REFRESH_TOKEN_IS_NULL.getMessage());
+            throw new IllegalArgumentException(REFRESH_TOKEN_IS_NULL.getMessage());
         }
 
         jwtUtils.verifyToken(member.getRefreshToken());
@@ -90,7 +91,7 @@ public class MemberService {
 
     public void logout(String memberId) {
 
-        Member member = findMember(memberId);
+        Member member = findMemberNotDeleted(memberId);
         member.deleteRefreshToken();
     }
 }

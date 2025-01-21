@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -17,10 +19,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public CustomUserDetails loadUserByUsername(String oauthId) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findByOauthId(oauthId);
-        if (member == null || member.isDeleted()) {
-            throw new UsernameNotFoundException("USER NOT FOUND");
-        }
+        Member member = memberRepository.findByOauthIdNotDeleted(oauthId).orElseThrow(() ->
+                new UsernameNotFoundException(USER_NOT_FOUND.getMessage()));
 
         return new CustomUserDetails(member.convertToDTO());
     }
