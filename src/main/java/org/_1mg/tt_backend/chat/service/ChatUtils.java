@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
-import org._1mg.tt_backend.chat.exception.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.exception.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.exception.ProfileNotParticipants;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
@@ -15,7 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static org._1mg.tt_backend.base.CustomException.*;
+import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
+import static org._1mg.tt_backend.base.CustomException.USER_NOT_IN_CHATROOM;
 
 /**
  * ProfileChatroomEntity 필드 등 여러 Service 클래스에서 사용되는 쿼리 집합(순환 참조 방지)
@@ -60,12 +60,9 @@ public class ChatUtils {
         return profileChatroom;
     }
 
-    public void checkAlreadyIn(Long profileId, Long chatroomId) {
+    public ProfileChatroomEntity getProfileChatroom(Long profileId, Long chatroomId) {
 
-        ProfileChatroomEntity profileChatroom = profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
-        if (profileChatroom != null) {
-            throw new AlreadyInChatroomException(USER_ALREADY_IN_CHATROOM.getMessage());
-        }
+        return profileChatroomRepository.findByProfileIdAndChatroomId(profileId, chatroomId);
     }
 
     public void join(ProfileChatroomEntity profileChatroom) {

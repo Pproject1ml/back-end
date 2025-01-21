@@ -31,6 +31,8 @@ public class ProfileChatroomEntity {
 
     private boolean alarm;
 
+    private boolean active;
+
     private LocalDateTime joinedAt;
 
     private LocalDateTime leftAt;
@@ -39,9 +41,11 @@ public class ProfileChatroomEntity {
 
     public static ProfileChatroomEntity create(Profile profile, ChatroomEntity chatroomEntity) {
 
+        chatroomEntity.join();
         return ProfileChatroomEntity.builder()
                 .profile(profile)
                 .chatroom(chatroomEntity)
+                .active(true)
                 .joinedAt(LocalDateTime.now())
                 .build();
     }
@@ -50,8 +54,20 @@ public class ProfileChatroomEntity {
         this.leftAt = LocalDateTime.now();
     }
 
+    public void disable() {
+        this.active = false;
+    }
+
+    public void enable() {
+        this.active = true;
+    }
+
     public void delete() {
         this.isDeleted = true;
+    }
+
+    public void restore() {
+        this.isDeleted = false;
     }
 
     public void changeAlarm(boolean alarm) {

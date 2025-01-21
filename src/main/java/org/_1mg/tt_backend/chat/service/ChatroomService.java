@@ -12,12 +12,15 @@ import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
+import org._1mg.tt_backend.chat.exception.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.repository.ChatroomRepository;
 import org._1mg.tt_backend.landmark.entity.Landmark;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org._1mg.tt_backend.base.CustomException.USER_ALREADY_IN_CHATROOM;
 
 @Service
 @RequiredArgsConstructor
@@ -100,13 +103,28 @@ public class ChatroomService {
         Profile profile = profileService.findProfile(joinDTO.getProfileId());
         ChatroomEntity chatroom = chatUtils.findChatroom(joinDTO.getChatroomId());
 
-        /*
-            이 사이에 유효성 검사 4가지 필요
-         */
+        ProfileChatroomEntity profileChatroom = chatUtils.getProfileChatroom(profile.getProfileId(), chatroom.getChatroomId());
 
-        chatroom.join();
-        chatUtils.checkAlreadyIn(profile.getProfileId(), chatroom.getChatroomId());
-        chatUtils.join(ProfileChatroomEntity.create(profile, chatroom));
+        //아예 없는 경우 최초 생성
+        if (profileChatroom == null) {
+            chatUtils.join(ProfileChatroomEntity.create(profile, chatroom));
+            return;
+        }
+
+        //이전에 나가기(삭제)됐던 경우
+        if (profileChatroom.isDeleted()) {
+            profileChatroom.restore();
+            return;
+        }
+
+        //이전에 범위를 벗어난 경우
+        if (!profileChatroom.isActive()) {
+            profileChatroom.enable();
+            return;
+        }
+
+        //있는데 나간적도 없고 비활성화도 안된 경우 던지는 예외
+        throw new AlreadyInChatroomException(USER_ALREADY_IN_CHATROOM.getMessage());
     }
 
     public void dieChatroom(DieDTO dieDTO) {
