@@ -61,7 +61,7 @@ public class MessageController {
     @SendTo("/sub/room/{chatroomId}")
     public ResponseDTO<TextDTO> textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
-        List<TextDTO> text = messageService.sendText(textDTO, chatroomId);
+        List<TextDTO> text = messageService.sendText(textDTO);
 
         if (text.size() > 1) {
             messagingTemplate.convertAndSend("/sub/room/" + chatroomId,
@@ -72,6 +72,7 @@ public class MessageController {
                             .build());
         }
 
+        //MessageBroker로 반환해도 가고 convertAndSend()로 직접 보내도 감
         return ResponseDTO.<TextDTO>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())

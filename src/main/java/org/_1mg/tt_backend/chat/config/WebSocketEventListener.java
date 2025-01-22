@@ -17,7 +17,7 @@ import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 
 import java.util.List;
 
-import static org._1mg.tt_backend.base.CustomException.OK;
+import static org._1mg.tt_backend.base.CustomException.*;
 
 @Component
 @Slf4j
@@ -41,7 +41,7 @@ public class WebSocketEventListener {
             return;
         }
 
-        log.info("WebSocket connected: sessionId={}, user={}", headerAccessor.getSessionId(), headerAccessor.getUser().getName());
+        log.info("WebSocket connected: sessionId={}\n user={}", headerAccessor.getSessionId(), headerAccessor.getUser().getName());
     }
 
     //Subscribe 이벤트 발생 시 로그
@@ -49,8 +49,15 @@ public class WebSocketEventListener {
     public void handleSubscribeListener(SessionSubscribeEvent event) {
 
         log.info("subscribe event : {}", event.toString());
+
+        //소켓 메세지 헤더 조회
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         MessageType messageType = getMessageType(headerAccessor);
+
+        //APP 시작할 땐 기존에 참여 중이던 채팅방에 다시 구독해야 하기 때문에 아무런 messageType이 없음
+        if (messageType == null) {
+            return;
+        }
 
         String profileId = getProfileId(headerAccessor);
         String destination = getDestination(headerAccessor);
@@ -61,9 +68,11 @@ public class WebSocketEventListener {
                 log.info("SUBSCRIBE JOIN");
                 List<TextDTO> joinMessages = socketService.makeWelcomeMessage(profileId, chatroomId);
                 sendMessage(joinMessages, destination);
+                log.info("SUBSCRIBE JOIN END");
             }
             case ENTER -> {
                 log.info("SUBSCRIBE ENTER");
+                log.info("SUBSCRIBE ENTER END");
             }
         }
     }
@@ -73,41 +82,53 @@ public class WebSocketEventListener {
     public void handleUnsubscribeListener(SessionUnsubscribeEvent event) {
 
         log.info("unsubscribe event : {}", event.toString());
+
+        //소켓 메세지 헤더 조회
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         MessageType messageType = getMessageType(headerAccessor);
+        if (messageType == null) {
+            return;
+        }
 
         String profileId = getProfileId(headerAccessor);
-        String destination = getDestination(headerAccessor);
-        String chatroomId = getChatroomId(destination);
+        //구독 해제에선 destination을 보낼 수 없음 그래서 일단 직접 받도록 했는데 어떻게 조회할 수 있을 것도 같은데..
+        String chatroomId = headerAccessor.getFirstNativeHeader("chatroomId");
+        //그래서 일단 직접 만들어야 함
+        String destination = "/sub/chat/" + chatroomId;
 
         switch (messageType) {
             case LEAVE -> {
                 log.info("UNSUBSCRIBE LEAVE");
+                log.info("UNSUBSCRIBE LEAVE END");
             }
             case DISABLE -> {
                 log.info("UNSUBSCRIBE DISABLE");
                 List<TextDTO> result = socketService.makeDisableMessage(profileId, chatroomId);
                 sendMessage(result, destination);
+                log.info("UNSUBSCRIBE DISABLE END");
             }
             case DIE -> {
                 log.info("UNSUBSCRIBE DIE");
                 List<TextDTO> result = socketService.makeDieMessage(profileId, chatroomId);
                 sendMessage(result, destination);
+                log.info("UNSUBSCRIBE DIE END");
             }
         }
     }
 
     MessageType getMessageType(StompHeaderAccessor headerAccessor) {
 
+        //COMMAND로 메세지 타입을 전달받음
         String command = headerAccessor.getFirstNativeHeader("COMMAND");
         if (command == null) {
-            log.info("Subscribe COMMAND IS NULL");
+            log.error("Subscribe COMMAND IS NULL");
             return null;
         }
 
         MessageType messageType = MessageType.getMessageType(command.toUpperCase());
         if (messageType == null) {
-            throw new RuntimeException("Unsupported message type: " + command);
+            log.error("{}", INVALID_MESSAGE_TYPE.getMessage() + " : " + command);
+            throw new IllegalArgumentException(INVALID_MESSAGE_TYPE.getMessage() + " " + command);
         }
 
         return messageType;
@@ -119,10 +140,11 @@ public class WebSocketEventListener {
 
     String getDestination(StompHeaderAccessor headerAccessor) {
 
+        //destination은 구독하는 URL을 의미함
         String destination = headerAccessor.getFirstNativeHeader("destination");
         if (destination == null) {
-            log.error("Destination header is null");
-            throw new IllegalArgumentException("Destination header is missing");
+            log.error("{}", DESTINATION_IS_NULL.getMessage() + " : " + headerAccessor.getSessionId());
+            throw new IllegalArgumentException(DESTINATION_IS_NULL.getMessage());
         }
 
         return destination;
@@ -135,20 +157,14 @@ public class WebSocketEventListener {
 
     void sendMessage(List<TextDTO> messages, String destination) {
 
-        if (messages.size() > 1) {
+        //시간 메세지와 입장/퇴장 메세지 전송
+        for (TextDTO message : messages) {
             messagingTemplate.convertAndSend(destination,
                     ResponseDTO.<TextDTO>builder()
                             .status(OK.getStatus())
                             .message(OK.getMessage())
-                            .data(messages.get(0))
+                            .data(message)
                             .build());
         }
-
-        messagingTemplate.convertAndSend(destination,
-                ResponseDTO.<TextDTO>builder()
-                        .status(OK.getStatus())
-                        .message(OK.getMessage())
-                        .data(messages.get(messages.size() - 1))
-                        .build());
     }
 }

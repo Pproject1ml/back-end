@@ -130,7 +130,7 @@ public class ChatroomService {
     public void disableChatroom(DieDTO dieDTO) {
 
         Profile profile = profileService.findProfile((dieDTO.getProfileId()));
-        ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getProfileId()));
+        ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getChatroomId()));
         ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
 
         profileChatroom.disable();
@@ -139,7 +139,7 @@ public class ChatroomService {
     public void dieChatroom(DieDTO dieDTO) {
 
         Profile profile = profileService.findProfile((dieDTO.getProfileId()));
-        ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getProfileId()));
+        ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getChatroomId()));
         ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
 
         profileChatroom.die();

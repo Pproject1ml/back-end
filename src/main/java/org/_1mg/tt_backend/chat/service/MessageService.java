@@ -13,6 +13,7 @@ import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
 import org._1mg.tt_backend.chat.repository.MessageRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,9 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ProfileService profileService;
     private final ChatUtils chatUtils;
+
+    @Value("${chat.system}")
+    private String SYSTEM;
 
     /**
      * chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
@@ -56,7 +60,7 @@ public class MessageService {
                 .toList();
     }
 
-    public List<TextDTO> sendText(TextDTO textDTO, Long chatroomId) {
+    public List<TextDTO> sendText(TextDTO textDTO) {
 
         List<TextDTO> result = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
@@ -70,10 +74,38 @@ public class MessageService {
         //참가 여부 확인
         chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
 
-        //오늘의 첫 메세지인지 확인
-        if (chatUtils.checkFirstMessage(chatroomId, now)) {
+        //메세지 생성
+        makeMessages(profile, chatroom, now, textDTO, result);
 
-            MessageEntity date = MessageEntity.create(chatroom, profile, MessageType.DATE, now.toString());
+        return result;
+    }
+
+    public List<TextDTO> sendSystemText(TextDTO textDTO) {
+
+        List<TextDTO> result = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+
+        //profile 조회
+        Profile profile = profileService.findProfile((textDTO.getProfileId()));
+
+        //chatroom 조회
+        ChatroomEntity chatroom = chatUtils.findChatroom((textDTO.getChatroomId()));
+
+        //System 메세지는 참가하지 않아도 어디서나 보낼 수 있음
+        //메세지 생성
+        makeMessages(profile, chatroom, now, textDTO, result);
+
+        return result;
+    }
+
+    public void makeMessages(Profile profile, ChatroomEntity chatroom, LocalDateTime now, TextDTO textDTO, List<TextDTO> result) {
+
+        //오늘의 첫 메세지인지 확인
+        if (chatUtils.checkFirstMessage(chatroom.getChatroomId(), now)) {
+
+            //날짜 데이터의 경우 SYSTEM 계정으로 메세지 작성
+            Profile system = profileService.findProfile(SYSTEM);
+            MessageEntity date = MessageEntity.create(chatroom, system, MessageType.DATE, now.toString());
             messageRepository.save(date);
             result.add(date.convertToText());
         }
@@ -86,8 +118,6 @@ public class MessageService {
         textDTO.setMessageId(message.getMessageId().toString());
         textDTO.setCreatedAt(message.getCreatedAt());
         result.add(textDTO);
-
-        return result;
     }
 
     public void leaveChatroom(LeaveDTO leaveDTO) {
