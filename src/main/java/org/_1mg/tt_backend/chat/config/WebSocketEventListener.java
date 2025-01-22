@@ -121,6 +121,7 @@ public class WebSocketEventListener {
 
         String destination = headerAccessor.getFirstNativeHeader("destination");
         if (destination == null) {
+            log.error("Destination header is null");
             throw new IllegalArgumentException("Destination header is missing");
         }
 

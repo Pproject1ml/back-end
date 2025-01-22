@@ -42,8 +42,12 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
-    public void updateDelete(boolean deleted) {
-        super.updateDeleted(deleted);
+    public void delete() {
+        super.updateDeleted(true);
+    }
+
+    public void restore() {
+        super.updateDeleted(false);
     }
 
     public void updateRefreshToken(String refreshToken) {
@@ -60,7 +64,7 @@ public class Member extends BaseEntity {
         this.oauthProvider = member.getOauthProvider();
         this.refreshToken = getRefreshToken();
         this.profile = createProfile(member.getProfile());
-        super.updateDeleted(member.getIsDeleted());
+        restore();
     }
 
     public static Member createMember(MemberDTO member) {
