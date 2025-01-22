@@ -2,9 +2,10 @@ package org._1mg.tt_backend.chat.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org._1mg.tt_backend.auth.entity.Profile;
-import org._1mg.tt_backend.auth.service.ProfileService;
+import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.MessageType;
+import org._1mg.tt_backend.chat.dto.TextDTO;
+import org._1mg.tt_backend.chat.service.SocketService;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -14,13 +15,17 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 
+import java.util.List;
+
+import static org._1mg.tt_backend.base.CustomException.OK;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class WebSocketEventListener {
 
     private final SimpMessagingTemplate messagingTemplate;
-    private final ProfileService profileService;
+    private final SocketService socketService;
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
@@ -62,9 +67,29 @@ public class WebSocketEventListener {
 
                 String profileId = headerAccessor.getFirstNativeHeader("profileId");
                 String destination = headerAccessor.getFirstNativeHeader("destination");
-                Profile profile = profileService.findProfile(profileId);
-                String message = profile.getNickname() + "님이 입장하셨습니다";
-                messagingTemplate.convertAndSend(destination, message);
+                if (destination == null) {
+                    throw new IllegalArgumentException("Destination header is missing");
+                }
+
+                String[] parts = destination.split("/");
+                String chatroomId = parts[parts.length - 1];
+                List<TextDTO> joinMessages = socketService.makeWelcomeMessage(profileId, chatroomId);
+
+                if (joinMessages.size() > 1) {
+                    messagingTemplate.convertAndSend(destination,
+                            ResponseDTO.<TextDTO>builder()
+                                    .status(OK.getStatus())
+                                    .message(OK.getMessage())
+                                    .data(joinMessages.get(0))
+                                    .build());
+                }
+
+                messagingTemplate.convertAndSend(destination,
+                        ResponseDTO.<TextDTO>builder()
+                                .status(OK.getStatus())
+                                .message(OK.getMessage())
+                                .data(joinMessages.get(joinMessages.size() - 1))
+                                .build());
             }
             default -> {
                 log.info("ERROR");
