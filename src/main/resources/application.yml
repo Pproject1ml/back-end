@@ -31,5 +31,5 @@ spring:
 
 logging:
   file:
-    path: "/var/log"
+    path: "/var/log/testTT-logs"
 
