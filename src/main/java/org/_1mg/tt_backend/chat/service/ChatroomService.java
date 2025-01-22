@@ -55,15 +55,17 @@ public class ChatroomService {
          * - chatroom에 본인 외에 profile이 존재하지 않는 경우 : 그냥 빈 배열 반환
          * - chatroom에 해당하는 landmark가 존재하지 않는 경우 : 그냥 join 자체가 안되서 null 값 반환함
          */
-        List<ChatroomEntity> chatroomEntityList = chatroomRepository.findChatroomsByProfileIdNotDeleted(profileId);
+
+        //active 정보를 받기 위해 ProfileChatroomEntity로 조회함
+        List<ProfileChatroomEntity> chatroomList = chatUtils.getChatrooms(profileId);
 
         //chatrooms에 각각 접근 chatroom의 profiles 조회
         //chatrooms에 각각 접근 마지막 message 조회
-        for (ChatroomEntity chatroomEntity : chatroomEntityList) {
+        for (ProfileChatroomEntity chatroomEntity : chatroomList) {
 
-            //chatroom 기본 정보 저장
-            ChatroomDTO chatroomDTO = chatroomEntity.convertToDTOForTab();
-            Long chatroomId = chatroomEntity.getChatroomId();
+            //chatroom 기본 정보 저장 + active 정보
+            ChatroomDTO chatroomDTO = chatroomEntity.getChatroom().convertToDTOForTab(chatroomEntity.isActive());
+            Long chatroomId = chatroomEntity.getChatroom().getChatroomId();
 
             //chatroom 참가자 조회
             //각 chatroom 별 참가자 List 생성
@@ -101,7 +103,6 @@ public class ChatroomService {
 
         Profile profile = profileService.findProfile(joinDTO.getProfileId());
         ChatroomEntity chatroom = chatUtils.findChatroom(joinDTO.getChatroomId());
-
         ProfileChatroomEntity profileChatroom = chatUtils.getProfileChatroom(profile.getProfileId(), chatroom.getChatroomId());
 
         //아예 없는 경우 최초 생성
@@ -126,14 +127,21 @@ public class ChatroomService {
         throw new AlreadyInChatroomException(USER_ALREADY_IN_CHATROOM.getMessage());
     }
 
+    public void disableChatroom(DieDTO dieDTO) {
+
+        Profile profile = profileService.findProfile((dieDTO.getProfileId()));
+        ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getProfileId()));
+        ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+
+        profileChatroom.disable();
+    }
+
     public void dieChatroom(DieDTO dieDTO) {
 
         Profile profile = profileService.findProfile((dieDTO.getProfileId()));
-
         ChatroomEntity chatroom = chatUtils.findChatroom((dieDTO.getProfileId()));
-        chatroom.die();
-
         ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
-        profileChatroom.delete();
+
+        profileChatroom.die();
     }
 }

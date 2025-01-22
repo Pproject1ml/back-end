@@ -9,6 +9,7 @@ public enum MessageType {
     ENTER("ENTER"), //입장
     DIE("DIE"), //탈퇴
     LEAVE("LEAVE"), //퇴장
+    DISABLE("DISABLE"), //범위를 벗어나서 비활성화
     TEXT("TEXT"), //메세지
     IMAGE("IMAGE"),
     DATE("DATE"),

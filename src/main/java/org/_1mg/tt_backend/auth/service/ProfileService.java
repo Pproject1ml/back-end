@@ -36,7 +36,7 @@ public class ProfileService {
 
     public List<ProfileDTO> findProfiles(Long chatroomId) {
 
-        return profileRepository.findProfilesNotDeletedByChatroomId(chatroomId)
+        return profileRepository.findProfilesByChatroomIdNotDeletedAndActive(chatroomId)
                 .stream()
                 .map(Profile::convertToDTO)
                 .toList();

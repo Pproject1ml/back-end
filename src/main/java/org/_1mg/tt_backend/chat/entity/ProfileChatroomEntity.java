@@ -56,14 +56,16 @@ public class ProfileChatroomEntity {
 
     public void disable() {
         this.active = false;
+        this.chatroom.die();
     }
 
     public void enable() {
         this.active = true;
     }
 
-    public void delete() {
+    public void die() {
         this.isDeleted = true;
+        this.chatroom.die();
     }
 
     public void restore() {

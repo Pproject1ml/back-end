@@ -13,6 +13,7 @@ import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
 import static org._1mg.tt_backend.base.CustomException.USER_NOT_IN_CHATROOM;
@@ -68,5 +69,10 @@ public class ChatUtils {
     public void join(ProfileChatroomEntity profileChatroom) {
 
         profileChatroomRepository.save(profileChatroom);
+    }
+
+    public List<ProfileChatroomEntity> getChatrooms(Long profileId) {
+        
+        return profileChatroomRepository.findChatroomsByProfileIdNotDeleted(profileId);
     }
 }

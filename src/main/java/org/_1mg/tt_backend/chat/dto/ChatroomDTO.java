@@ -25,4 +25,5 @@ public class ChatroomDTO {
     private String lastReadMessageId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean active;
 }

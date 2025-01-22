@@ -5,6 +5,7 @@ import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
+import org._1mg.tt_backend.chat.dto.DieDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +17,69 @@ public class SocketService {
 
     private final ProfileService profileService;
     private final MessageService messageService;
+    private final ChatroomService chatroomService;
+
+    private final String WELCOME = "님이 입장하셨습니다";
+    private final String BYE = "님이 퇴장하셨습니다";
 
     public List<TextDTO> makeWelcomeMessage(String profileId, String chatroomId) {
 
         Profile profile = profileService.findProfile(profileId);
-        String message = profile.getNickname() + "님이 입장하셨습니다";
+        String message = profile.getNickname() + WELCOME;
 
         List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
         TextDTO text = TextDTO.builder()
                 .chatroomId(chatroomId)
                 .profileId(profileId)
                 .messageType(MessageType.JOIN)
+                .content(message)
+                .profiles(profiles)
+                .build();
+
+        return messageService.sendText(text, Long.parseLong(chatroomId));
+    }
+
+    public List<TextDTO> makeDieMessage(String profileId, String chatroomId) {
+
+        Profile profile = profileService.findProfile(profileId);
+        String message = profile.getNickname() + BYE;
+
+        chatroomService.dieChatroom(
+                DieDTO.builder()
+                        .chatroomId(chatroomId)
+                        .profileId(profileId)
+                        .build());
+
+        List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
+
+        TextDTO text = TextDTO.builder()
+                .chatroomId(chatroomId)
+                .profileId(profileId)
+                .messageType(MessageType.DIE)
+                .content(message)
+                .profiles(profiles)
+                .build();
+
+        return messageService.sendText(text, Long.parseLong(chatroomId));
+    }
+
+    public List<TextDTO> makeDisableMessage(String profileId, String chatroomId) {
+
+        Profile profile = profileService.findProfile(profileId);
+        String message = profile.getNickname() + BYE;
+
+        chatroomService.disableChatroom(
+                DieDTO.builder()
+                        .chatroomId(chatroomId)
+                        .profileId(profileId)
+                        .build());
+
+        List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
+
+        TextDTO text = TextDTO.builder()
+                .chatroomId(chatroomId)
+                .profileId(profileId)
+                .messageType(MessageType.DISABLE)
                 .content(message)
                 .profiles(profiles)
                 .build();

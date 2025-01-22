@@ -52,7 +52,7 @@ public class ChatroomEntity extends BaseEntity {
                 .build();
     }
 
-    public ChatroomDTO convertToDTOForTab() {
+    public ChatroomDTO convertToDTOForTab(boolean active) {
 
         return ChatroomDTO.builder()
                 .chatroomId(this.chatroomId.toString())
@@ -63,6 +63,7 @@ public class ChatroomEntity extends BaseEntity {
                 .imagePath(this.landmark.getImagePath())
                 .createdAt(super.getCreatedAt())
                 .updatedAt(super.getUpdatedAt())
+                .active(active)
                 .build();
     }
 
@@ -73,19 +74,19 @@ public class ChatroomEntity extends BaseEntity {
                 .build();
     }
 
-    public void deleteTrue() {
+    public void delete() {
         super.updateDeleted(true);
     }
 
-    public void deleteFalse() {
+    public void restore() {
         super.updateDeleted(false);
     }
 
-    public int join() {
-        return ++this.count;
+    public void join() {
+        this.count++;
     }
 
-    public int die() {
-        return --this.count;
+    public void die() {
+        this.count--;
     }
 }

@@ -119,7 +119,7 @@ public class LandmarkService {
                 if (!chatroom.isDeleted()) {
                     throw new IllegalArgumentException(LANDMARK_ALREADY_EXISTS.getMessage());
                 }
-                chatroom.deleteFalse();
+                chatroom.restore();
                 chatroomRepository.save(chatroom); // 채팅방 변경 사항 저장
             }
 
@@ -187,7 +187,7 @@ public class LandmarkService {
             }
 
             // 채팅방을 삭제 상태로 변경
-            chatroom.deleteTrue();
+            chatroom.delete();
 
             // 채팅방 변경 사항 저장
             chatroomRepository.save(chatroom);
