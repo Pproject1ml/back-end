@@ -74,7 +74,7 @@ public class SecurityConfig {
                     auth
                             ///error 경로 permitAll()에 포함시키면 JWT 에러가 EntryPoint로 넘어가지 않음 왜지?
                             .requestMatchers("/", "/auth/**").permitAll()
-                            .requestMatchers("/swagger/**", "/swagger-resources/**", "webjars/**").permitAll()
+                            .requestMatchers("/swagger/**", "/swagger-resources/**").permitAll()
                             .requestMatchers("/chat/**", "/pub/**", "/sub/**").hasRole(Role.ROLE_USER.getValue())
                             .requestMatchers("/test/**").permitAll()
 

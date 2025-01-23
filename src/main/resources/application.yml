@@ -30,6 +30,9 @@ spring:
       on-profile: prod
 
 logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: trace
   file:
-    path: "/var/log/testTT-logs"
+    path: /var/log/testTT-log
 
