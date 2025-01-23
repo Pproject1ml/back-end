@@ -17,6 +17,12 @@ public interface ProfileChatroomRepository extends JpaRepository<ProfileChatroom
             , nativeQuery = true)
     ProfileChatroomEntity findByProfileIdAndChatroomIdNotDeleted(@Param("profileId") Long profileId, @Param("chatroomId") Long chatroomId);
 
+    @Query(value = "SELECT * " +
+            "FROM profile_chatroom " +
+            "WHERE profile_id = :profileId " +
+            "AND chatroom_id = :chatroomId "
+            , nativeQuery = true)
+    ProfileChatroomEntity findByProfileIdAndChatroomIdWithDeleted(@Param("profileId") Long profileId, @Param("chatroomId") Long chatroomId);
 
     @Query("SELECT pc FROM ProfileChatroomEntity pc " +
             "JOIN FETCH pc.chatroom c " +

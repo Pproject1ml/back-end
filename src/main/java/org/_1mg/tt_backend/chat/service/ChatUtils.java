@@ -63,7 +63,7 @@ public class ChatUtils {
 
     public ProfileChatroomEntity getProfileChatroom(Long profileId, Long chatroomId) {
 
-        return profileChatroomRepository.findByProfileIdAndChatroomIdNotDeleted(profileId, chatroomId);
+        return profileChatroomRepository.findByProfileIdAndChatroomIdWithDeleted(profileId, chatroomId);
     }
 
     public void join(ProfileChatroomEntity profileChatroom) {
@@ -72,7 +72,7 @@ public class ChatUtils {
     }
 
     public List<ProfileChatroomEntity> getChatrooms(Long profileId) {
-        
+
         return profileChatroomRepository.findChatroomsByProfileIdNotDeleted(profileId);
     }
 }
