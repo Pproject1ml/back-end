@@ -53,7 +53,7 @@ public class WebSocketEventListener {
         //소켓 메세지 헤더 조회
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         MessageType messageType = getMessageType(headerAccessor);
-
+        log.info("MESSAGE : {}", event.getMessage());
         //APP 시작할 땐 기존에 참여 중이던 채팅방에 다시 구독해야 하기 때문에 아무런 messageType이 없음
         if (messageType == null) {
             return;
