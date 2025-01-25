@@ -60,7 +60,7 @@ public class ChatroomController {
     @PostMapping("/join")
     public ResponseDTO<String> joinMessage(@RequestBody JoinDTO joinDTO) {
 
-        chatroomService.joinChatroom(joinDTO);
+        //일단 컨트롤러는 냅두는데... 실질적인 동작은 eventListenr로..
 
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())

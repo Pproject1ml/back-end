@@ -8,6 +8,7 @@ import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.DieDTO;
+import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,13 +39,13 @@ public class SocketService {
         //입장 메세지 생성
         String message = profile.getNickname() + WELCOME;
 
-        /*
-            실질적인 JOIN 처리는 구독 바로 직전에 발생하는 HTTP 요청에서 처리함
-            SOCKET 쪽에서 DB 조회 최소한으로 하려고 그렇게 했던건데 어차피 퇴장에서 쓰일 수 밖에 없어서
-            그럴거면 HTTP 요청 자체가 필요없음
-            또한 그 요청 자체가 채팅방에 참여하기 전에 위치를 확인하는 작업을 위한거였는데 그것도 안 함..
-            일단은 넘어가고.. 이거에 대해선 리팩토링 필요
-        */
+        //입장 처리
+        chatroomService.joinChatroom(
+                JoinDTO.builder()
+                        .chatroomId(chatroomId)
+                        .profileId(profileId)
+                        .build()
+        );
 
         //최신화된 참여자 정보 조회
         List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
