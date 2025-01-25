@@ -60,6 +60,7 @@ public class ProfileChatroomEntity {
     }
 
     public void enable() {
+        this.chatroom.join();
         this.active = true;
     }
 
@@ -69,6 +70,7 @@ public class ProfileChatroomEntity {
     }
 
     public void restore() {
+        this.chatroom.join();
         this.isDeleted = false;
     }
 
