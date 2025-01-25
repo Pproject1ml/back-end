@@ -6,10 +6,14 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=mariadb
       - SPRING_DATASOURCE_URL=jdbc:mariadb://testDBContainer:3306/testdb
-      - SPRING_DATASOURCE_USERNAME=testuser
-      - SPRING_DATASOURCE_PASSWORD=232323
+      - SPRING_DATASOURCE_USERNAME=
+      - SPRING_DATASOURCE_PASSWORD=
       - spring.jwt.secret=
       - TZ=Asia/Seoul
+      - SPRING_PROFILES_ACTIVE=prod
+      - chat.system=
+    volumes:
+      - ~/test/testTT-log:/var/log/testTT-log
     networks:
       - testnet
     ports:
