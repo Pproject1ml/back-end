@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.AlarmDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
-import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.dto.LocationDTO;
 import org._1mg.tt_backend.chat.service.ChatroomService;
 import org._1mg.tt_backend.landmark.service.LandmarkService;
@@ -58,7 +57,7 @@ public class ChatroomController {
     }
 
     @PostMapping("/join")
-    public ResponseDTO<String> joinMessage(@RequestBody JoinDTO joinDTO) {
+    public ResponseDTO<String> joinMessage() {
 
         //일단 컨트롤러는 냅두는데... 실질적인 동작은 eventListenr로..
 

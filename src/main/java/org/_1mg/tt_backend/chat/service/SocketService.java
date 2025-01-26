@@ -1,5 +1,6 @@
 package org._1mg.tt_backend.chat.service;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,8 +8,8 @@ import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
-import org._1mg.tt_backend.chat.dto.DieDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
+import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,14 @@ public class SocketService {
     private final String BYE = "님이 퇴장하셨습니다";
 
     @Value("${chat.system}")
-    private String SYSTEM;
+    private String SYSTEM_ID;
+    private Profile SYSTEM;
+
+    @PostConstruct
+    public void initSystem() {
+        SYSTEM = profileService.findProfile(SYSTEM_ID);
+    }
+
 
     public List<TextDTO> makeWelcomeMessage(String profileId, String chatroomId) {
 
@@ -39,21 +47,21 @@ public class SocketService {
         String message = profile.getNickname() + WELCOME;
 
         //입장 처리
-        chatroomService.joinChatroom(profile, chatroomId);
+        ChatroomEntity chatroom = chatroomService.joinChatroom(profile, chatroomId);
 
         //최신화된 참여자 정보 조회
         List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
 
         //퇴장 메세지의와 같은 이유로 SYSTEM 계정으로 입장 메세지를 저장
         TextDTO text = TextDTO.builder()
+                .profileId(SYSTEM_ID)
                 .chatroomId(chatroomId)
-                .profileId(SYSTEM)
                 .messageType(MessageType.JOIN)
                 .content(message)
                 .profiles(profiles)
                 .build();
 
-        return messageService.sendSystemText(text);
+        return messageService.sendSystemText(text, SYSTEM, chatroom);
     }
 
     public List<TextDTO> makeDieMessage(String profileId, String chatroomId) {
@@ -65,11 +73,7 @@ public class SocketService {
         String message = profile.getNickname() + BYE;
 
         //퇴장 처리
-        chatroomService.dieChatroom(
-                DieDTO.builder()
-                        .chatroomId(chatroomId)
-                        .profileId(profileId)
-                        .build());
+        ChatroomEntity chatroom = chatroomService.dieChatroom(profile, chatroomId);
 
         //최신화된 참여자 정보 조회
         List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
@@ -84,14 +88,14 @@ public class SocketService {
          */
         TextDTO text = TextDTO.builder()
                 .chatroomId(chatroomId)
-                .profileId(SYSTEM)
+                .profileId(SYSTEM_ID)
                 .messageType(MessageType.DIE)
                 .content(message)
                 .profiles(profiles)
                 .build();
 
         //시스템 전용 메세지 전송 메소드
-        return messageService.sendSystemText(text);
+        return messageService.sendSystemText(text, SYSTEM, chatroom);
     }
 
     public List<TextDTO> makeDisableMessage(String profileId, String chatroomId) {
@@ -104,11 +108,7 @@ public class SocketService {
         String message = profile.getNickname() + BYE;
 
         //비활성화 처리
-        chatroomService.disableChatroom(
-                DieDTO.builder()
-                        .chatroomId(chatroomId)
-                        .profileId(profileId)
-                        .build());
+        ChatroomEntity chatroom = chatroomService.disableChatroom(profile, chatroomId);
 
         //최신화된 참여자 정보 조회
         List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
@@ -116,12 +116,12 @@ public class SocketService {
         //퇴장과 동일한 이유로 SYSTEM으로 메세지 저장
         TextDTO text = TextDTO.builder()
                 .chatroomId(chatroomId)
-                .profileId(SYSTEM)
+                .profileId(SYSTEM_ID)
                 .messageType(MessageType.DISABLE)
                 .content(message)
                 .profiles(profiles)
                 .build();
 
-        return messageService.sendSystemText(text);
+        return messageService.sendSystemText(text, SYSTEM, chatroom);
     }
 }

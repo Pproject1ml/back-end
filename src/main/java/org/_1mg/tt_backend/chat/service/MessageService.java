@@ -1,5 +1,6 @@
 package org._1mg.tt_backend.chat.service;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
@@ -30,7 +31,13 @@ public class MessageService {
     private final ChatUtils chatUtils;
 
     @Value("${chat.system}")
-    private String SYSTEM;
+    private String SYSTEM_ID;
+    private Profile SYSTEM;
+
+    @PostConstruct
+    public void initSystem() {
+        SYSTEM = profileService.findProfile(SYSTEM_ID);
+    }
 
     /**
      * chatroom에 startId와 endId 사이의 메세지와 그 메세지를 보낸 Profile을 조회
@@ -80,17 +87,14 @@ public class MessageService {
         return result;
     }
 
-    public List<TextDTO> sendSystemText(TextDTO textDTO, ChatroomEntity chatroom) {
+    public List<TextDTO> sendSystemText(TextDTO textDTO, Profile system, ChatroomEntity chatroom) {
 
         List<TextDTO> result = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
 
-        //profile 조회
-        Profile profile = profileService.findProfile((textDTO.getProfileId()));
-
         //System 메세지는 참가하지 않아도 어디서나 보낼 수 있음
         //메세지 생성
-        makeMessages(profile, chatroom, now, textDTO, result);
+        makeMessages(system, chatroom, now, textDTO, result);
 
         return result;
     }
@@ -100,9 +104,8 @@ public class MessageService {
         //오늘의 첫 메세지인지 확인
         if (chatUtils.checkFirstMessage(chatroom.getChatroomId(), now)) {
 
-            //날짜 데이터의 경우 SYSTEM 계정으로 메세지 작성
-            Profile system = profileService.findProfile(SYSTEM);
-            MessageEntity date = MessageEntity.create(chatroom, system, MessageType.DATE, now.toString());
+            //날짜 데이터의 경우 SYSTEM 계정으로 메세지 작성;
+            MessageEntity date = MessageEntity.create(chatroom, SYSTEM, MessageType.DATE, now.toString());
             messageRepository.save(date);
             result.add(date.convertToText());
         }

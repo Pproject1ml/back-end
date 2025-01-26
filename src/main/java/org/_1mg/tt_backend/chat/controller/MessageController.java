@@ -59,25 +59,18 @@ public class MessageController {
 
     @MessageMapping("/message/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<TextDTO> textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
+    public void textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
 
-        List<TextDTO> text = messageService.sendText(textDTO);
+        List<TextDTO> texts = messageService.sendText(textDTO);
 
-        if (text.size() > 1) {
+        for (TextDTO text : texts) {
             messagingTemplate.convertAndSend("/sub/room/" + chatroomId,
                     ResponseDTO.<TextDTO>builder()
                             .status(OK.getStatus())
                             .message(OK.getMessage())
-                            .data(text.get(0))
+                            .data(text)
                             .build());
         }
-
-        //MessageBroker로 반환해도 가고 convertAndSend()로 직접 보내도 감
-        return ResponseDTO.<TextDTO>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .data(text.get(text.size() - 1))
-                .build();
     }
 
     @MessageMapping("/leave/{chatroomId}")
