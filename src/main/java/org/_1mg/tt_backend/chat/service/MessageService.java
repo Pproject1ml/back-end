@@ -80,16 +80,13 @@ public class MessageService {
         return result;
     }
 
-    public List<TextDTO> sendSystemText(TextDTO textDTO) {
+    public List<TextDTO> sendSystemText(TextDTO textDTO, ChatroomEntity chatroom) {
 
         List<TextDTO> result = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
 
         //profile 조회
         Profile profile = profileService.findProfile((textDTO.getProfileId()));
-
-        //chatroom 조회
-        ChatroomEntity chatroom = chatUtils.findChatroom((textDTO.getChatroomId()));
 
         //System 메세지는 참가하지 않아도 어디서나 보낼 수 있음
         //메세지 생성
