@@ -52,12 +52,13 @@ public class ChatroomEntity extends BaseEntity {
                 .build();
     }
 
-    public ChatroomDTO convertToDTOForTab(boolean active) {
+    public ChatroomDTO convertToDTOForTab(boolean active, boolean alarm) {
 
         return ChatroomDTO.builder()
                 .chatroomId(this.chatroomId.toString())
                 .title(this.title)
                 .count(this.count)
+                .alarm(alarm)
                 .longitude(this.landmark.getLongitude())
                 .latitude(this.landmark.getLatitude())
                 .imagePath(this.landmark.getImagePath())

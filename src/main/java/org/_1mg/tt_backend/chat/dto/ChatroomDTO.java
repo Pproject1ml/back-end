@@ -17,6 +17,7 @@ public class ChatroomDTO {
     private String title;
     private Integer count;
     private List<ProfileDTO> profiles;
+    private boolean alarm;
     private double longitude;
     private double latitude;
     private String imagePath;
