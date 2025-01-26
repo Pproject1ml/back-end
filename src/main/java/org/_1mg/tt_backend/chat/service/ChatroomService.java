@@ -8,7 +8,6 @@ import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.dto.AlarmDTO;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 import org._1mg.tt_backend.chat.dto.DieDTO;
-import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.entity.ChatroomEntity;
 import org._1mg.tt_backend.chat.entity.MessageEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
@@ -99,10 +98,9 @@ public class ChatroomService {
         profileChatroom.changeAlarm(alarmDTO.isAlarm());
     }
 
-    public void joinChatroom(JoinDTO joinDTO) {
+    public void joinChatroom(Profile profile, String chatroomId) {
 
-        Profile profile = profileService.findProfile(joinDTO.getProfileId());
-        ChatroomEntity chatroom = chatUtils.findChatroom(joinDTO.getChatroomId());
+        ChatroomEntity chatroom = chatUtils.findChatroom(chatroomId);
         ProfileChatroomEntity profileChatroom = chatUtils.getProfileChatroom(profile.getProfileId(), chatroom.getChatroomId());
 
         //아예 없는 경우 최초 생성

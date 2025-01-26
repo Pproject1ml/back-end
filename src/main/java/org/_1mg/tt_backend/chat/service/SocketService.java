@@ -8,7 +8,6 @@ import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.DieDTO;
-import org._1mg.tt_backend.chat.dto.JoinDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,12 +39,7 @@ public class SocketService {
         String message = profile.getNickname() + WELCOME;
 
         //입장 처리
-        chatroomService.joinChatroom(
-                JoinDTO.builder()
-                        .chatroomId(chatroomId)
-                        .profileId(profileId)
-                        .build()
-        );
+        chatroomService.joinChatroom(profile, chatroomId);
 
         //최신화된 참여자 정보 조회
         List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
