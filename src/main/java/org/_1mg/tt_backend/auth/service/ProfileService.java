@@ -41,4 +41,15 @@ public class ProfileService {
                 .map(Profile::convertToDTO)
                 .toList();
     }
+
+    public void save(Profile profile) {
+        profileRepository.save(profile);
+    }
+
+    public Profile findById(Long profileId) {
+        return profileRepository.findByIdNotDeleted(profileId)
+                .orElseThrow(() -> new IllegalArgumentException("Profile not found with ID: " + profileId));
+    }
+
+
 }

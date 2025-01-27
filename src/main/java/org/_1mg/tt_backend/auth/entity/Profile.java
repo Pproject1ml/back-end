@@ -46,6 +46,9 @@ public class Profile extends BaseEntity {
     @OneToMany(mappedBy = "profile")
     private List<ProfileChatroomEntity> profileChatrooms;
 
+    @Column(name = "fcm_token", nullable = true) // FCM 토큰 추가
+    private String fcmToken;
+
     public void updateProfile(ProfileDTO dto) {
 
         this.nickname = dto.getNickname();
@@ -55,6 +58,11 @@ public class Profile extends BaseEntity {
         this.age = dto.getAge();
         this.gender = dto.getGender();
         this.isVisible = dto.getIsVisible();
+        this.fcmToken = dto.getFcmToken(); // FCM 토큰 업데이트 추가
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public ProfileDTO convertToDTO() {
@@ -68,6 +76,7 @@ public class Profile extends BaseEntity {
                 .age(this.age)
                 .gender(this.gender)
                 .isVisible(this.isVisible)
+                .fcmToken(this.fcmToken)
                 .build();
     }
 }

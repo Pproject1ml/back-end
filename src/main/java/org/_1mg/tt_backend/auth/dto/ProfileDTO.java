@@ -19,6 +19,7 @@ public class ProfileDTO {
     private Integer age;
     private Gender gender;
     private Boolean isVisible;
+    private String fcmToken; // fcm 토큰 추가
 
 
     public ProfileDTO checkNull(ProfileDTO profileDTO, Profile profile) {
@@ -32,6 +33,7 @@ public class ProfileDTO {
                 .age(profileDTO.age == null ? profile.getAge() : profileDTO.age)
                 .gender(profileDTO.gender == null ? profile.getGender() : profileDTO.gender)
                 .isVisible(profileDTO.isVisible == null ? profile.isVisible() : profileDTO.isVisible)
+                .fcmToken(profileDTO.fcmToken == null ? profile.getFcmToken() : profileDTO.fcmToken) // 추가
                 .build();
     }
 }
