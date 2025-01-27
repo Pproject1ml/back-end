@@ -13,6 +13,7 @@ public enum MessageType {
     TEXT("TEXT"), //메세지
     IMAGE("IMAGE"),
     DATE("DATE"),
+    ERROR("ERROR"),
     ;
 
     private final String value;
