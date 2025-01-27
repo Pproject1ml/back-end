@@ -35,7 +35,7 @@ public class MessageEntity extends BaseEntity {
     @Column(nullable = false)
     private MessageType messageType;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     public static MessageEntity create(ChatroomEntity chatroomEntity, Profile profile, MessageType messageType, String content) {

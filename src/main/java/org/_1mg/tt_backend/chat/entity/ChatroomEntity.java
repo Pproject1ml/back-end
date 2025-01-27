@@ -9,8 +9,6 @@ import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.dto.ChatroomDTO;
 import org._1mg.tt_backend.landmark.entity.Landmark;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,12 +26,6 @@ public class ChatroomEntity extends BaseEntity {
 
     @Column(nullable = false)
     private int count;
-
-    @OneToMany(mappedBy = "chatroom")
-    private List<MessageEntity> messageEntities;
-
-    @OneToMany(mappedBy = "chatroom")
-    private List<ProfileChatroomEntity> profileChatrooms;
 
     @OneToOne(mappedBy = "chatroom")
     private Landmark landmark;
