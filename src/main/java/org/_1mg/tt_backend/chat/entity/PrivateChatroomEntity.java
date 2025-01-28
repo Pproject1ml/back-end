@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.base.BaseEntity;
+import org._1mg.tt_backend.chat.dto.PrivateChatroomDTO;
 
 @Getter
 @NoArgsConstructor
@@ -28,4 +29,9 @@ public class PrivateChatroomEntity extends BaseEntity {
     @JoinColumn(name = "user2_id", nullable = false)
     private Profile user2;
 
+    public PrivateChatroomDTO convertToDTOForTab(boolean alarm, String username) {
+
+        return PrivateChatroomDTO.builder()
+                .build();
+    }
 }

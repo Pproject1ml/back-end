@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.MessageType;
 import org._1mg.tt_backend.chat.dto.TextDTO;
+import org._1mg.tt_backend.chat.service.PrivateSocketService;
 import org._1mg.tt_backend.chat.service.SocketService;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,6 +27,7 @@ public class WebSocketEventListener {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final SocketService socketService;
+    private final PrivateSocketService privateSocketService;
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
