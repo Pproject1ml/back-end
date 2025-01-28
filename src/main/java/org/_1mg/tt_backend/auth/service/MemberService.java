@@ -94,4 +94,9 @@ public class MemberService {
         Member member = findMemberNotDeleted(memberId);
         member.deleteRefreshToken();
     }
+
+    public void deleteMember(String memberId) {
+
+        memberRepository.findById(UUID.fromString(memberId)).ifPresent(memberRepository::delete);
+    }
 }

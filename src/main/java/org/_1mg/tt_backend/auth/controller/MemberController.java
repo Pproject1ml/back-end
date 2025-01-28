@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 import static org._1mg.tt_backend.base.CustomException.OK;
@@ -194,6 +195,17 @@ public class MemberController {
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message("LOGOUT SUCCESS")
+                .build();
+    }
+
+    @DeleteMapping("/user")
+    public ResponseDTO<String> deleteUser(Principal principal) {
+
+        memberService.deleteMember(principal.getName());
+
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
                 .build();
     }
 }
