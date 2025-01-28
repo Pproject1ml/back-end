@@ -11,6 +11,9 @@ import org._1mg.tt_backend.auth.entity.Member;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
+import org._1mg.tt_backend.chat.service.ChatUtils;
+import org._1mg.tt_backend.chat.service.MessageService;
+import org._1mg.tt_backend.chat.service.PrivateMessageService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +30,11 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ProfileService profileService;
+    private final MessageService messageService;
+    private final PrivateMessageService privateMessageService;
     private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
+    private final ChatUtils chatUtils;
 
     public Member findMemberNotDeleted(String memberId) {
 
@@ -97,6 +103,15 @@ public class MemberService {
 
     public void deleteMember(String memberId) {
 
-        memberRepository.findById(UUID.fromString(memberId)).ifPresent(memberRepository::delete);
+        Member member = memberRepository.findMemberAndProfileNotDeleted(UUID.fromString(memberId)).orElseThrow(
+                () -> new UsernameNotFoundException(USER_NOT_FOUND.getMessage())
+        );
+
+        messageService.toNullSender(member.getProfile().getProfileId());
+        privateMessageService.toNullSender(member.getProfile().getProfileId());
+        chatUtils.toNullSender(member.getProfile().getProfileId());
+
+        memberRepository.delete(member);
+
     }
 }

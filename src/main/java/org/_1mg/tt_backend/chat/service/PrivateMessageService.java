@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
+import org._1mg.tt_backend.chat.dto.RefreshDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.entity.PrivateChatroomEntity;
 import org._1mg.tt_backend.chat.entity.PrivateMessageEntity;
 import org._1mg.tt_backend.chat.repository.PrivateMessageRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ import java.util.List;
 public class PrivateMessageService {
 
     private final ProfileService profileService;
+    private final PrivateChatroomService chatroomService;
     private final PrivateMessageRepository messageRepository;
 
     @Value("${chat.system}")
@@ -32,6 +35,46 @@ public class PrivateMessageService {
     @PostConstruct
     public void initSystem() {
         SYSTEM = profileService.findProfile(SYSTEM_ID);
+    }
+
+    public List<TextDTO> getMessagesByRange(RefreshDTO refreshDTO) {
+
+        Long start = refreshDTO.getStart();
+        Long end = refreshDTO.getEnd();
+        Long chatroom = refreshDTO.getChatroom();
+
+        if (start == null) {
+            return new ArrayList<>();
+        }
+
+        if (end == null) {
+            return messageRepository.findMessagesFromStartNotDeleted(chatroom, start)
+                    .stream()
+                    .map(PrivateMessageEntity::convertToText)
+                    .toList();
+        }
+
+        return messageRepository.findMessagesBetweenStartAndEndNotDeleted(chatroom, start, end)
+                .stream()
+                .map(PrivateMessageEntity::convertToText)
+                .toList();
+    }
+
+    public List<TextDTO> sendText(TextDTO textDTO) {
+
+        List<TextDTO> result = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+
+        //profile 조회
+        Profile profile = profileService.findProfile((textDTO.getProfileId()));
+
+        //chatroom 조회 및 참가 여부 확인
+        PrivateChatroomEntity chatroom = chatroomService.findChatroom(profile.getProfileId(), textDTO.getChatroomId());
+
+        //메세지 생성
+        makeMessages(profile, chatroom, now, textDTO, result);
+
+        return result;
     }
 
     public List<TextDTO> sendSystemText(TextDTO textDTO, Profile system, PrivateChatroomEntity chatroom) {
@@ -78,6 +121,16 @@ public class PrivateMessageService {
 
     public PrivateMessageEntity getLastMessage(Long chatroom) {
 
-        return null;
+        return messageRepository.findLastMessageWithChatroomNotDeleted(chatroom, Limit.of(1));
+    }
+
+    public void toNullSender(Long profileId) {
+
+        //messageRepository.nullifySenderForMessages(memberId);
+        List<PrivateMessageEntity> messages = messageRepository.findAllMessages(profileId).stream()
+                .peek(PrivateMessageEntity::detachProfile)
+                .toList();
+
+        messageRepository.saveAll(messages);
     }
 }

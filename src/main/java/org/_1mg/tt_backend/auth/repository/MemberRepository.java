@@ -24,4 +24,10 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
             "WHERE m.isDeleted = false " +
             "AND m.memberId = :memberId")
     Optional<Member> findByIdNotDeleted(@Param("memberId") UUID memberId);
+
+    @Query("SELECT m FROM Member m " +
+            "JOIN FETCH m.profile p " +
+            "WHERE m.isDeleted = false " +
+            "AND m.memberId = :memberId")
+    Optional<Member> findMemberAndProfileNotDeleted(@Param("memberId") UUID memberId);
 }

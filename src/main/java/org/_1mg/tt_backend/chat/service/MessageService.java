@@ -120,6 +120,16 @@ public class MessageService {
         result.add(textDTO);
     }
 
+    public void toNullSender(Long profileId) {
+
+        //messageRepository.nullifySenderForMessages(memberId);
+        List<MessageEntity> messages = messageRepository.findAllMessages(profileId).stream()
+                .peek(MessageEntity::detachProfile)
+                .toList();
+
+        messageRepository.saveAll(messages);
+    }
+
     public void leaveChatroom(LeaveDTO leaveDTO) {
 
         Profile profile = profileService.findProfile((leaveDTO.getProfileId()));

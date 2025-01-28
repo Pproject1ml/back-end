@@ -27,7 +27,7 @@ public class PrivateMessageEntity extends BaseEntity {
     private PrivateChatroomEntity chatroom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false)
+    @JoinColumn(name = "profile_id", nullable = true)
     private Profile profile; // profile 테이블과 연관
 
     @Enumerated(EnumType.STRING)
@@ -57,6 +57,10 @@ public class PrivateMessageEntity extends BaseEntity {
                 .messageType(this.messageType)
                 .createdAt(super.getCreatedAt())
                 .build();
+    }
+
+    public void detachProfile() {
+        this.profile = null;
     }
 }
 

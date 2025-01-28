@@ -22,7 +22,7 @@ public class ProfileChatroomEntity {
     private Long profileChatroomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false)
+    @JoinColumn(name = "profile_id")
     private Profile profile; // profile 테이블과 연관
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -76,5 +76,10 @@ public class ProfileChatroomEntity {
 
     public void changeAlarm(boolean alarm) {
         this.alarm = alarm;
+    }
+
+    public void detachProfile() {
+        this.profile = null;
+        this.isDeleted = true;
     }
 }

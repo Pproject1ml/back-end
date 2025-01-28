@@ -34,4 +34,9 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
             "ORDER BY m.messageId ASC")
     List<MessageEntity> findMessagesFromStartNotDeleted(@Param("chatroomId") Long chatroomId,
                                                         @Param("startId") Long startId);
+
+    @Query(value = "SELECT * from message m " +
+            "WHERE m.profile_id = :profileId"
+            , nativeQuery = true)
+    List<MessageEntity> findAllMessages(Long profileId);
 }

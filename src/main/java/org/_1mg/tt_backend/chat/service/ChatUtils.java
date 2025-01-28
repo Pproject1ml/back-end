@@ -75,4 +75,14 @@ public class ChatUtils {
 
         return profileChatroomRepository.findChatroomsByProfileIdNotDeleted(profileId);
     }
+
+    public void toNullSender(Long profileId) {
+
+        //messageRepository.nullifySenderForMessages(memberId);
+        List<ProfileChatroomEntity> chatrooms = profileChatroomRepository.findAllMessages(profileId).stream()
+                .peek(ProfileChatroomEntity::detachProfile)
+                .toList();
+
+        profileChatroomRepository.saveAll(chatrooms);
+    }
 }
