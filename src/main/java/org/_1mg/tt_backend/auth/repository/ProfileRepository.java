@@ -25,11 +25,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
             "AND p.profileId = :profileId ")
     Optional<Profile> findByIdNotDeleted(Long profileId);
 
-    @Query("SELECT p FROM Member m " +
-            "JOIN FETCH m.profile p " +
-            "WHERE m.memberId = :memberId " +
-            "AND m.isDeleted = false " +
-            "AND p.isDeleted = false ")
+    @Query(value = "SELECT P.* FROM profile p " +
+            "JOIN member m ON p.profile_id = m.profile_id " +
+            "WHERE m.member_id = :memberId " +
+            "AND m.is_deleted = false " +
+            "AND p.is_deleted = false ", nativeQuery = true)
     Optional<Profile> findByMemberIdNotDeleted(UUID memberId);
 
 
