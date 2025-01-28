@@ -9,6 +9,7 @@ import org._1mg.tt_backend.auth.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org._1mg.tt_backend.base.CustomException.ALREADY_EXISTS_NICKNAME;
 import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
@@ -31,6 +32,20 @@ public class ProfileService {
 
         Long id = Long.parseLong(profileId);
         return profileRepository.findByIdNotDeleted(id)
+                .orElseThrow(() -> new ProfileNotFoundException(USER_NOT_FOUND.getMessage()));
+    }
+
+    public Profile findProfileWithMemberId(String memberId) {
+
+        UUID id = UUID.fromString(memberId);
+        return profileRepository.findByMemberIdNotDeleted(id)
+                .orElseThrow(() -> new ProfileNotFoundException(USER_NOT_FOUND.getMessage()));
+    }
+
+    public Profile findProfileAndMember(String profileId) {
+
+        Long id = Long.parseLong(profileId);
+        return profileRepository.findProfileAndMemberByIdNotDeleted(id)
                 .orElseThrow(() -> new ProfileNotFoundException(USER_NOT_FOUND.getMessage()));
     }
 

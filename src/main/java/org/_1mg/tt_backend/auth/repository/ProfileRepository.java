@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
@@ -23,4 +24,19 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
             "WHERE p.isDeleted = false " +
             "AND p.profileId = :profileId ")
     Optional<Profile> findByIdNotDeleted(Long profileId);
+
+    @Query("SELECT p FROM Member m " +
+            "JOIN FETCH m.profile p " +
+            "WHERE m.memberId = :memberId " +
+            "AND m.isDeleted = false " +
+            "AND p.isDeleted = false ")
+    Optional<Profile> findByMemberIdNotDeleted(UUID memberId);
+
+
+    @Query("SELECT p FROM Profile p " +
+            "JOIN FETCH p.member m " +
+            "WHERE p.profileId = :profileid " +
+            "AND p.isDeleted = false " +
+            "AND m.isDeleted = false")
+    Optional<Profile> findProfileAndMemberByIdNotDeleted(Long profileId);
 }

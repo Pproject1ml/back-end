@@ -43,6 +43,9 @@ public class Profile extends BaseEntity {
     @Column(nullable = false)
     private boolean isVisible;
 
+    @OneToOne(mappedBy = "profile")
+    private Member member;
+
     @OneToMany(mappedBy = "profile")
     private List<ProfileChatroomEntity> profileChatrooms;
 
