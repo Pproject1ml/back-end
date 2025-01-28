@@ -21,11 +21,13 @@ public class PrivateChatroomService {
 
         Profile user1 = profileService.findProfileWithMemberId(user2MemberId);
 
+        //일대 일 채팅방 생성
         PrivateChatroomEntity privateChatroom = privateChatroomRepository.save(
                 PrivateChatroomEntity.builder()
                         .user1(user1)
                         .user2(user2)
                         .build());
+
 
         return DESTINATION + privateChatroom.getPrivateChatroomId();
     }

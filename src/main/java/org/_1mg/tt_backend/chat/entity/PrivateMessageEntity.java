@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.base.BaseEntity;
 import org._1mg.tt_backend.chat.MessageType;
+import org._1mg.tt_backend.chat.dto.TextDTO;
 
 @Getter
 @NoArgsConstructor
@@ -35,4 +36,27 @@ public class PrivateMessageEntity extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    public static PrivateMessageEntity create(PrivateChatroomEntity chatroomEntity, Profile profile, MessageType messageType, String content) {
+
+        return PrivateMessageEntity.builder()
+                .chatroom(chatroomEntity)
+                .profile(profile)
+                .messageType(messageType)
+                .content(content)
+                .build();
+    }
+
+    public TextDTO convertToText() {
+
+        return TextDTO.builder()
+                .messageId(this.privateMessageId.toString())
+                .profileId(this.profile.getProfileId().toString())
+                .chatroomId(this.chatroom.getPrivateChatroomId().toString())
+                .content(this.content)
+                .messageType(this.messageType)
+                .createdAt(super.getCreatedAt())
+                .build();
+    }
 }
+

@@ -60,5 +60,4 @@ public class MessageEntity extends BaseEntity {
                 .build();
 
     }
-
 }
