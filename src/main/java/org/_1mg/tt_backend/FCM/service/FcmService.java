@@ -6,8 +6,8 @@ import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,19 +16,27 @@ public class FcmService {
     private final ProfileService profileService;
     private final FcmSender fcmSender;
 
-    public void sendNotificationToChatroom(Long chatroomId, String senderName, String content) {
+    public void sendNotificationToChatroom(String chatroomId, String profileId, String content) {
+
         //채팅방 참여 중인 인원 프로필 조회
-        List<ProfileDTO> profiles = profileService.findProfiles(chatroomId); //채팅방 인원 프로필 조회
+        List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId)); //채팅방 인원 프로필 조회
 
+        List<String> tokens = new ArrayList<>();
+        String senderName = null;
+        for (ProfileDTO profile : profiles) {
 
-        List<String> tokens = profiles.stream() //참여자 토큰 list 추출
-                .map(ProfileDTO::getFcmToken)
-                .filter(token -> token != null && !token.isEmpty())
-                .collect(Collectors.toList());
+            //본인이 보낸 메세지에 대해선 알림이 오면 안 됨
+            if (profile.getProfileId().equals(profileId)) {
+                senderName = profile.getNickname();
+                continue;
+            }
 
-        if (!tokens.isEmpty()) {
-            String title = senderName;
-            fcmSender.sendNotification(tokens, title, content); //토큰list로 알림 전송
+            tokens.add(profile.getFcmToken());
+        }
+
+        //메세지 보낸 후 나가기 한 경우 알림을 보내지 않음(보낸 이가 NULL인 경우 방지)
+        if (!tokens.isEmpty() && senderName != null) {
+            fcmSender.sendNotification(tokens, senderName, content);
         }
     }
 

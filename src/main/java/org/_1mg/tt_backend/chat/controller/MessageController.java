@@ -2,6 +2,7 @@ package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.FCM.service.FcmService;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.EnterDTO;
 import org._1mg.tt_backend.chat.dto.LeaveDTO;
@@ -28,6 +29,7 @@ import static org._1mg.tt_backend.base.CustomException.OK;
 public class MessageController {
 
     private final MessageService messageService;
+    private final FcmService fcmService;
     private final SimpMessagingTemplate messagingTemplate;
 
     @ResponseBody
@@ -71,6 +73,10 @@ public class MessageController {
                             .data(text)
                             .build());
         }
+
+        //알림 생성
+        TextDTO message = texts.get(texts.size() - 1);
+        fcmService.sendNotificationToChatroom(message.getChatroomId(), message.getProfileId(), message.getContent());
     }
 
     @MessageMapping("/leave/{chatroomId}")

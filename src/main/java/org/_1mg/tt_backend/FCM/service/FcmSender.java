@@ -1,21 +1,16 @@
 package org._1mg.tt_backend.FCM.service;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class FcmSender {
 
     public void sendNotification(List<String> tokens, String title, String body) {
-        if (tokens.isEmpty()) {
-            System.out.println("No tokens error");
-            return;
-        }
 
         try {
             MulticastMessage message = MulticastMessage.builder()
@@ -26,9 +21,11 @@ public class FcmSender {
                             .build())
                     .build();
 
-            FirebaseMessaging.getInstance().sendMulticast(message);
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            log.info("SUCCESS SENT response: {}", response.getSuccessCount());
+            log.error("FAILURE SENT response: {}", response.getFailureCount());
         } catch (FirebaseMessagingException e) {
-            throw new RuntimeException("전송 실패", e);
+            log.error(e.getMessage());
         }
     }
 }
