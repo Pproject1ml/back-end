@@ -2,12 +2,15 @@ package org._1mg.tt_backend.auth.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.FCM.exception.InvalidFCMToken;
 import org._1mg.tt_backend.auth.dto.MemberDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Member;
+import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
@@ -113,5 +116,21 @@ public class MemberService {
 
         memberRepository.delete(member);
 
+    }
+
+    public void checkJwtToken(String token) {
+
+        Claims claims = jwtUtils.verifyToken(token);
+        String memberId = jwtUtils.getSubject(claims);
+        findMemberNotDeleted(memberId);
+    }
+
+    public void checkFcmToken(String profileId, String token) {
+
+        Profile profile = profileService.findProfile(profileId);
+
+        if (!profile.getFcmToken().equals(token)) {
+            throw new InvalidFCMToken(INVALID_FCM_TOKEN.getMessage());
+        }
     }
 }

@@ -1,6 +1,8 @@
 package org._1mg.tt_backend.FCM.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org._1mg.tt_backend.FCM.dto.FcmDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FcmService {
 
     private final ProfileService profileService;
@@ -40,9 +43,10 @@ public class FcmService {
         }
     }
 
-    public void registerFcmToken(Long profileId, String fcmToken) {
-        Profile profile = profileService.findById(profileId);
-        profile.updateFcmToken(fcmToken); //토큰 업데이트
-        profileService.save(profile);
+    public void registerFcmToken(String memberId, FcmDTO fcmDTO) {
+
+        Profile profile = profileService.findProfileWithMemberId(memberId);
+        //토큰 업데이트
+        profile.updateFcmToken(fcmDTO.getFcmToken());
     }
 }

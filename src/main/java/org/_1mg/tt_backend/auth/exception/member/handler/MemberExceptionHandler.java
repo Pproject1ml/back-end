@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.FCM.exception.InvalidFCMToken;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.auth.service.MemberService;
 import org._1mg.tt_backend.base.ResponseDTO;
@@ -84,6 +85,17 @@ public class MemberExceptionHandler {
         return ResponseDTO.<String>builder()
                 .status(DEFAULT_TOKEN_ERROR.getStatus())
                 .message(DEFAULT_TOKEN_ERROR.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(InvalidFCMToken.class)
+    public ResponseDTO<String> fcmTokenError(InvalidFCMToken exception) {
+
+        log.error("NEED TO REFRESH FCM TOKEN");
+        return ResponseDTO.<String>builder()
+                .status(INVALID_FCM_TOKEN.getStatus())
+                .message(INVALID_FCM_TOKEN.getMessage())
                 .build();
     }
 }

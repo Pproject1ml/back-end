@@ -208,4 +208,27 @@ public class MemberController {
                 .message(OK.getMessage())
                 .build();
     }
+
+    @GetMapping("/auth/check-jwt")
+    public ResponseDTO<String> checkJwt(@RequestParam("jwt") String jwtToken) {
+
+        String token = jwtToken.split(" ")[1];
+        memberService.checkJwtToken(token);
+
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .build();
+    }
+
+    @GetMapping("/auth/check-fcm")
+    public ResponseDTO<String> checkFcm(@RequestParam("id") String profileId, @RequestParam("fcm") String fcmToken) {
+
+        memberService.checkFcmToken(profileId, fcmToken);
+
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .build();
+    }
 }

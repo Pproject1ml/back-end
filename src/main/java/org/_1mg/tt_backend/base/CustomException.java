@@ -73,9 +73,14 @@ public enum CustomException {
      * 소켓 관련 예외
      */
     INVALID_MESSAGE_TYPE(80, "잘못된 메세지 타입입니다"),
-    DESTINATION_IS_NULL(81, "구독 URL이 입력되지 않았습니다");
+    DESTINATION_IS_NULL(81, "구독 URL이 입력되지 않았습니다"),
 
-    
+
+    /**
+     * FCM 관련 예외
+     */
+    INVALID_FCM_TOKEN(90, "FCM 토큰이 유효하지 않습니다");
+
     private final int status;
     private final String message;
 
