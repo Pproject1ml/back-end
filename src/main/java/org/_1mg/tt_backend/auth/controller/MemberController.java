@@ -22,7 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
@@ -168,14 +170,26 @@ public class MemberController {
                 .build();
     }
 
+    // 회원수정
     @PatchMapping("/user")
-    public ResponseDTO<String> userinfo(@RequestBody ProfileDTO profileDTO, Authentication authentication) {
+    public ResponseDTO<String> userinfo(@RequestPart(value = "profileData", required = false) ProfileDTO profileDTO,
+                                        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+                                        Authentication authentication) throws IOException {
 
         log.debug("UPDATE USERINFO START");
+
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        memberService.updateMember(profileDTO, user.getMemberId());
+        String memberId = user.getMemberId();
+
+        // 데이터가 없는 경우 대비하여 기본 객체 생성
+        if (profileDTO == null) {
+            profileDTO = new ProfileDTO();
+        }
+
+        memberService.updateMember(profileDTO, profileImage, memberId);
 
         log.debug("UPDATE USERINFO FINISHED");
+
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
                 .message("UPDATE USERINFO SUCCESS")

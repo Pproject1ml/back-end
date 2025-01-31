@@ -19,7 +19,9 @@ import org._1mg.tt_backend.chat.service.MessageService;
 import org._1mg.tt_backend.chat.service.PrivateMessageService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,16 +41,35 @@ public class MemberService {
     private final ObjectMapper objectMapper;
     private final ChatUtils chatUtils;
 
+    private final S3Service s3Service;
+
     public Member findMemberNotDeleted(String memberId) {
 
         return memberRepository.findByIdNotDeleted(UUID.fromString(memberId)).orElseThrow(() ->
                 new UsernameNotFoundException(USER_NOT_FOUND.getMessage()));
     }
 
-    public void updateMember(ProfileDTO profileDTO, String memberId) {
-
+    public void updateMember(ProfileDTO profileDTO, MultipartFile profileImage, String memberId) throws IOException {
         Member member = findMemberNotDeleted(memberId);
-        member.updateProfile(profileDTO);
+        Profile profile = member.getProfile();
+
+        // 📌 이미지 처리: S3 업로드 또는 기본 이미지 사용
+        String updatedImageUrl;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            updatedImageUrl = s3Service.uploadProfileImage(profileImage, memberId);
+        } else if (profile.getProfileImage() == null || profile.getProfileImage().isEmpty()) {
+            updatedImageUrl = s3Service.getDefaultProfileImage(); // 기존 이미지 없으면 기본 이미지 적용
+        } else {
+            updatedImageUrl = profile.getProfileImage(); // 기존 이미지 유지
+        }
+
+        // 📌 기존 값 유지하면서 업데이트 수행
+        ProfileDTO updatedProfileDTO = profileDTO.checkNull(profileDTO, profile);
+        updatedProfileDTO.setProfileImage(updatedImageUrl); // 이미지 경로 업데이트
+
+
+        member.updateProfile(updatedProfileDTO);
+        memberRepository.save(member);
     }
 
     public String checkUniqueNickname(String nickname) throws JsonProcessingException {
