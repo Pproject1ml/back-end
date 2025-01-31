@@ -16,13 +16,11 @@ public interface PrivateChatroomRepository extends JpaRepository<PrivateChatroom
             "AND pc.isDeleted = false ")
     Optional<PrivateChatroomEntity> findByIdAndUserNotDeleted(Long profileId, Long chatroomId);
 
-    @Query("SELECT pc FROM ProfileChatroomEntity pc " +
-            "JOIN FETCH pc.chatroom c " +
-            "JOIN FETCH c.landmark l " +
-            "JOIN FETCH pc.profile p " +
-            "WHERE p.profileId = :profileId " +
-            "AND c.isDeleted = false " +
-            "AND pc.isDeleted = false " +
-            "AND l.isDeleted = false")
+    @Query("SELECT pc FROM PrivateChatroomEntity pc " +
+            "LEFT JOIN FETCH pc.user1 u1 " +
+            "LEFT JOIN FETCH pc.user2 u2 " +
+            "WHERE (pc.user1.profileId = :profileId " +
+            "OR pc.user2.profileId = :profileId) " +
+            "AND pc.isDeleted = false ")
     List<PrivateChatroomEntity> findChatroomsByProfileIdNotDeleted(@Param("profileId") Long profileId);
 }
