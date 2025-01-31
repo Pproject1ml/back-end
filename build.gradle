@@ -60,6 +60,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.1.1'
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.17.0'
 
+    implementation 'software.amazon.awssdk:s3:2.27.21'
+
 }
 
 tasks.named('test') {
