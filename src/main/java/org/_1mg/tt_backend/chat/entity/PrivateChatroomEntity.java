@@ -22,12 +22,16 @@ public class PrivateChatroomEntity extends BaseEntity {
     private Long privateChatroomId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user1_id", nullable = false)
+    @JoinColumn(name = "user1_id")
     private Profile user1;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user2_id", nullable = false)
+    @JoinColumn(name = "user2_id")
     private Profile user2;
+
+    private boolean alarm;
+
+    private boolean active;
 
     public PrivateChatroomDTO convertToDTOForTab(boolean alarm, String username) {
 
