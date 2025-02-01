@@ -2,6 +2,7 @@ package org._1mg.tt_backend.FCM.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.dto.FcmDTO;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -37,6 +39,7 @@ public class FcmService {
             tokens.add(profile.getFcmToken());
         }
 
+        log.info("{}", tokens);
         //메세지 보낸 후 나가기 한 경우 알림을 보내지 않음(보낸 이가 NULL인 경우 방지)
         if (!tokens.isEmpty() && senderName != null) {
             fcmSender.sendNotification(tokens, senderName, content);
@@ -47,6 +50,6 @@ public class FcmService {
 
         Profile profile = profileService.findProfileWithMemberId(memberId);
         //토큰 업데이트
-        profile.updateFcmToken(fcmDTO.getFcmToken());
+        profile.updateFcmToken(fcmDTO.getToken());
     }
 }
