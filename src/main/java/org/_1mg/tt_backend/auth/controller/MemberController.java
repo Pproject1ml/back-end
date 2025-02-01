@@ -18,6 +18,7 @@ import org._1mg.tt_backend.auth.security.CustomUserDetails;
 import org._1mg.tt_backend.auth.service.MemberService;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -171,28 +172,21 @@ public class MemberController {
     }
 
     // 회원수정
-    @PatchMapping("/user")
-    public ResponseDTO<String> userinfo(@RequestPart(value = "profileData", required = false) ProfileDTO profileDTO,
-                                        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-                                        Authentication authentication) throws IOException {
-
+    @PatchMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseDTO<ProfileDTO> userinfo(@RequestPart ProfileDTO profile,
+                                            @RequestPart(required = false) MultipartFile profileImage,
+                                            Principal principal) throws IOException {
         log.debug("UPDATE USERINFO START");
 
-        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        String memberId = user.getMemberId();
-
-        // 데이터가 없는 경우 대비하여 기본 객체 생성
-        if (profileDTO == null) {
-            profileDTO = new ProfileDTO();
-        }
-
-        memberService.updateMember(profileDTO, profileImage, memberId);
+        String memberId = principal.getName();
+        ProfileDTO newProfile = memberService.updateMember(profile, profileImage, memberId);
 
         log.debug("UPDATE USERINFO FINISHED");
 
-        return ResponseDTO.<String>builder()
+        return ResponseDTO.<ProfileDTO>builder()
                 .status(OK.getStatus())
                 .message("UPDATE USERINFO SUCCESS")
+                .data(newProfile)
                 .build();
     }
 

@@ -56,27 +56,26 @@ public class MemberService {
         );
     }
 
-    public void updateMember(ProfileDTO profileDTO, MultipartFile profileImage, String memberId) throws IOException {
+    public ProfileDTO updateMember(ProfileDTO profileDTO, MultipartFile profileImage, String memberId) throws IOException {
+
         Member member = findMemberNotDeleted(memberId);
         Profile profile = member.getProfile();
 
-        // 📌 이미지 처리: S3 업로드 또는 기본 이미지 사용
+        //이미지 처리: S3 업로드 또는 기본 이미지 사용
         String updatedImageUrl;
         if (profileImage != null && !profileImage.isEmpty()) {
             updatedImageUrl = s3Service.uploadProfileImage(profileImage, memberId);
-        } else if (profile.getProfileImage() == null || profile.getProfileImage().isEmpty()) {
+        } else if (profile.getProfileImage().isEmpty()) {
             updatedImageUrl = s3Service.getDefaultProfileImage(); // 기존 이미지 없으면 기본 이미지 적용
         } else {
             updatedImageUrl = profile.getProfileImage(); // 기존 이미지 유지
         }
 
-        // 📌 기존 값 유지하면서 업데이트 수행
-        ProfileDTO updatedProfileDTO = profileDTO.checkNull(profileDTO, profile);
-        updatedProfileDTO.setProfileImage(updatedImageUrl); // 이미지 경로 업데이트
+        //기존 값 유지하면서 업데이트 수행
+        profileDTO.setProfileImage(updatedImageUrl); // 이미지 경로 업데이트
+        member.updateProfile(profileDTO);
 
-
-        member.updateProfile(updatedProfileDTO);
-        memberRepository.save(member);
+        return profileDTO;
     }
 
     public String checkUniqueNickname(String nickname) throws JsonProcessingException {

@@ -26,9 +26,9 @@ public class S3Service {
         this.defaultImageUrl = defaultImageUrl;
     }
 
-    // 📌 S3에 프로필 이미지 업로드 (경로 유지 & 덮어쓰기)
-    public String uploadProfileImage(MultipartFile file, String userId) throws IOException {
-        String key = "profile-images/" + userId + ".jpg"; // 사용자당 하나의 프로필 이미지 유지
+    //S3에 프로필 이미지 업로드 (경로 유지 & 덮어쓰기)
+    public String uploadProfileImage(MultipartFile file, String memberId) throws IOException {
+        String key = "profile-images/" + memberId + ".jpg"; // 사용자당 하나의 프로필 이미지 유지
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -42,7 +42,7 @@ public class S3Service {
         return "https://" + bucketName + ".s3.amazonaws.com/" + key;
     }
 
-    // 📌 기본 이미지 반환
+    //기본 이미지 반환
     public String getDefaultProfileImage() {
         return defaultImageUrl;
     }
