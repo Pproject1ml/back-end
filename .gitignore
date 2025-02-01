@@ -28,7 +28,7 @@ out/
 src/test/
 src/main/java/org/_1mg/tt_backend/base/test/
 src/main/resources/application-secret.yml
-src/main/resources/chatloaction-firebase-adminsdk-fbsvc-3ebd762c0d.json
+src/main/resources/firebase/
 
 ### NetBeans ###
 /nbproject/private/
