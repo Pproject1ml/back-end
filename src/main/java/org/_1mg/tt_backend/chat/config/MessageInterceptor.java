@@ -27,4 +27,19 @@ public class MessageInterceptor implements ChannelInterceptor {
 
         return message;
     }
+
+    @Override
+    public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
+
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+
+
+        log.info("========== STOMP SEND EVENT END ==========");
+        log.info("Command: {}", headerAccessor.getCommand());
+        log.info("Session ID: {}", headerAccessor.getSessionId());
+        //log.info("User: {}", headerAccessor.getUser().getName());
+        log.info("Destination: {}", headerAccessor.getDestination());
+        log.info("Payload: {}", new String((byte[]) message.getPayload()));
+        log.info("message : {}", message);
+    }
 }
