@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.exception.member.custom.NicknameAlreadyExistsException;
 import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
-import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +14,7 @@ import static org._1mg.tt_backend.base.CustomException.ALREADY_EXISTS_NICKNAME;
 import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = ProfileService.class)
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class ProfileExceptionHandler {
 
