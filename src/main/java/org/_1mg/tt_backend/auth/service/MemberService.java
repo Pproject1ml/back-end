@@ -49,6 +49,13 @@ public class MemberService {
                 new UsernameNotFoundException(USER_NOT_FOUND.getMessage()));
     }
 
+    public Member findMemberAndProfile(String memberId) {
+
+        return memberRepository.findMemberAndProfileNotDeleted(UUID.fromString(memberId)).orElseThrow(
+                () -> new UsernameNotFoundException(USER_NOT_FOUND.getMessage())
+        );
+    }
+
     public void updateMember(ProfileDTO profileDTO, MultipartFile profileImage, String memberId) throws IOException {
         Member member = findMemberNotDeleted(memberId);
         Profile profile = member.getProfile();
@@ -127,9 +134,7 @@ public class MemberService {
 
     public void deleteMember(String memberId) {
 
-        Member member = memberRepository.findMemberAndProfileNotDeleted(UUID.fromString(memberId)).orElseThrow(
-                () -> new UsernameNotFoundException(USER_NOT_FOUND.getMessage())
-        );
+        Member member = findMemberAndProfile(memberId);
 
         messageService.toNullSender(member.getProfile().getProfileId());
         privateMessageService.toNullSender(member.getProfile().getProfileId());
@@ -139,16 +144,20 @@ public class MemberService {
 
     }
 
-    public void checkJwtToken(String token) {
+    public MemberDTO checkJwtToken(String token) {
 
         Claims claims = jwtUtils.verifyToken(token);
         String memberId = jwtUtils.getSubject(claims);
-        findMemberNotDeleted(memberId);
+        return findMemberAndProfile(memberId).convertToDTO();
     }
 
     public void checkFcmToken(String profileId, String token) {
 
         Profile profile = profileService.findProfile(profileId);
+
+        if (profile.getFcmToken() == null) {
+            throw new InvalidFCMToken(INVALID_MESSAGE_TYPE.getMessage());
+        }
 
         if (!profile.getFcmToken().equals(token)) {
             throw new InvalidFCMToken(INVALID_FCM_TOKEN.getMessage());

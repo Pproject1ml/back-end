@@ -224,14 +224,17 @@ public class MemberController {
     }
 
     @GetMapping("/auth/check-jwt")
-    public ResponseDTO<String> checkJwt(@RequestParam("jwt") String jwtToken) {
+    public ResponseDTO<MemberDTO> checkJwt(@RequestParam("jwt") String jwtToken) {
 
+        log.info("start check jwt");
         String token = jwtToken.split(" ")[1];
-        memberService.checkJwtToken(token);
+        MemberDTO memberDTO = memberService.checkJwtToken(token);
 
-        return ResponseDTO.<String>builder()
+        log.info("end check jwt");
+        return ResponseDTO.<MemberDTO>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())
+                .data(memberDTO)
                 .build();
     }
 
