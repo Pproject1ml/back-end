@@ -17,6 +17,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
             "JOIN FETCH pc.chatroom c " +
             "WHERE c.chatroomId = :chatroomId " +
             "AND p.isDeleted = false " +
+            "AND pc.isDeleted = false " +
             "AND pc.active = true")
     List<Profile> findProfilesByChatroomIdNotDeletedAndActive(Long chatroomId);
 
@@ -25,11 +26,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
             "AND p.profileId = :profileId ")
     Optional<Profile> findByIdNotDeleted(Long profileId);
 
-    @Query(value = "SELECT P.* FROM profile p " +
-            "JOIN member m ON p.profile_id = m.profile_id " +
-            "WHERE m.member_id = :memberId " +
-            "AND m.is_deleted = false " +
-            "AND p.is_deleted = false ", nativeQuery = true)
+    @Query(value = "SELECT p FROM Profile p " +
+            "JOIN FETCH p.member m " +
+            "WHERE m.memberId = :memberId " +
+            "AND m.isDeleted = false " +
+            "AND p.isDeleted = false ")
     Optional<Profile> findByMemberIdNotDeleted(UUID memberId);
 
 
