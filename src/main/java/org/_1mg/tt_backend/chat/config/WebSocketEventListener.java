@@ -96,7 +96,9 @@ public class WebSocketEventListener {
         //구독 해제에선 destination을 보낼 수 없음 그래서 일단 직접 받도록 했는데 어떻게 조회할 수 있을 것도 같은데..
         String chatroomId = headerAccessor.getFirstNativeHeader("chatroomId");
         //그래서 일단 직접 만들어야 함
-        String destination = "/sub/chat/" + chatroomId;
+        String destination = "/sub/room/" + chatroomId;
+
+        log.info("MESSAGETYPE : {}", messageType);
 
         switch (messageType) {
             case LEAVE -> {
@@ -112,6 +114,8 @@ public class WebSocketEventListener {
             case DIE -> {
                 log.info("UNSUBSCRIBE DIE");
                 List<TextDTO> result = socketService.makeDieMessage(profileId, chatroomId);
+
+                log.info("SEND DIE {}", result);
                 sendMessage(result, destination);
                 log.info("UNSUBSCRIBE DIE END");
             }
@@ -159,8 +163,12 @@ public class WebSocketEventListener {
 
     void sendMessage(List<TextDTO> messages, String destination) {
 
+        log.info("destination : {} ", destination);
+
         //시간 메세지와 입장/퇴장 메세지 전송
         for (TextDTO message : messages) {
+            log.info("messages : {}", message);
+
             messagingTemplate.convertAndSend(destination,
                     ResponseDTO.<TextDTO>builder()
                             .status(OK.getStatus())
