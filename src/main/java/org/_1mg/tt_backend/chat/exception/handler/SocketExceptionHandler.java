@@ -3,7 +3,6 @@ package org._1mg.tt_backend.chat.exception.handler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.exception.member.custom.ProfileNotFoundException;
-import org._1mg.tt_backend.chat.config.WebSocketEventListener;
 import org._1mg.tt_backend.chat.exception.custom.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.exception.custom.ProfileNotParticipants;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import java.security.Principal;
 
 @Slf4j
-@ControllerAdvice(assignableTypes = WebSocketEventListener.class)
+@ControllerAdvice
 @RequiredArgsConstructor
 public class SocketExceptionHandler {
 

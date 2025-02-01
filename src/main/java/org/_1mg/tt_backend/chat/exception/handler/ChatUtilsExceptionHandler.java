@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.exception.custom.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.exception.custom.ProfileNotParticipants;
-import org._1mg.tt_backend.chat.service.ChatUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -15,7 +14,7 @@ import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
 import static org._1mg.tt_backend.base.CustomException.USER_NOT_IN_CHATROOM;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = ChatUtils.class)
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class ChatUtilsExceptionHandler {
 

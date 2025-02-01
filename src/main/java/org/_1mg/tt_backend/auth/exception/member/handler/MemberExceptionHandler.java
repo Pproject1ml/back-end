@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.exception.InvalidFCMToken;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
-import org._1mg.tt_backend.auth.service.MemberService;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org._1mg.tt_backend.base.CustomException.*;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = MemberService.class)
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class MemberExceptionHandler {
 
@@ -55,7 +54,7 @@ public class MemberExceptionHandler {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseDTO<String> jwtExpired(ExpiredJwtException exception) {
 
