@@ -1,9 +1,6 @@
 spring:
   profiles:
-    default: default
-
-  config:
-    import: optional:application-secret.yml
+    default: dev
 
   jpa:
     hibernate:
@@ -33,7 +30,19 @@ springdoc:
 spring:
   config:
     activate:
+      on-profile: dev
+
+    import: application-secret.yml
+
+firebase.admin.path: src/main/resources/firebase/admin.json
+
+---
+spring:
+  config:
+    activate:
       on-profile: prod
+
+    import: /var/config/application-secret.yml
 
 logging:
   level:
@@ -41,4 +50,6 @@ logging:
     org.hibernate.type.descriptor.sql: trace
   file:
     path: /var/log/testTT-log
+
+firebase.admin.path: /var/config/firebase/admin.json
 
