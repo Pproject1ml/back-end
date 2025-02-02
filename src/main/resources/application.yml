@@ -1,6 +1,8 @@
 spring:
   profiles:
     default: dev
+  config:
+    import: optional:application-secret.yml
 
   jpa:
     hibernate:
@@ -31,8 +33,6 @@ spring:
   config:
     activate:
       on-profile: dev
-
-    import: optional:application-secret.yml
 
 firebase.admin.path: src/main/resources/firebase/admin.json
 
