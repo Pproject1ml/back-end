@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PrivateChatroomDTO {
 
-    private String chatroomId;
+    private String privateChatroomId;
     private String title;
     private ProfileDTO user1;
     private ProfileDTO user2;

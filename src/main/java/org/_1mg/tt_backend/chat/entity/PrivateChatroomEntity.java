@@ -33,9 +33,12 @@ public class PrivateChatroomEntity extends BaseEntity {
 
     private boolean active;
 
-    public PrivateChatroomDTO convertToDTOForTab(boolean alarm, String username) {
+    public PrivateChatroomDTO convertToDTOForTab() {
 
         return PrivateChatroomDTO.builder()
+                .privateChatroomId(this.privateChatroomId.toString())
+                .alarm(this.alarm)
+                .active(this.active)
                 .build();
     }
 }

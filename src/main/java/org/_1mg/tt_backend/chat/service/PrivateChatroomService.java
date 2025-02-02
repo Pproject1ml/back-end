@@ -57,11 +57,13 @@ public class PrivateChatroomService {
         //chatrooms에 각각 접근 마지막 message 조회
         for (PrivateChatroomEntity chatroom : chatroomList) {
 
+            PrivateChatroomDTO chatroomDTO = chatroom.convertToDTOForTab();
 
-//            //chatroom 기본 정보 저장 + active 정보
-//            PrivateChatroomDTO chatroomDTO = chatroom.convertToDTOForTab(chatroom.isAlarm());
-//            Long chatroomId = chatroom.getPrivateChatroomId();
-//
+            String title = checkChatroomTitle(profileId, chatroom.getUser1(), chatroom.getUser2());
+            //chatroom 기본 정보 저장 + title 정보
+
+            Long chatroomId = chatroom.getPrivateChatroomId();
+
 //            //chatroom 별 참가자 List 추가
 //            chatroomDTO.setProfiles(profileDTOs);
 //
@@ -79,5 +81,24 @@ public class PrivateChatroomService {
         }
 
         return chatrooms;
+    }
+
+    String checkChatroomTitle(Long profileId, Profile user1, Profile user2) {
+
+        String title = "(알 수 없음)";
+
+        if (user1 != null) {
+            if (user1.getProfileId().equals(profileId)) {
+
+            }
+        }
+
+        if (user2 != null && user2.getProfileId().equals(profileId) && user1.getProfileId() != null) {
+
+            title = user1.getNickname();
+
+        }
+
+        return title;
     }
 }
