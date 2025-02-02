@@ -1,19 +1,14 @@
 #여기있는 파일이 동작하는게 아님 실제 docker compose는 따로 존재함
 services:
   server:
-    image: teamonemg/tt-server:latest
-    container_name: testTT
+    image: demo:latest
+    container_name: demoTT
     environment:
-      - SPRING_PROFILES_ACTIVE=mariadb
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://testDBContainer:3306/testdb
-      - SPRING_DATASOURCE_USERNAME=
-      - SPRING_DATASOURCE_PASSWORD=
-      - spring.jwt.secret=
       - TZ=Asia/Seoul
       - SPRING_PROFILES_ACTIVE=prod
-      - chat.system=
     volumes:
       - ~/test/testTT-log:/var/log/testTT-log
+      - ~/test/config/:/var/config/ #application-secret.yml 파일 및 각종 설정 파일 바인딩 마운트
     networks:
       - testnet
     ports:
