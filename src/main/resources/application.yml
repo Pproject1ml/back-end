@@ -1,6 +1,6 @@
 spring:
   profiles:
-    default: dev
+    default: default
   config:
     import: optional:application-secret.yml
 
@@ -28,12 +28,6 @@ springdoc:
   #ControllerAdvice를 통해 만들어지는 응답은 무시하기 위한 설정 (이거 필수)
   override-with-generic-response: false
 
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-
 firebase.admin.path: src/main/resources/firebase/admin.json
 
 ---
@@ -41,7 +35,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    additional-location: file:/var/config/
+    import: optional:/var/config/application-secret.yml
 
 logging:
   level:

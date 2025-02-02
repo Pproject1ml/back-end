@@ -3,14 +3,12 @@ package org._1mg.tt_backend.base;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
-@PropertySource("classpath:application-secret.yml") // application-secret.yml을 로드
 public class S3Config {
 
     @Value("${aws.credentials.access-key}")
