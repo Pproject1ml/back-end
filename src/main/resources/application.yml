@@ -41,8 +41,7 @@ spring:
   config:
     activate:
       on-profile: prod
-
-    import: optional:/var/config/application-secret.yml
+    additional-location: file:/var/config/
 
 logging:
   level:
