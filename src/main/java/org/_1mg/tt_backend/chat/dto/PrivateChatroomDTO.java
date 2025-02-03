@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class PrivateChatroomDTO {
 
-    private String privateChatroomId;
+    private String chatroomId;
     private String title;
     private List<ProfileDTO> profiles;
     private boolean alarm;

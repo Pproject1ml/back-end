@@ -36,7 +36,7 @@ public class PrivateChatroomEntity extends BaseEntity {
     public PrivateChatroomDTO convertToDTO() {
 
         return PrivateChatroomDTO.builder()
-                .privateChatroomId(this.privateChatroomId.toString())
+                .chatroomId(this.privateChatroomId.toString())
                 .title(this.privateChatroomId.toString())
                 .alarm(this.alarm)
                 .active(this.active)
