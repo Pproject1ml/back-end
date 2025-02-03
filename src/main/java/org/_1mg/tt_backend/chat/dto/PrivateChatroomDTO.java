@@ -4,6 +4,7 @@ import lombok.*;
 import org._1mg.tt_backend.auth.dto.ProfileDTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,8 +15,7 @@ public class PrivateChatroomDTO {
 
     private String privateChatroomId;
     private String title;
-    private ProfileDTO user1;
-    private ProfileDTO user2;
+    private List<ProfileDTO> profiles;
     private boolean alarm;
     private String imagePath;
     private String lastMessage;

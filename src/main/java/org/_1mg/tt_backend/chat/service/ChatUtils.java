@@ -1,14 +1,10 @@
 package org._1mg.tt_backend.chat.service;
 
 import lombok.RequiredArgsConstructor;
-import org._1mg.tt_backend.chat.entity.ChatroomEntity;
-import org._1mg.tt_backend.chat.entity.MessageEntity;
-import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
+import org._1mg.tt_backend.chat.entity.*;
 import org._1mg.tt_backend.chat.exception.custom.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.exception.custom.ProfileNotParticipants;
-import org._1mg.tt_backend.chat.repository.ChatroomRepository;
-import org._1mg.tt_backend.chat.repository.MessageRepository;
-import org._1mg.tt_backend.chat.repository.ProfileChatroomRepository;
+import org._1mg.tt_backend.chat.repository.*;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +24,9 @@ public class ChatUtils {
     private final ProfileChatroomRepository profileChatroomRepository;
     private final ChatroomRepository chatroomRepository;
     private final MessageRepository messageRepository;
+
+    private final PrivateMessageRepository privateMessageRepository;
+    private final PrivateChatroomRepository privateChatroomRepository;
 
     public MessageEntity getLastMessage(Long chatroom) {
 
@@ -84,5 +83,26 @@ public class ChatUtils {
                 .toList();
 
         profileChatroomRepository.saveAll(chatrooms);
+    }
+
+    public boolean checkFirstPrivateMessage(Long chatroomId, LocalDateTime now) {
+
+        PrivateMessageEntity lastMessage = getLastPrivateMessage(chatroomId);
+        if (lastMessage == null) {
+            return true;
+        }
+        return now.toLocalDate().isAfter(lastMessage.getCreatedAt().toLocalDate());
+    }
+
+    public PrivateMessageEntity getLastPrivateMessage(Long chatroomId) {
+
+        return privateMessageRepository.findLastMessageWithChatroomNotDeleted(chatroomId, Limit.of(1));
+    }
+
+    public PrivateChatroomEntity findPrivateChatroom(Long profileId, String chatroomId) {
+
+        Long id = Long.parseLong(chatroomId);
+        return privateChatroomRepository.findByIdAndUserNotDeleted(profileId, id)
+                .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
     }
 }

@@ -4,16 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
+import org._1mg.tt_backend.base.CustomException;
 import org._1mg.tt_backend.chat.dto.PrivateChatroomDTO;
 import org._1mg.tt_backend.chat.entity.PrivateChatroomEntity;
-import org._1mg.tt_backend.chat.exception.custom.ChatroomNotFoundException;
+import org._1mg.tt_backend.chat.entity.PrivateMessageEntity;
+import org._1mg.tt_backend.chat.exception.custom.AlreadyInChatroomException;
 import org._1mg.tt_backend.chat.repository.PrivateChatroomRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org._1mg.tt_backend.base.CustomException.CHATROOM_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -22,33 +22,47 @@ public class PrivateChatroomService {
 
     private final PrivateChatroomRepository chatroomRepository;
     private final ProfileService profileService;
-    final String DESTINATION = "/sub/private-room/";
+    private final ChatUtils chatUtils;
 
-    public String createPrivateChatroom(String user2MemberId, Profile user2) {
+    public PrivateChatroomDTO createPrivateChatroom(String user1MemberId, Profile user2) {
 
-        Profile user1 = profileService.findProfileWithMemberId(user2MemberId);
+        Profile user1 = profileService.findProfileWithMemberId(user1MemberId);
+        PrivateChatroomEntity privateChatroom = checkAlreadyParticipants(user1, user2);
 
-        //일대 일 채팅방 생성
-        PrivateChatroomEntity privateChatroom = chatroomRepository.save(
-                PrivateChatroomEntity.builder()
-                        .user1(user1)
-                        .user2(user2)
-                        .build());
+        if (privateChatroom == null) {
+            //일대 일 채팅방 생성
+            privateChatroom = chatroomRepository.save(
+                    PrivateChatroomEntity.builder()
+                            .user1(user1)
+                            .user2(user2)
+                            .build());
+        }
 
+        PrivateChatroomDTO dto = privateChatroom.convertToDTO();
+        dto.setProfiles(List.of(user1.convertToDTO(), user2.convertToDTO()));
 
-        return DESTINATION + privateChatroom.getPrivateChatroomId();
+        return dto;
     }
 
-    public PrivateChatroomEntity findChatroom(Long profileId, String chatroomId) {
+    public PrivateChatroomEntity checkAlreadyParticipants(Profile user1, Profile user2) {
 
-        Long id = Long.parseLong(chatroomId);
-        return chatroomRepository.findByIdAndUserNotDeleted(profileId, id)
-                .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
+        PrivateChatroomEntity pc = chatroomRepository.findByUser1AndUser2(user1.getProfileId(), user2.getProfileId());
+
+        if (pc == null) {
+            return null;
+        }
+
+        if (pc.isDeleted()) {
+            pc.restore();
+            return pc;
+        } else {
+            throw new AlreadyInChatroomException(CustomException.USER_ALREADY_IN_CHATROOM.getMessage());
+        }
     }
 
     public List<PrivateChatroomDTO> getChatrooms(Long profileId) {
 
-        List<PrivateChatroomDTO> chatrooms = new ArrayList<>();
+        List<PrivateChatroomDTO> privateChatrooms = new ArrayList<>();
 
         //active 정보를 받기 위해 ProfileChatroomEntity로 조회함
         List<PrivateChatroomEntity> chatroomList = chatroomRepository.findChatroomsByProfileIdNotDeleted(profileId);
@@ -57,48 +71,25 @@ public class PrivateChatroomService {
         //chatrooms에 각각 접근 마지막 message 조회
         for (PrivateChatroomEntity chatroom : chatroomList) {
 
-            PrivateChatroomDTO chatroomDTO = chatroom.convertToDTOForTab();
+            PrivateChatroomDTO chatroomDTO = chatroom.convertToDTO();
 
-            String title = checkChatroomTitle(profileId, chatroom.getUser1(), chatroom.getUser2());
-            //chatroom 기본 정보 저장 + title 정보
+            //chatroom 별 참가자 List 추가
+            chatroomDTO.setProfiles(List.of(chatroom.getUser1().convertToDTO(), chatroom.getUser2().convertToDTO()));
 
+            //채팅방 별 마지막 메세지 조회
             Long chatroomId = chatroom.getPrivateChatroomId();
+            PrivateMessageEntity lastMessage = chatUtils.getLastPrivateMessage(chatroomId);
 
-//            //chatroom 별 참가자 List 추가
-//            chatroomDTO.setProfiles(profileDTOs);
-//
-//            //채팅방 별 마지막 메세지 조회
-//            PrivateMessageEntity lastMessage = chatUtils.getLastMessage(chatroomId);
-//
-//            //마지막 메세지가 없는 경우엔 그냥 NULL로 놔두면 됨
-//            if (lastMessage != null) {
-//                chatroomDTO.setLastMessage(lastMessage.getContent());
-//                chatroomDTO.setLastMessageAt(lastMessage.getCreatedAt());
-//            }
-//
-//            //생성된 chatroomDTO를 List에 추가
-//            chatrooms.add(chatroomDTO);
-        }
-
-        return chatrooms;
-    }
-
-    String checkChatroomTitle(Long profileId, Profile user1, Profile user2) {
-
-        String title = "(알 수 없음)";
-
-        if (user1 != null) {
-            if (user1.getProfileId().equals(profileId)) {
-
+            //마지막 메세지가 없는 경우엔 그냥 NULL로 놔두면 됨
+            if (lastMessage != null) {
+                chatroomDTO.setLastMessage(lastMessage.getContent());
+                chatroomDTO.setLastMessageAt(lastMessage.getCreatedAt());
             }
+
+            //생성된 chatroomDTO를 List에 추가
+            privateChatrooms.add(chatroomDTO);
         }
 
-        if (user2 != null && user2.getProfileId().equals(profileId) && user1.getProfileId() != null) {
-
-            title = user1.getNickname();
-
-        }
-
-        return title;
+        return privateChatrooms;
     }
 }

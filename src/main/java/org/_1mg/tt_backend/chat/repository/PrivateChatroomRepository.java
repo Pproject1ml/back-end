@@ -23,4 +23,10 @@ public interface PrivateChatroomRepository extends JpaRepository<PrivateChatroom
             "OR pc.user2.profileId = :profileId) " +
             "AND pc.isDeleted = false ")
     List<PrivateChatroomEntity> findChatroomsByProfileIdNotDeleted(@Param("profileId") Long profileId);
+
+
+    @Query(value = "SELECT pc.* FROM private_chatroom pc " +
+            "WHERE pc.user1_id = :user1 " +
+            "AND pc.user2_id = :user2 ", nativeQuery = true)
+    PrivateChatroomEntity findByUser1AndUser2(Long user1, Long user2);
 }

@@ -12,7 +12,6 @@ import org._1mg.tt_backend.chat.entity.PrivateChatroomEntity;
 import org._1mg.tt_backend.chat.entity.PrivateMessageEntity;
 import org._1mg.tt_backend.chat.repository.PrivateMessageRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,8 +24,8 @@ import java.util.List;
 public class PrivateMessageService {
 
     private final ProfileService profileService;
-    private final PrivateChatroomService chatroomService;
     private final PrivateMessageRepository messageRepository;
+    private final ChatUtils chatUtils;
 
     @Value("${chat.system}")
     private String SYSTEM_ID;
@@ -69,7 +68,7 @@ public class PrivateMessageService {
         Profile profile = profileService.findProfile((textDTO.getProfileId()));
 
         //chatroom 조회 및 참가 여부 확인
-        PrivateChatroomEntity chatroom = chatroomService.findChatroom(profile.getProfileId(), textDTO.getChatroomId());
+        PrivateChatroomEntity chatroom = chatUtils.findPrivateChatroom(profile.getProfileId(), textDTO.getChatroomId());
 
         //메세지 생성
         makeMessages(profile, chatroom, now, textDTO, result);
@@ -92,7 +91,7 @@ public class PrivateMessageService {
     public void makeMessages(Profile profile, PrivateChatroomEntity chatroom, LocalDateTime now, TextDTO textDTO, List<TextDTO> result) {
 
         //오늘의 첫 메세지인지 확인
-        if (checkFirstMessage(chatroom.getPrivateChatroomId(), now)) {
+        if (chatUtils.checkFirstPrivateMessage(chatroom.getPrivateChatroomId(), now)) {
 
             //날짜 데이터의 경우 SYSTEM 계정으로 메세지 작성;
             PrivateMessageEntity date = PrivateMessageEntity.create(chatroom, SYSTEM, MessageType.DATE, now.toString());
@@ -108,20 +107,6 @@ public class PrivateMessageService {
         textDTO.setMessageId(message.getPrivateMessageId().toString());
         textDTO.setCreatedAt(message.getCreatedAt());
         result.add(textDTO);
-    }
-
-    public boolean checkFirstMessage(Long chatroomId, LocalDateTime now) {
-
-        PrivateMessageEntity lastMessage = getLastMessage(chatroomId);
-        if (lastMessage == null) {
-            return true;
-        }
-        return now.toLocalDate().isAfter(lastMessage.getCreatedAt().toLocalDate());
-    }
-
-    public PrivateMessageEntity getLastMessage(Long chatroom) {
-
-        return messageRepository.findLastMessageWithChatroomNotDeleted(chatroom, Limit.of(1));
     }
 
     public void toNullSender(Long profileId) {

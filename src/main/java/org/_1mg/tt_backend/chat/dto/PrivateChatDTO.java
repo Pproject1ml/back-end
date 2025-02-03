@@ -12,5 +12,4 @@ import lombok.Setter;
 public class PrivateChatDTO {
 
     private String profileId;
-    private String destination;
 }
