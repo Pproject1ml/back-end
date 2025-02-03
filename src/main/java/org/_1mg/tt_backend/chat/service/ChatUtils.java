@@ -1,6 +1,7 @@
 package org._1mg.tt_backend.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.chat.entity.*;
 import org._1mg.tt_backend.chat.exception.custom.ChatroomNotFoundException;
 import org._1mg.tt_backend.chat.exception.custom.ProfileNotParticipants;
@@ -17,6 +18,7 @@ import static org._1mg.tt_backend.base.CustomException.USER_NOT_IN_CHATROOM;
 /**
  * ProfileChatroomEntity 필드 등 여러 Service 클래스에서 사용되는 쿼리 집합(순환 참조 방지)
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatUtils {
@@ -101,6 +103,7 @@ public class ChatUtils {
 
     public PrivateChatroomEntity findPrivateChatroom(Long profileId, String chatroomId) {
 
+        log.info("profile : {} chatroom : {}", profileId, chatroomId);
         Long id = Long.parseLong(chatroomId);
         return privateChatroomRepository.findByIdAndUserNotDeleted(profileId, id)
                 .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
