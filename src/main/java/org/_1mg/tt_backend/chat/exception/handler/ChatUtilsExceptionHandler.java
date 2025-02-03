@@ -1,6 +1,5 @@
 package org._1mg.tt_backend.chat.exception.handler;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.exception.custom.ChatroomNotFoundException;
@@ -15,7 +14,6 @@ import static org._1mg.tt_backend.base.CustomException.USER_NOT_IN_CHATROOM;
 
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class ChatUtilsExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
