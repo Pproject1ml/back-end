@@ -33,6 +33,16 @@ public class PrivateChatroomEntity extends BaseEntity {
 
     private boolean active;
 
+    public static PrivateChatroomEntity create(Profile user1, Profile user2) {
+
+        return PrivateChatroomEntity.builder()
+                .user1(user1)
+                .user2(user2)
+                .alarm(true)
+                .active(true)
+                .build();
+    }
+
     public PrivateChatroomDTO convertToDTO() {
 
         return PrivateChatroomDTO.builder()

@@ -31,11 +31,7 @@ public class PrivateChatroomService {
 
         if (privateChatroom == null) {
             //일대 일 채팅방 생성
-            privateChatroom = chatroomRepository.save(
-                    PrivateChatroomEntity.builder()
-                            .user1(user1)
-                            .user2(user2)
-                            .build());
+            privateChatroom = chatroomRepository.save(PrivateChatroomEntity.create(user1, user2));
         }
 
         PrivateChatroomDTO dto = privateChatroom.convertToDTO();
