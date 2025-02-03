@@ -43,7 +43,18 @@ public class PrivateMessageService {
         Long chatroom = refreshDTO.getChatroom();
 
         if (start == null) {
-            return new ArrayList<>();
+
+            if (end == null) {
+                return messageRepository.findAllMessagesAtChatroom(chatroom)
+                        .stream()
+                        .map(PrivateMessageEntity::convertToText)
+                        .toList();
+            }
+
+            return messageRepository.findMessagesUntilEnd(chatroom, end)
+                    .stream()
+                    .map(PrivateMessageEntity::convertToText)
+                    .toList();
         }
 
         if (end == null) {
