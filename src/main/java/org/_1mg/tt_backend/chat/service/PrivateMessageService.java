@@ -3,6 +3,7 @@ package org._1mg.tt_backend.chat.service;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -74,15 +76,20 @@ public class PrivateMessageService {
 
         List<TextDTO> result = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
+        log.info(now.toString());
 
         //profile 조회
         Profile profile = profileService.findProfile((textDTO.getProfileId()));
+        log.info("profile : {} ", profile.getProfileId());
+
 
         //chatroom 조회 및 참가 여부 확인
         PrivateChatroomEntity chatroom = chatUtils.findPrivateChatroom(profile.getProfileId(), textDTO.getChatroomId());
+        log.info("chatroom : {} ", chatroom.getPrivateChatroomId());
 
         //메세지 생성
         makeMessages(profile, chatroom, now, textDTO, result);
+        log.info("result : {} ", result.get(result.size() - 1));
 
         return result;
     }
@@ -108,11 +115,14 @@ public class PrivateMessageService {
             PrivateMessageEntity date = PrivateMessageEntity.create(chatroom, SYSTEM, MessageType.DATE, now.toString());
             messageRepository.save(date);
             result.add(date.convertToText());
+
+            log.info(date.getContent());
         }
 
         //저장
         PrivateMessageEntity message = PrivateMessageEntity.create(chatroom, profile, textDTO.getMessageType(), textDTO.getContent());
         message = messageRepository.save(message);
+        log.info(message.getContent());
 
         //createdAt 필드 초기화 후 반환
         textDTO.setMessageId(message.getPrivateMessageId().toString());

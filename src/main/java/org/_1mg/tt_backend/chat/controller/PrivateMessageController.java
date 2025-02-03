@@ -49,6 +49,7 @@ public class PrivateMessageController {
         List<TextDTO> texts = messageService.sendText(textDTO);
 
         for (TextDTO text : texts) {
+            log.info("Send text message: {}", text.getMessageId());
             messagingTemplate.convertAndSend("/sub/private-room/" + chatroomId,
                     ResponseDTO.<TextDTO>builder()
                             .status(OK.getStatus())
