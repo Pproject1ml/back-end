@@ -64,6 +64,8 @@ public class SecurityConfig {
         http
                 .formLogin(AbstractHttpConfigurer::disable);
         http
+                .logout(AbstractHttpConfigurer::disable);
+        http
                 .httpBasic(AbstractHttpConfigurer::disable);
         http
                 .sessionManagement(session -> {
