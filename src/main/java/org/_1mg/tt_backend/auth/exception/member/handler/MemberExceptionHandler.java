@@ -3,11 +3,12 @@ package org._1mg.tt_backend.auth.exception.member.handler;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.exception.InvalidFCMToken;
 import org._1mg.tt_backend.auth.exception.member.custom.UserAlreadyExistsException;
 import org._1mg.tt_backend.base.ResponseDTO;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +19,7 @@ import static org._1mg.tt_backend.base.CustomException.*;
 
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class MemberExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

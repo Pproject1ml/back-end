@@ -3,6 +3,8 @@ package org._1mg.tt_backend.chat.exception.handler;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.exception.custom.AlreadyInChatroomException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,6 +14,7 @@ import static org._1mg.tt_backend.base.CustomException.USER_ALREADY_IN_CHATROOM;
 
 @Slf4j
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ChatroomExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
