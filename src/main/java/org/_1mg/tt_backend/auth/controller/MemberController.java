@@ -136,7 +136,7 @@ public class MemberController {
     })
     @Parameter(name = "nickname")
     @PostMapping("/auth/check-nickname")
-    public ResponseDTO<String> checkUniqueNickname(
+    public ResponseDTO<Map<String, String>> checkUniqueNickname(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON BODY",
                     content = @Content(
                             mediaType = "application/json",
@@ -145,13 +145,13 @@ public class MemberController {
             ) @RequestBody Map<String, String> nicknameDTO) throws JsonProcessingException {
 
         log.debug("CHECK NICKNAME START");
-        String result = memberService.checkUniqueNickname(nicknameDTO.get("nickname"));
+        memberService.checkUniqueNickname(nicknameDTO.get("nickname"));
 
         log.debug("CHECK NICKNAME FINISHED");
-        return ResponseDTO.<String>builder()
+        return ResponseDTO.<Map<String, String>>builder()
                 .status(OK.getStatus())
-                .message("UNIQUE NICKNAME")
-                .data(result)
+                .message(OK.getMessage())
+                .data(nicknameDTO)
                 .build();
     }
 
@@ -193,16 +193,16 @@ public class MemberController {
     @PostMapping("/logout")
     public ResponseDTO<String> logout(Authentication authentication) {
 
-        log.debug("LOGOUT START");
+        log.info("LOGOUT START");
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         memberService.logout(user.getMemberId());
 
         SecurityContextHolder.getContext().setAuthentication(null);
 
-        log.debug("LOGOUT FINISHED");
+        log.info("LOGOUT FINISHED");
         return ResponseDTO.<String>builder()
                 .status(OK.getStatus())
-                .message("LOGOUT SUCCESS")
+                .message(OK.getMessage())
                 .build();
     }
 

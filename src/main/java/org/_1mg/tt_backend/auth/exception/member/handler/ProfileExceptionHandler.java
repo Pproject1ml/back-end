@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+
 import static org._1mg.tt_backend.base.CustomException.ALREADY_EXISTS_NICKNAME;
 import static org._1mg.tt_backend.base.CustomException.USER_NOT_FOUND;
 
@@ -21,13 +23,13 @@ public class ProfileExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NicknameAlreadyExistsException.class)
-    public ResponseDTO<String> nicknameAlreadyExists(NicknameAlreadyExistsException exception) {
+    public ResponseDTO<Map<String, String>> nicknameAlreadyExists(NicknameAlreadyExistsException exception) {
 
         log.error("NOT UNIQUE NICKNAME");
-        return ResponseDTO.<String>builder()
+        return ResponseDTO.<Map<String, String>>builder()
                 .status(ALREADY_EXISTS_NICKNAME.getStatus())
                 .message(ALREADY_EXISTS_NICKNAME.getMessage())
-                .data(exception.getInvalidNickname())
+                .data(Map.of("nickname", exception.getInvalidNickname()))
                 .build();
     }
 

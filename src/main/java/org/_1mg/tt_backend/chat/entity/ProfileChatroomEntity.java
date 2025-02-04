@@ -46,6 +46,7 @@ public class ProfileChatroomEntity {
                 .profile(profile)
                 .chatroom(chatroomEntity)
                 .active(true)
+                .alarm(true)
                 .joinedAt(LocalDateTime.now())
                 .build();
     }
