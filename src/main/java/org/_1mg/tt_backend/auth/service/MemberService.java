@@ -1,7 +1,5 @@
 package org._1mg.tt_backend.auth.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 import static org._1mg.tt_backend.base.CustomException.*;
@@ -38,7 +35,6 @@ public class MemberService {
     private final MessageService messageService;
     private final PrivateMessageService privateMessageService;
     private final JwtUtils jwtUtils;
-    private final ObjectMapper objectMapper;
     private final ChatUtils chatUtils;
 
     private final S3Service s3Service;
@@ -78,10 +74,9 @@ public class MemberService {
         return profileDTO;
     }
 
-    public String checkUniqueNickname(String nickname) throws JsonProcessingException {
+    public void checkUniqueNickname(String nickname) {
 
         profileService.checkUniqueNickname(nickname);
-        return objectMapper.writeValueAsString(Map.of("nickname", nickname));
     }
 
 

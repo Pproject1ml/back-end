@@ -38,4 +38,12 @@ public interface ProfileChatroomRepository extends JpaRepository<ProfileChatroom
             "WHERE m.profile_id = :profileId"
             , nativeQuery = true)
     List<ProfileChatroomEntity> findAllMessages(Long profileId);
+
+    @Query(value = "SELECT pc FROM ProfileChatroomEntity pc " +
+            "JOIN FETCH pc.profile p " +
+            "JOIN FETCH pc.chatroom c " +
+            "WHERE pc.chatroom.chatroomId = :chatroomId " +
+            "AND pc.isDeleted = false " +
+            "AND pc.active = true ")
+    List<ProfileChatroomEntity> findProfileAndChatroomNotDeletedAndActive(Long chatroomId);
 }
