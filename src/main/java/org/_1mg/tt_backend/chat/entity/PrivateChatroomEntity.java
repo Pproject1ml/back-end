@@ -47,7 +47,6 @@ public class PrivateChatroomEntity extends BaseEntity {
 
         return PrivateChatroomDTO.builder()
                 .chatroomId(this.privateChatroomId.toString())
-                .title(this.privateChatroomId.toString())
                 .alarm(this.alarm)
                 .active(this.active)
                 .build();
@@ -55,5 +54,11 @@ public class PrivateChatroomEntity extends BaseEntity {
 
     public void restore() {
         this.active = false;
+    }
+
+    public void detachProfile(Long profileId) {
+
+        if (user1 != null && user1.getProfileId().equals(profileId)) user1 = null;
+        if (user2 != null && user2.getProfileId().equals(profileId)) user2 = null;
     }
 }

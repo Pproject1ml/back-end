@@ -123,7 +123,8 @@ public class MessageService {
     public void toNullSender(Long profileId) {
 
         //messageRepository.nullifySenderForMessages(memberId);
-        List<MessageEntity> messages = messageRepository.findAllMessages(profileId).stream()
+        List<MessageEntity> messages = messageRepository.findAllMessages(profileId)
+                .stream()
                 .peek(MessageEntity::detachProfile)
                 .toList();
 

@@ -80,7 +80,8 @@ public class ChatUtils {
     public void toNullSender(Long profileId) {
 
         //messageRepository.nullifySenderForMessages(memberId);
-        List<ProfileChatroomEntity> chatrooms = profileChatroomRepository.findAllMessages(profileId).stream()
+        List<ProfileChatroomEntity> chatrooms = profileChatroomRepository.findAllUserChatrooms(profileId)
+                .stream()
                 .peek(ProfileChatroomEntity::detachProfile)
                 .toList();
 
@@ -103,7 +104,6 @@ public class ChatUtils {
 
     public PrivateChatroomEntity findPrivateChatroom(Long profileId, String chatroomId) {
 
-        log.info("profile : {} chatroom : {}", profileId, chatroomId);
         Long id = Long.parseLong(chatroomId);
         return privateChatroomRepository.findByIdAndUserNotDeleted(profileId, id)
                 .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));

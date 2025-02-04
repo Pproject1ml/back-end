@@ -37,7 +37,7 @@ public interface ProfileChatroomRepository extends JpaRepository<ProfileChatroom
     @Query(value = "SELECT * from profile_chatroom m " +
             "WHERE m.profile_id = :profileId"
             , nativeQuery = true)
-    List<ProfileChatroomEntity> findAllMessages(Long profileId);
+    List<ProfileChatroomEntity> findAllUserChatrooms(Long profileId);
 
     @Query(value = "SELECT pc FROM ProfileChatroomEntity pc " +
             "JOIN FETCH pc.profile p " +

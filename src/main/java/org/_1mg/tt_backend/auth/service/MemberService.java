@@ -14,6 +14,7 @@ import org._1mg.tt_backend.auth.jwt.JwtUtils;
 import org._1mg.tt_backend.auth.repository.MemberRepository;
 import org._1mg.tt_backend.chat.service.ChatUtils;
 import org._1mg.tt_backend.chat.service.MessageService;
+import org._1mg.tt_backend.chat.service.PrivateChatroomService;
 import org._1mg.tt_backend.chat.service.PrivateMessageService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class MemberService {
     private final ProfileService profileService;
     private final MessageService messageService;
     private final PrivateMessageService privateMessageService;
+    private final PrivateChatroomService privateChatroomService;
     private final JwtUtils jwtUtils;
     private final ChatUtils chatUtils;
 
@@ -130,9 +132,16 @@ public class MemberService {
 
         Member member = findMemberAndProfile(memberId);
 
+        log.info("MESSAGE SERVICE");
         messageService.toNullSender(member.getProfile().getProfileId());
+        log.info("PRIVATE MESSAGE SERVICE");
         privateMessageService.toNullSender(member.getProfile().getProfileId());
+
+        log.info("CHATROOM SERVICE");
         chatUtils.toNullSender(member.getProfile().getProfileId());
+
+        log.info("PRIVATE CHATROOM SERVICE");
+        privateChatroomService.toNullSender(member.getProfile().getProfileId());
 
         memberRepository.delete(member);
 

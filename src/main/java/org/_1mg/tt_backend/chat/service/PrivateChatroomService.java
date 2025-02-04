@@ -88,4 +88,15 @@ public class PrivateChatroomService {
 
         return privateChatrooms;
     }
+
+    public void toNullSender(Long profileId) {
+
+        //messageRepository.nullifySenderForMessages(memberId);
+        List<PrivateChatroomEntity> chatrooms = chatroomRepository.findAllUserPrivateChatrooms(profileId)
+                .stream()
+                .peek(chatroom -> chatroom.detachProfile(profileId))
+                .toList();
+
+        chatroomRepository.saveAll(chatrooms);
+    }
 }
