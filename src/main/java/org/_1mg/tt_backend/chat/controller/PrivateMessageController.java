@@ -2,6 +2,7 @@ package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org._1mg.tt_backend.FCM.service.FcmService;
 import org._1mg.tt_backend.base.ResponseDTO;
 import org._1mg.tt_backend.chat.dto.RefreshDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
@@ -27,6 +28,7 @@ public class PrivateMessageController {
 
     private final PrivateMessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final FcmService fcmService;
 
     @ResponseBody
     @GetMapping("/private-chat/refresh")
@@ -57,5 +59,9 @@ public class PrivateMessageController {
                             .data(text)
                             .build());
         }
+
+        //알림 생성
+        TextDTO message = texts.get(texts.size() - 1);
+        fcmService.sendNotificationToPrivateChatroom(message.getChatroomId(), message.getProfileId(), message.getContent());
     }
 }

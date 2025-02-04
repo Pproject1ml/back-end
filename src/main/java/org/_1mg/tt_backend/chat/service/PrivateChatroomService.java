@@ -99,4 +99,10 @@ public class PrivateChatroomService {
 
         chatroomRepository.saveAll(chatrooms);
     }
+
+    public List<Profile> getProfileForNotification(String chatroomId) {
+
+        PrivateChatroomEntity chatroom = chatroomRepository.findProfilesById(Long.parseLong(chatroomId));
+        return List.of(chatroom.getUser1(), chatroom.getUser2());
+    }
 }

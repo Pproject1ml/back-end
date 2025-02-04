@@ -1,10 +1,7 @@
 package org._1mg.tt_backend.FCM.service;
 
 import com.google.api.core.ApiFuture;
-import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +31,25 @@ public class FcmSender {
             log.info("{}", response.getResponses());
         } catch (InterruptedException | ExecutionException e) {
             log.error("ERROR AT SEND NOTIFICATION {} ", e.getMessage());
+        }
+    }
+
+    public void sendPrivateNotification(String token, String title, String body) {
+
+        Message message = Message.builder()
+                .setToken(token)
+                .setNotification(Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build())
+                .build();
+
+        ApiFuture<String> responseFuture = FirebaseMessaging.getInstance().sendAsync(message);
+
+        try {
+            log.info("PRIVATE SEND {} ", responseFuture.get());
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("ERROR AT SEND PRIVATE NOTIFICATION {} ", e.getMessage());
         }
     }
 }
