@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.chat.MessageType;
+import org._1mg.tt_backend.chat.dto.EnterDTO;
+import org._1mg.tt_backend.chat.dto.LeaveDTO;
 import org._1mg.tt_backend.chat.dto.RefreshDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.entity.PrivateChatroomEntity;
@@ -94,18 +96,6 @@ public class PrivateMessageService {
         return result;
     }
 
-    public List<TextDTO> sendSystemText(TextDTO textDTO, Profile system, PrivateChatroomEntity chatroom) {
-
-        List<TextDTO> result = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
-
-        //System 메세지는 참가하지 않아도 어디서나 보낼 수 있음
-        //메세지 생성
-        makeMessages(system, chatroom, now, textDTO, result);
-
-        return result;
-    }
-
     public void makeMessages(Profile profile, PrivateChatroomEntity chatroom, LocalDateTime now, TextDTO textDTO, List<TextDTO> result) {
 
         //오늘의 첫 메세지인지 확인
@@ -138,5 +128,33 @@ public class PrivateMessageService {
                 .toList();
 
         messageRepository.saveAll(messages);
+    }
+
+    public void leaveChatroom(LeaveDTO leaveDTO) {
+
+        Profile profile = profileService.findProfile(leaveDTO.getProfileId());
+        PrivateChatroomEntity privateChatroom = chatUtils.findPrivateChatroomAndProfile(profile.getProfileId(), leaveDTO.getChatroomId());
+
+        if (profile.getProfileId().equals(privateChatroom.getUser1().getProfileId())) {
+            privateChatroom.leaveUser1();
+        }
+
+        if (profile.getProfileId().equals(privateChatroom.getUser2().getProfileId())) {
+            privateChatroom.leaveUser2();
+        }
+    }
+
+    public void enterChatroom(EnterDTO enterDTO) {
+
+        Profile profile = profileService.findProfile(enterDTO.getProfileId());
+        PrivateChatroomEntity privateChatroom = chatUtils.findPrivateChatroomAndProfile(profile.getProfileId(), enterDTO.getChatroomId());
+
+        if (profile.getProfileId().equals(privateChatroom.getUser1().getProfileId())) {
+            privateChatroom.enterUser1();
+        }
+
+        if (profile.getProfileId().equals(privateChatroom.getUser2().getProfileId())) {
+            privateChatroom.enterUser2();
+        }
     }
 }

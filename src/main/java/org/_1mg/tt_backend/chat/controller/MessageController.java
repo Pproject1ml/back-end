@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.service.FcmService;
 import org._1mg.tt_backend.base.ResponseDTO;
+import org._1mg.tt_backend.chat.dto.EnterDTO;
+import org._1mg.tt_backend.chat.dto.LeaveDTO;
 import org._1mg.tt_backend.chat.dto.RefreshDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.MessageService;
@@ -41,6 +43,16 @@ public class MessageController {
                 .message(OK.getMessage())
                 .data(result)
                 .build();
+    }
+
+    @MessageMapping("/enter/{chatroomId}")
+    public void enterMessage(@Payload EnterDTO enterDTO) {
+        messageService.enterChatroom(enterDTO);
+    }
+
+    @MessageMapping("/leave/{chatroomId}")
+    public void leaveMessage(@Payload LeaveDTO leaveDTO) {
+        messageService.leaveChatroom(leaveDTO);
     }
 
     @MessageMapping("/message/{chatroomId}")

@@ -75,10 +75,12 @@ public class PrivateChatroomService {
             List<ProfileDTO> profileDTOS = new ArrayList<>();
             if (chatroom.getUser1() != null) {
                 profileDTOS.add(chatroom.getUser1().convertToDTO());
+                chatroomDTO.setAlarm(chatroom.isUser1Alarm());
             }
 
             if (chatroom.getUser2() != null) {
                 profileDTOS.add(chatroom.getUser2().convertToDTO());
+                chatroomDTO.setAlarm(chatroom.isUser2Alarm());
             }
             chatroomDTO.setProfiles(profileDTOS);
 
@@ -110,15 +112,22 @@ public class PrivateChatroomService {
         chatroomRepository.saveAll(chatrooms);
     }
 
-    public List<Profile> getProfileForNotification(String chatroomId) {
+    public PrivateChatroomEntity getProfileForNotification(String chatroomId) {
 
-        PrivateChatroomEntity chatroom = chatroomRepository.findProfilesById(Long.parseLong(chatroomId));
-        return List.of(chatroom.getUser1(), chatroom.getUser2());
+        return chatroomRepository.findProfilesById(Long.parseLong(chatroomId));
     }
 
     public void changeAlarm(AlarmDTO alarmDTO) {
 
-        PrivateChatroomEntity chatroom = chatUtils.findPrivateChatroom(Long.parseLong(alarmDTO.getProfileId()), alarmDTO.getChatroomId());
-        chatroom.changeAlarm(alarmDTO.isAlarm());
+        Long profileId = Long.parseLong(alarmDTO.getProfileId());
+        PrivateChatroomEntity chatroom = chatUtils.findPrivateChatroom(profileId, alarmDTO.getChatroomId());
+
+        if (profileId.equals(chatroom.getUser1().getProfileId())) {
+            chatroom.changeUser1Alarm(alarmDTO.isAlarm());
+        }
+
+        if (profileId.equals(chatroom.getUser2().getProfileId())) {
+            chatroom.changeUser2Alarm(alarmDTO.isAlarm());
+        }
     }
 }

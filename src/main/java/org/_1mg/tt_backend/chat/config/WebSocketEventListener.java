@@ -72,9 +72,8 @@ public class WebSocketEventListener {
                 sendMessage(joinMessages, destination);
                 log.info("SUBSCRIBE JOIN END");
             }
-            case ENTER -> {
-                log.info("SUBSCRIBE ENTER");
-                log.info("SUBSCRIBE ENTER END");
+            default -> {
+                log.error("INVALID SUBSCRIBE MESSAGE");
             }
         }
     }
@@ -101,10 +100,6 @@ public class WebSocketEventListener {
         log.info("MESSAGETYPE : {}", messageType);
 
         switch (messageType) {
-            case LEAVE -> {
-                log.info("UNSUBSCRIBE LEAVE");
-                log.info("UNSUBSCRIBE LEAVE END");
-            }
             case DISABLE -> {
                 log.info("UNSUBSCRIBE DISABLE");
                 List<TextDTO> result = socketService.makeDisableMessage(profileId, chatroomId);

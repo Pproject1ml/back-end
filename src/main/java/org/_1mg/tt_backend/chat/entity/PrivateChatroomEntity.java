@@ -29,7 +29,11 @@ public class PrivateChatroomEntity extends BaseEntity {
     @JoinColumn(name = "user2_id")
     private Profile user2;
 
-    private boolean alarm;
+    private boolean user1Alarm;
+    private boolean user2Alarm;
+
+    private boolean user1Presence;
+    private boolean user2Presence;
 
     private boolean active;
 
@@ -38,7 +42,10 @@ public class PrivateChatroomEntity extends BaseEntity {
         return PrivateChatroomEntity.builder()
                 .user1(user1)
                 .user2(user2)
-                .alarm(true)
+                .user1Alarm(true)
+                .user2Alarm(true)
+                .user1Presence(false)
+                .user2Presence(false)
                 .active(true)
                 .build();
     }
@@ -47,7 +54,7 @@ public class PrivateChatroomEntity extends BaseEntity {
 
         return PrivateChatroomDTO.builder()
                 .chatroomId(this.privateChatroomId.toString())
-                .alarm(this.alarm)
+                .alarm(true)
                 .active(this.active)
                 .build();
     }
@@ -62,7 +69,27 @@ public class PrivateChatroomEntity extends BaseEntity {
         if (user2 != null && user2.getProfileId().equals(profileId)) user2 = null;
     }
 
-    public void changeAlarm(Boolean alarm) {
-        this.alarm = alarm;
+    public void changeUser1Alarm(Boolean alarm) {
+        this.user1Alarm = alarm;
+    }
+
+    public void changeUser2Alarm(Boolean alarm) {
+        this.user2Alarm = alarm;
+    }
+
+    public void leaveUser1() {
+        this.user1Presence = false;
+    }
+
+    public void leaveUser2() {
+        this.user1Presence = true;
+    }
+
+    public void enterUser1() {
+        this.user1Presence = true;
+    }
+
+    public void enterUser2() {
+        this.user2Presence = true;
     }
 }

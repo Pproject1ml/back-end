@@ -33,6 +33,8 @@ public class ProfileChatroomEntity {
 
     private boolean active;
 
+    private boolean presence;
+
     private LocalDateTime joinedAt;
 
     private LocalDateTime leftAt;
@@ -47,12 +49,18 @@ public class ProfileChatroomEntity {
                 .chatroom(chatroomEntity)
                 .active(true)
                 .alarm(true)
+                .presence(true)
                 .joinedAt(LocalDateTime.now())
                 .build();
     }
 
+    public void enter() {
+        this.presence = true;
+    }
+
     public void leave() {
         this.leftAt = LocalDateTime.now();
+        this.presence = false;
     }
 
     public void disable() {

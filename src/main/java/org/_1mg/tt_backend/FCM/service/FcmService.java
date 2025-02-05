@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.dto.FcmDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
+import org._1mg.tt_backend.chat.entity.PrivateChatroomEntity;
 import org._1mg.tt_backend.chat.entity.ProfileChatroomEntity;
 import org._1mg.tt_backend.chat.service.ChatUtils;
 import org._1mg.tt_backend.chat.service.PrivateChatroomService;
@@ -40,7 +41,7 @@ public class FcmService {
                 continue;
             }
 
-            if (!profileChatroom.isAlarm()) {
+            if (!profileChatroom.isAlarm() || profileChatroom.isPresence()) {
                 continue;
             }
 
@@ -56,19 +57,24 @@ public class FcmService {
     public void sendNotificationToPrivateChatroom(String chatroomId, String profileId, String content) {
 
         //채팅방 참여 중인 인원 프로필 조회
-        List<Profile> profiles = privateChatroomService.getProfileForNotification(chatroomId); //채팅방 인원 프로필 조회
+        PrivateChatroomEntity privateChatroom = privateChatroomService.getProfileForNotification(chatroomId); //채팅방 인원 프로필 조회
 
         String token = null;
         String senderName = null;
-        for (Profile profile : profiles) {
 
-            //본인이 보낸 메세지에 대해선 알림이 오면 안 됨
-            if (profile.getProfileId().equals(Long.parseLong(profileId))) {
-                senderName = profile.getNickname();
-                continue;
+        //본인이 보낸 메세지에 대해선 알림이 오면 안 됨
+        if (privateChatroom.getUser1().getProfileId().equals(Long.parseLong(profileId))) {
+            senderName = privateChatroom.getUser1().getNickname();
+
+            if (privateChatroom.isUser2Alarm() && !privateChatroom.isUser2Presence()) {
+                token = privateChatroom.getUser2().getFcmToken();
             }
+        } else {
+            senderName = privateChatroom.getUser2().getNickname();
 
-            token = profile.getFcmToken();
+            if (privateChatroom.isUser1Alarm() && !privateChatroom.isUser1Presence()) {
+                token = privateChatroom.getUser1().getFcmToken();
+            }
         }
 
         //메세지 보낸 후 나가기 한 경우 알림을 보내지 않음(보낸 이가 NULL인 경우 방지)

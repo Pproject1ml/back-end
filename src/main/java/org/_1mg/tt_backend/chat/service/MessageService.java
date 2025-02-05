@@ -133,15 +133,19 @@ public class MessageService {
 
     public void leaveChatroom(LeaveDTO leaveDTO) {
 
-        Profile profile = profileService.findProfile((leaveDTO.getProfileId()));
-
-        ChatroomEntity chatroom = chatUtils.findChatroom((leaveDTO.getChatroomId()));
-
+        Profile profile = profileService.findProfile(leaveDTO.getProfileId());
+        ChatroomEntity chatroom = chatUtils.findChatroom(leaveDTO.getChatroomId());
         ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+
         profileChatroom.leave();
     }
 
     public void enterChatroom(EnterDTO enterDTO) {
 
+        Profile profile = profileService.findProfile(enterDTO.getProfileId());
+        ChatroomEntity chatroom = chatUtils.findChatroom(enterDTO.getChatroomId());
+        ProfileChatroomEntity profileChatroom = chatUtils.checkParticipant(profile.getProfileId(), chatroom.getChatroomId());
+
+        profileChatroom.enter();
     }
 }

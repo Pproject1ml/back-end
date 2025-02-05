@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.service.FcmService;
 import org._1mg.tt_backend.base.ResponseDTO;
+import org._1mg.tt_backend.chat.dto.EnterDTO;
+import org._1mg.tt_backend.chat.dto.LeaveDTO;
 import org._1mg.tt_backend.chat.dto.RefreshDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.PrivateMessageService;
@@ -43,6 +45,17 @@ public class PrivateMessageController {
                 .build();
     }
 
+
+    @MessageMapping("/private-enter/{chatroomId}")
+    public void enterMessage(@Payload EnterDTO enterDTO) {
+
+
+    }
+
+    @MessageMapping("/private-leave/{chatroomId}")
+    public void leaveMessage(@Payload LeaveDTO leaveDTO) {
+        log.info("leave private");
+    }
 
     @MessageMapping("/private-message/{chatroomId}")
     @SendTo("/sub/private-room/{chatroomId}")
