@@ -17,7 +17,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     MessageEntity findLastMessageWithChatroomNotDeleted(@Param("chatroomId") Long chatroomId, Limit limit);
 
     @Query("SELECT m FROM MessageEntity m " +
-            "JOIN FETCH m.profile p " +
+            "LEFT JOIN FETCH m.profile p " +
             "WHERE m.chatroom.chatroomId = :chatroomId " +
             "AND m.messageId > :startId AND m.messageId < :endId " +
             "AND m.isDeleted = false " +
@@ -27,7 +27,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
                                                                  @Param("endId") Long endId);
 
     @Query("SELECT m FROM MessageEntity m " +
-            "JOIN FETCH m.profile p " +
+            "LEFT JOIN FETCH m.profile p " +
             "WHERE m.chatroom.chatroomId = :chatroomId " +
             "AND m.messageId > :startId " +
             "AND m.isDeleted = false " +

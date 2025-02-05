@@ -18,7 +18,7 @@ public interface PrivateMessageRepository extends JpaRepository<PrivateMessageEn
 
 
     @Query("SELECT pm FROM PrivateMessageEntity pm " +
-            "JOIN FETCH pm.profile p " +
+            "LEFT JOIN FETCH pm.profile p " +
             "WHERE pm.chatroom.privateChatroomId = :chatroomId " +
             "AND pm.privateMessageId > :startId AND pm.privateMessageId < :endId " +
             "AND pm.isDeleted = false " +
@@ -28,7 +28,7 @@ public interface PrivateMessageRepository extends JpaRepository<PrivateMessageEn
                                                                         @Param("endId") Long endId);
 
     @Query("SELECT pm FROM PrivateMessageEntity pm " +
-            "JOIN FETCH pm.profile p " +
+            "LEFT JOIN FETCH pm.profile p " +
             "WHERE pm.chatroom.privateChatroomId = :chatroomId " +
             "AND pm.privateMessageId > :startId " +
             "AND pm.isDeleted = false " +
@@ -43,7 +43,7 @@ public interface PrivateMessageRepository extends JpaRepository<PrivateMessageEn
 
     @Query(value = "SELECT pm FROM PrivateMessageEntity pm " +
             "JOIN FETCH pm.chatroom c " +
-            "JOIN FETCH pm.profile p " +
+            "LEFT JOIN FETCH pm.profile p " +
             "WHERE c.privateChatroomId = :chatroomId " +
             "AND pm.isDeleted = false " +
             "ORDER BY pm.privateMessageId ASC ")
@@ -51,7 +51,7 @@ public interface PrivateMessageRepository extends JpaRepository<PrivateMessageEn
 
     @Query(value = "SELECT pm FROM PrivateMessageEntity pm " +
             "JOIN FETCH pm.chatroom c " +
-            "JOIN FETCH pm.profile p " +
+            "LEFT JOIN FETCH pm.profile p " +
             "WHERE c.privateChatroomId = :chatroomId " +
             "AND pm.privateMessageId < :endId " +
             "AND pm.isDeleted = false " +

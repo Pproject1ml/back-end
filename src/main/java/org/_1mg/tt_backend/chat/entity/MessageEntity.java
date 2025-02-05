@@ -52,7 +52,7 @@ public class MessageEntity extends BaseEntity {
 
         return TextDTO.builder()
                 .messageId(this.messageId.toString())
-                .profileId(this.profile.getProfileId().toString())
+                .profileId(this.profile == null ? "EMPTY" : this.profile.getProfileId().toString())
                 .chatroomId(this.chatroom.getChatroomId().toString())
                 .content(this.content)
                 .messageType(this.messageType)

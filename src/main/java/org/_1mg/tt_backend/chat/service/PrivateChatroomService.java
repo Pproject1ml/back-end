@@ -2,6 +2,7 @@ package org._1mg.tt_backend.chat.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.base.CustomException;
@@ -70,7 +71,15 @@ public class PrivateChatroomService {
             PrivateChatroomDTO chatroomDTO = chatroom.convertToDTO();
 
             //chatroom 별 참가자 List 추가
-            chatroomDTO.setProfiles(List.of(chatroom.getUser1().convertToDTO(), chatroom.getUser2().convertToDTO()));
+            List<ProfileDTO> profileDTOS = new ArrayList<>();
+            if (chatroom.getUser1() != null) {
+                profileDTOS.add(chatroom.getUser1().convertToDTO());
+            }
+
+            if (chatroom.getUser2() != null) {
+                profileDTOS.add(chatroom.getUser2().convertToDTO());
+            }
+            chatroomDTO.setProfiles(profileDTOS);
 
             //채팅방 별 마지막 메세지 조회
             Long chatroomId = chatroom.getPrivateChatroomId();

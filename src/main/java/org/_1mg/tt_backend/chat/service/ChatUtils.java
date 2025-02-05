@@ -83,6 +83,7 @@ public class ChatUtils {
         List<ProfileChatroomEntity> chatrooms = profileChatroomRepository.findAllUserChatrooms(profileId)
                 .stream()
                 .peek(ProfileChatroomEntity::detachProfile)
+                .peek(ProfileChatroomEntity::die)
                 .toList();
 
         profileChatroomRepository.saveAll(chatrooms);
