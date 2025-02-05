@@ -61,4 +61,8 @@ public class PrivateChatroomEntity extends BaseEntity {
         if (user1 != null && user1.getProfileId().equals(profileId)) user1 = null;
         if (user2 != null && user2.getProfileId().equals(profileId)) user2 = null;
     }
+
+    public void changeAlarm(Boolean alarm) {
+        this.alarm = alarm;
+    }
 }

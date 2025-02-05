@@ -6,6 +6,7 @@ import org._1mg.tt_backend.auth.dto.ProfileDTO;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.base.CustomException;
+import org._1mg.tt_backend.chat.dto.AlarmDTO;
 import org._1mg.tt_backend.chat.dto.PrivateChatroomDTO;
 import org._1mg.tt_backend.chat.entity.PrivateChatroomEntity;
 import org._1mg.tt_backend.chat.entity.PrivateMessageEntity;
@@ -113,5 +114,11 @@ public class PrivateChatroomService {
 
         PrivateChatroomEntity chatroom = chatroomRepository.findProfilesById(Long.parseLong(chatroomId));
         return List.of(chatroom.getUser1(), chatroom.getUser2());
+    }
+
+    public void changeAlarm(AlarmDTO alarmDTO) {
+
+        PrivateChatroomEntity chatroom = chatUtils.findPrivateChatroom(Long.parseLong(alarmDTO.getProfileId()), alarmDTO.getChatroomId());
+        chatroom.changeAlarm(alarmDTO.isAlarm());
     }
 }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.base.ResponseDTO;
+import org._1mg.tt_backend.chat.dto.AlarmDTO;
 import org._1mg.tt_backend.chat.dto.PrivateChatDTO;
 import org._1mg.tt_backend.chat.dto.PrivateChatroomDTO;
 import org._1mg.tt_backend.chat.service.PrivateChatroomService;
@@ -56,15 +57,15 @@ public class PrivateChatroomController {
                 .data(result)
                 .build();
     }
-//
-//    @PostMapping("/alarm")
-//    public ResponseDTO<String> setAlarm(@RequestBody AlarmDTO alarmDTO) {
-//
-//        chatroomService.changeAlarm(alarmDTO);
-//
-//        return ResponseDTO.<String>builder()
-//                .status(OK.getStatus())
-//                .message(OK.getMessage())
-//                .build();
-//    }
+
+    @PostMapping("/private-alarm")
+    public ResponseDTO<String> setAlarm(@RequestBody AlarmDTO alarmDTO) {
+
+        chatroomService.changeAlarm(alarmDTO);
+
+        return ResponseDTO.<String>builder()
+                .status(OK.getStatus())
+                .message(OK.getMessage())
+                .build();
+    }
 }
