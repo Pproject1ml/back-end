@@ -1,6 +1,7 @@
 package org._1mg.tt_backend.chat.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.auth.entity.Profile;
 import org._1mg.tt_backend.auth.service.ProfileService;
 import org._1mg.tt_backend.base.ResponseDTO;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org._1mg.tt_backend.base.CustomException.OK;
 
+@Slf4j
 @RequestMapping("/chat")
 @RestController
 @RequiredArgsConstructor
@@ -43,8 +45,11 @@ public class PrivateChatroomController {
     @GetMapping("/private-list")
     public ResponseDTO<List<PrivateChatroomDTO>> chatList(@RequestParam("id") Long profileId) {
 
+        log.info("START PRIVATE CHATROOM LIST");
         List<PrivateChatroomDTO> result = chatroomService.getChatrooms(profileId);
+        log.info(result.toString());
 
+        log.info("END PRIVATE CHATROOM LIST");
         return ResponseDTO.<List<PrivateChatroomDTO>>builder()
                 .status(OK.getStatus())
                 .message(OK.getMessage())

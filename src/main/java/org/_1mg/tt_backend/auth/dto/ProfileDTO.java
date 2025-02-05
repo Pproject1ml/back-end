@@ -9,6 +9,7 @@ import org._1mg.tt_backend.auth.entity.Profile;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ProfileDTO {
 
     private String profileId;

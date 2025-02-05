@@ -60,11 +60,4 @@ public class ProfileService {
     public void save(Profile profile) {
         profileRepository.save(profile);
     }
-
-    public Profile findById(Long profileId) {
-        return profileRepository.findByIdNotDeleted(profileId)
-                .orElseThrow(() -> new IllegalArgumentException("Profile not found with ID: " + profileId));
-    }
-
-
 }
