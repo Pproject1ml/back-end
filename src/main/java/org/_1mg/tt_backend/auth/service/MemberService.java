@@ -63,7 +63,7 @@ public class MemberService {
         String updatedImageUrl;
         if (profileImage != null && !profileImage.isEmpty()) {
             updatedImageUrl = s3Service.uploadProfileImage(profileImage, memberId);
-        } else if (profile.getProfileImage().isEmpty()) {
+        } else if (profile.getProfileImage() == null) {
             updatedImageUrl = s3Service.getDefaultProfileImage(); // 기존 이미지 없으면 기본 이미지 적용
         } else {
             updatedImageUrl = profile.getProfileImage(); // 기존 이미지 유지
