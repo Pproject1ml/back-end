@@ -127,7 +127,7 @@ public class WebSocketEventListener {
         //COMMAND로 메세지 타입을 전달받음
         String command = headerAccessor.getFirstNativeHeader("COMMAND");
         if (command == null) {
-            log.error("Subscribe COMMAND IS NULL");
+            log.warn("Subscribe COMMAND IS NULL");
             return null;
         }
 
