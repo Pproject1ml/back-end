@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org._1mg.tt_backend.FCM.service.FcmService;
 import org._1mg.tt_backend.base.ResponseDTO;
-import org._1mg.tt_backend.chat.dto.EnterDTO;
-import org._1mg.tt_backend.chat.dto.LeaveDTO;
 import org._1mg.tt_backend.chat.dto.RefreshDTO;
 import org._1mg.tt_backend.chat.dto.TextDTO;
 import org._1mg.tt_backend.chat.service.MessageService;
@@ -45,20 +43,6 @@ public class MessageController {
                 .build();
     }
 
-    @MessageMapping("/enter/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> enterMessage(@Payload EnterDTO enterDTO, @DestinationVariable Long chatroomId) {
-
-        /*
-            채팅읽음처리 관련 기능
-         */
-
-        return ResponseDTO.<String>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .build();
-    }
-
     @MessageMapping("/message/{chatroomId}")
     @SendTo("/sub/room/{chatroomId}")
     public void textMessage(@Payload TextDTO textDTO, @DestinationVariable Long chatroomId) {
@@ -77,16 +61,5 @@ public class MessageController {
         //알림 생성
         TextDTO message = texts.get(texts.size() - 1);
         fcmService.sendNotificationToChatroom(message.getChatroomId(), message.getProfileId(), message.getContent());
-    }
-
-    @MessageMapping("/leave/{chatroomId}")
-    @SendTo("/sub/room/{chatroomId}")
-    public ResponseDTO<String> leaveMessage(@Payload LeaveDTO leaveDTO, @DestinationVariable Long chatroomId) {
-
-
-        return ResponseDTO.<String>builder()
-                .status(OK.getStatus())
-                .message(OK.getMessage())
-                .build();
     }
 }
