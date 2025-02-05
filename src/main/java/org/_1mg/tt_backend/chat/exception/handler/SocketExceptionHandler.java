@@ -25,26 +25,24 @@ public class SocketExceptionHandler {
     @MessageExceptionHandler(IllegalArgumentException.class)
     public void handleIllegalArgumentException(IllegalArgumentException ex, Principal principal) {
 
-
+        log.error(ex.getMessage());
     }
 
     @MessageExceptionHandler(ProfileNotFoundException.class)
     public void handleNicknameAlreadyExists(ProfileNotFoundException e) {
 
-
+        log.error(e.getMessage());
     }
 
     @MessageExceptionHandler(AlreadyInChatroomException.class)
     public void handleAlreadyInChatroom(AlreadyInChatroomException e) {
 
         log.error(e.getMessage());
-
     }
 
     @MessageExceptionHandler(ProfileNotParticipants.class)
     public void handleProfileNotParticipants(ProfileNotParticipants e) {
 
         log.error(e.getMessage());
-
     }
 }

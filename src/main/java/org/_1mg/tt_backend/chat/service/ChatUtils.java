@@ -106,7 +106,7 @@ public class ChatUtils {
     public PrivateChatroomEntity findPrivateChatroom(Long profileId, String chatroomId) {
 
         Long id = Long.parseLong(chatroomId);
-        return privateChatroomRepository.findByIdAndUserNotDeleted(profileId, id)
+        return privateChatroomRepository.findByProfileAndChatroomNotDeleted(profileId, id)
                 .orElseThrow(() -> new ChatroomNotFoundException(CHATROOM_NOT_FOUND.getMessage()));
     }
 
