@@ -37,6 +37,29 @@ public class SocketService {
         SYSTEM = profileService.findProfile(SYSTEM_ID);
     }
 
+    public List<TextDTO> preSendMessage(ChatroomEntity chatroom, MessageType messageType, String message) {
+
+        //최신화된 참여자 정보 조회
+        List<ProfileDTO> profiles = profileService.findProfiles(chatroom.getChatroomId());
+
+        //퇴장 메세지는 SYSTEM이 보내야 함
+        /*
+            만약 profileID를 그대로 할 경우 발생하는 에러
+            - 유저는 이미 퇴장했기 때문에 checkParticipants가 항상 예외를 던짐
+            - CLIENT에서 profileID로 보내는 사람을 구분하기 때문에 퇴장 메세지 출력이 틀어짐
+            이에 따라 날짜, 입장, 퇴장 등 모든 상태 메세지는 SYSTEM으로 변경해야 함
+            주의할 점은 SYSTEM profile을 미리 만들어야 하고 SYSTEM 계정 프로필 상수도 지정해야 함
+         */
+        TextDTO text = TextDTO.builder()
+                .profileId(SYSTEM_ID)
+                .chatroomId(chatroom.getChatroomId().toString())
+                .messageType(messageType)
+                .content(message)
+                .profiles(profiles)
+                .build();
+
+        return messageService.sendSystemText(text, SYSTEM, chatroom);
+    }
 
     public List<TextDTO> makeWelcomeMessage(String profileId, String chatroomId) {
 
@@ -49,19 +72,7 @@ public class SocketService {
         //입장 처리
         ChatroomEntity chatroom = chatroomService.joinChatroom(profile, chatroomId);
 
-        //최신화된 참여자 정보 조회
-        List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
-
-        //퇴장 메세지의와 같은 이유로 SYSTEM 계정으로 입장 메세지를 저장
-        TextDTO text = TextDTO.builder()
-                .profileId(SYSTEM_ID)
-                .chatroomId(chatroomId)
-                .messageType(MessageType.JOIN)
-                .content(message)
-                .profiles(profiles)
-                .build();
-
-        return messageService.sendSystemText(text, SYSTEM, chatroom);
+        return preSendMessage(chatroom, MessageType.JOIN, message);
     }
 
     public List<TextDTO> makeDieMessage(String profileId, String chatroomId) {
@@ -75,27 +86,7 @@ public class SocketService {
         //퇴장 처리
         ChatroomEntity chatroom = chatroomService.dieChatroom(profile, chatroomId);
 
-        //최신화된 참여자 정보 조회
-        List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
-
-        //퇴장 메세지는 SYSTEM이 보내야 함
-        /*
-            만약 profileID를 그대로 할 경우 발생하는 에러
-            - 유저는 이미 퇴장했기 때문에 checkParticipants가 항상 예외를 던짐
-            - CLIENT에서 profileID로 보내는 사람을 구분하기 때문에 퇴장 메세지 출력이 틀어짐 
-            이에 따라 날짜, 입장, 퇴장 등 모든 상태 메세지는 SYSTEM으로 변경해야 함
-            주의할 점은 SYSTEM profile을 미리 만들어야 하고 SYSTEM 계정 프로필 상수도 지정해야 함
-         */
-        TextDTO text = TextDTO.builder()
-                .chatroomId(chatroomId)
-                .profileId(SYSTEM_ID)
-                .messageType(MessageType.DIE)
-                .content(message)
-                .profiles(profiles)
-                .build();
-
-        //시스템 전용 메세지 전송 메소드
-        return messageService.sendSystemText(text, SYSTEM, chatroom);
+        return preSendMessage(chatroom, MessageType.DIE, message);
     }
 
     public List<TextDTO> makeDisableMessage(String profileId, String chatroomId) {
@@ -110,18 +101,6 @@ public class SocketService {
         //비활성화 처리
         ChatroomEntity chatroom = chatroomService.disableChatroom(profile, chatroomId);
 
-        //최신화된 참여자 정보 조회
-        List<ProfileDTO> profiles = profileService.findProfiles(Long.parseLong(chatroomId));
-
-        //퇴장과 동일한 이유로 SYSTEM으로 메세지 저장
-        TextDTO text = TextDTO.builder()
-                .chatroomId(chatroomId)
-                .profileId(SYSTEM_ID)
-                .messageType(MessageType.DISABLE)
-                .content(message)
-                .profiles(profiles)
-                .build();
-
-        return messageService.sendSystemText(text, SYSTEM, chatroom);
+        return preSendMessage(chatroom, MessageType.DISABLE, message);
     }
 }
