@@ -14,7 +14,7 @@ public interface PrivateChatroomRepository extends JpaRepository<PrivateChatroom
             "WHERE pc.privateChatroomId = :chatroomId " +
             "AND (pc.user1.profileId = :profileId OR pc.user2.profileId = :profileId) " +
             "AND pc.isDeleted = false ")
-    Optional<PrivateChatroomEntity> findByIdAndUserNotDeleted(Long profileId, Long chatroomId);
+    Optional<PrivateChatroomEntity> findByProfileAndChatroomNotDeleted(Long profileId, Long chatroomId);
 
     @Query("SELECT pc FROM PrivateChatroomEntity pc " +
             "LEFT JOIN FETCH pc.user1 u1 " +
@@ -26,8 +26,8 @@ public interface PrivateChatroomRepository extends JpaRepository<PrivateChatroom
 
 
     @Query(value = "SELECT pc.* FROM private_chatroom pc " +
-            "WHERE pc.user1_id = :user1 " +
-            "AND pc.user2_id = :user2 ", nativeQuery = true)
+            "WHERE (pc.user1_id = :user1 AND pc.user2_id = :user2) " +
+            "OR (pc.user1_id = :user2 AND pc.user2_id = :user1)", nativeQuery = true)
     PrivateChatroomEntity findByUser1AndUser2(Long user1, Long user2);
 
     @Query(value = "SELECT pc FROM PrivateChatroomEntity pc " +
