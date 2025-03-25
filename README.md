@@ -1,3 +1,3 @@
 # 시연 영상
 
-https://www.veed.io/view/9a0d06a7-2642-4520-afb6-f379a2d2ac3d?panel=share
+![왕규하's Video - Feb 6, 2025-VEED](https://github.com/user-attachments/assets/af6baf7c-b1fb-4cc0-a640-cbaeeb25ba6f)
