@@ -1,4 +1,3 @@
 # 시연 영상
 
-![image](https://github.com/user-attachments/assets/71b7dd5d-0781-451f-b2a5-be312f0041dd)
-
+https://www.veed.io/view/9a0d06a7-2642-4520-afb6-f379a2d2ac3d?panel=share
